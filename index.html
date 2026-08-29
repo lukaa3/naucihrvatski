@@ -1,0 +1,2143 @@
+<!DOCTYPE html>
+<html lang="hr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pleter — učim hrvatski</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=Karla:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
+<style>
+:root{
+  --deep:#0F212B;
+  --deep-2:#16303C;
+  --deep-3:#1E3F4D;
+  --stone:#EDE7DA;
+  --stone-dim:#A9B4B6;
+  --olive:#93AC72;
+  --madder:#CB4B3C;
+  --brass:#D9A441;
+  --line:rgba(237,231,218,.12);
+  --line-2:rgba(237,231,218,.22);
+  --display:'Alegreya', Georgia, 'Times New Roman', serif;
+  --body:'Karla', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --mono:'Space Mono', ui-monospace, Menlo, monospace;
+  --r:14px;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--deep);
+  color:var(--stone);
+  font-family:var(--body);
+  font-size:16px;
+  line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+  min-height:100vh;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(900px 500px at 82% -8%, rgba(217,164,65,.09), transparent 60%),
+    radial-gradient(700px 600px at 6% 104%, rgba(147,172,114,.07), transparent 62%);
+}
+h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.15;margin:0;letter-spacing:-.01em}
+p{margin:0 0 .8em}
+a{color:var(--brass)}
+button{font-family:inherit;font-size:inherit;color:inherit;cursor:pointer}
+input,textarea,select{font-family:inherit;font-size:inherit}
+:focus-visible{outline:2px solid var(--brass);outline-offset:2px;border-radius:6px}
+
+/* ---------- shell ---------- */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100vh;max-width:1240px;margin:0 auto}
+
+.rail{
+  border-right:1px solid var(--line);
+  padding:26px 18px 40px;
+  position:sticky;top:0;height:100vh;overflow-y:auto;
+  display:flex;flex-direction:column;gap:22px;
+}
+.brand{display:block;text-decoration:none;color:inherit}
+.brand .mark{font-family:var(--display);font-size:30px;font-weight:800;letter-spacing:-.02em}
+.brand .mark em{font-style:italic;color:var(--brass)}
+.brand .tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--stone-dim);margin-top:2px}
+
+.nav{display:flex;flex-direction:column;gap:2px}
+.nav button{
+  display:flex;align-items:baseline;gap:9px;width:100%;text-align:left;
+  background:none;border:0;border-radius:10px;padding:9px 11px;
+  color:var(--stone-dim);transition:background .15s,color .15s;
+}
+.nav button .hr{font-family:var(--display);font-size:17px;font-weight:700;color:inherit}
+.nav button .en{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.nav button:hover{background:rgba(237,231,218,.05);color:var(--stone)}
+.nav button[aria-current="true"]{background:var(--deep-2);color:var(--stone)}
+.nav button[aria-current="true"] .hr{color:var(--brass)}
+
+.rail-foot{margin-top:auto;font-size:12px;color:var(--stone-dim);line-height:1.5}
+.stat-row{display:flex;gap:14px;margin-bottom:12px}
+.stat{flex:1}
+.stat b{display:block;font-family:var(--mono);font-size:19px;color:var(--brass);font-weight:700}
+.stat span{font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--stone-dim)}
+
+.main{padding:30px 34px 90px;min-width:0}
+
+/* ---------- pleter (signature) ---------- */
+.pleter{width:100%;height:26px;display:block;overflow:visible}
+.pleter .bg{stroke:rgba(237,231,218,.14)}
+.pleter .fg{stroke:var(--brass)}
+.pleter path{fill:none;stroke-width:2.2;stroke-linecap:round}
+
+/* ---------- page head ---------- */
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
+.page-h{font-size:clamp(30px,4.4vw,44px);margin-bottom:6px}
+.page-h i{color:var(--brass);font-style:italic}
+.lede{color:var(--stone-dim);max-width:60ch;margin-bottom:24px}
+
+/* ---------- cards ---------- */
+.card{background:var(--deep-2);border:1px solid var(--line);border-radius:var(--r);padding:20px}
+.card + .card{margin-top:14px}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(190px,1fr))}
+
+.kicker{font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--stone-dim);margin-bottom:10px}
+
+/* ---------- buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:8px;justify-content:center;
+  background:var(--madder);border:1px solid var(--madder);color:#fff;
+  padding:10px 18px;border-radius:999px;font-weight:600;font-size:15px;
+  transition:transform .12s, filter .15s;
+}
+.btn:hover{filter:brightness(1.1)}
+.btn:active{transform:translateY(1px)}
+.btn.ghost{background:transparent;border-color:var(--line-2);color:var(--stone)}
+.btn.ghost:hover{background:rgba(237,231,218,.06)}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:#20180A}
+.btn.sm{padding:6px 13px;font-size:13.5px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  background:transparent;border:1px solid var(--line-2);color:var(--stone-dim);
+  padding:5px 12px;border-radius:999px;font-size:13.5px;transition:.15s;
+}
+.chip:hover{color:var(--stone);border-color:var(--stone-dim)}
+.chip[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#20180A;font-weight:600}
+
+/* ---------- word rows ---------- */
+.wordlist{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.word{display:flex;align-items:center;gap:12px;background:var(--deep-2);padding:9px 13px}
+.word .hr{font-family:var(--display);font-size:19px;font-weight:700;min-width:150px}
+.word .en{color:var(--stone-dim);flex:1;font-size:14.5px}
+.word .note{font-size:12px;color:var(--brass);opacity:.85;font-style:italic}
+.spk{background:none;border:0;color:var(--stone-dim);padding:3px 5px;border-radius:6px;line-height:1}
+.spk:hover{color:var(--brass);background:rgba(217,164,65,.1)}
+.save{background:none;border:0;color:var(--stone-dim);padding:3px 5px;font-size:13px}
+.save:hover{color:var(--brass)}
+.save[aria-pressed="true"]{color:var(--brass)}
+
+/* ---------- tables ---------- */
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:7px 10px;border-bottom:1px solid var(--line)}
+th{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--stone-dim);font-weight:600}
+td.hr{font-family:var(--display);font-size:17px;font-weight:600}
+td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--brass);white-space:nowrap}
+.tblwrap{overflow-x:auto}
+
+/* ---------- unit list ---------- */
+.unit{
+  display:flex;align-items:center;gap:16px;width:100%;text-align:left;
+  background:var(--deep-2);border:1px solid var(--line);border-radius:var(--r);
+  padding:15px 18px;margin-bottom:9px;transition:.15s;
+}
+.unit:hover{border-color:var(--line-2);transform:translateX(3px)}
+.unit .ord{
+  font-family:var(--display);font-style:italic;font-size:14px;color:var(--brass);
+  min-width:62px;border-right:1px solid var(--line);padding-right:12px;line-height:1.2;
+}
+.unit .ord b{display:block;font-style:normal;font-family:var(--mono);font-size:20px;font-weight:700}
+.unit .body{flex:1;min-width:0}
+.unit .t{font-family:var(--display);font-size:21px;font-weight:700}
+.unit .s{font-size:13px;color:var(--stone-dim)}
+.unit .tick{color:var(--olive);font-size:19px}
+
+/* ---------- chat ---------- */
+.chat{display:flex;flex-direction:column;gap:12px;min-height:280px;max-height:56vh;overflow-y:auto;padding-right:4px}
+.msg{max-width:88%;padding:12px 15px;border-radius:14px;font-size:15.5px}
+.msg.bot{background:var(--deep-3);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
+.msg.me{background:rgba(203,75,60,.16);border:1px solid rgba(203,75,60,.4);align-self:flex-end;border-bottom-right-radius:4px}
+.msg .cro{font-family:var(--display);font-size:18px;line-height:1.45}
+.msg .tr{font-size:13.5px;color:var(--stone-dim);margin-top:5px;font-style:italic}
+.fix{margin-top:9px;padding:9px 11px;border-left:3px solid var(--olive);background:rgba(147,172,114,.1);border-radius:0 8px 8px 0;font-size:13.5px}
+.fix b{color:var(--olive)}
+.composer{display:flex;gap:9px;margin-top:14px}
+.composer input{
+  flex:1;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);
+  padding:12px 15px;border-radius:999px;font-size:16px;
+}
+.composer input::placeholder{color:var(--stone-dim);opacity:.65}
+.hintbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.hintbar button{background:rgba(217,164,65,.11);border:1px solid rgba(217,164,65,.3);color:var(--brass);padding:4px 11px;border-radius:999px;font-size:13px}
+.hintbar button:hover{background:rgba(217,164,65,.2)}
+
+/* ---------- quiz ---------- */
+.q{font-family:var(--display);font-size:23px;font-weight:700;margin-bottom:14px;line-height:1.35}
+.opts{display:grid;gap:8px}
+.opt{
+  text-align:left;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);
+  padding:12px 16px;border-radius:11px;font-size:16px;transition:.13s;
+}
+.opt:hover:not(:disabled){border-color:var(--brass)}
+.opt.right{border-color:var(--olive);background:rgba(147,172,114,.16)}
+.opt.wrong{border-color:var(--madder);background:rgba(203,75,60,.14)}
+.answer{
+  width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);
+  padding:12px 16px;border-radius:11px;font-size:18px;font-family:var(--display);
+}
+.verdict{margin-top:13px;padding:12px 14px;border-radius:10px;font-size:14.5px}
+.verdict.ok{background:rgba(147,172,114,.13);border:1px solid rgba(147,172,114,.4)}
+.verdict.no{background:rgba(203,75,60,.12);border:1px solid rgba(203,75,60,.4)}
+.progressline{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:20px}
+.progressline i{display:block;height:100%;background:var(--brass);transition:width .3s}
+
+/* ---------- reading ---------- */
+.read{font-family:var(--display);font-size:20px;line-height:1.75;max-width:62ch}
+.read w{cursor:pointer;border-bottom:1px dotted rgba(217,164,65,.4)}
+.read w:hover{color:var(--brass);background:rgba(217,164,65,.09)}
+.gloss{
+  position:fixed;background:var(--deep-3);border:1px solid var(--brass);border-radius:9px;
+  padding:8px 12px;font-family:var(--body);font-size:14px;z-index:60;pointer-events:none;
+  box-shadow:0 8px 26px rgba(0,0,0,.5);max-width:250px;
+}
+.gloss b{font-family:var(--display);font-size:16px;color:var(--brass);display:block}
+
+/* ---------- flashcard ---------- */
+.flash{
+  background:var(--deep-2);border:1px solid var(--line-2);border-radius:18px;
+  padding:46px 26px;text-align:center;min-height:190px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+}
+.flash .front{font-family:var(--display);font-size:40px;font-weight:800;line-height:1.1}
+.flash .back{font-size:19px;color:var(--stone-dim)}
+
+/* ---------- misc ---------- */
+.note{font-size:13.5px;color:var(--stone-dim);background:rgba(237,231,218,.04);border-left:2px solid var(--brass);padding:10px 13px;border-radius:0 8px 8px 0;margin:10px 0}
+.note b{color:var(--brass)}
+.pill{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--line-2);border-radius:999px;color:var(--stone-dim)}
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(237,231,218,.25);border-top-color:var(--brass);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.err{background:rgba(203,75,60,.12);border:1px solid rgba(203,75,60,.45);border-radius:10px;padding:12px 15px;font-size:14px;margin-top:12px}
+.hidden{display:none !important}
+hr.rule{border:0;border-top:1px solid var(--line);margin:22px 0}
+
+/* ---------- chat list ---------- */
+.chatlist{display:grid;gap:6px;max-height:260px;overflow-y:auto}
+.chatrow{display:flex;align-items:center;gap:8px;background:var(--deep);border:1px solid var(--line);border-radius:11px;padding:9px 12px;cursor:pointer;transition:.13s}
+.chatrow:hover{border-color:var(--line-2)}
+.chatrow.on{border-color:var(--brass);background:rgba(217,164,65,.07)}
+.cmeta{flex:1;min-width:0}
+.ct{font-family:var(--display);font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cs2{font-size:11px;letter-spacing:.04em;color:var(--stone-dim);text-transform:uppercase}
+.cprev{font-size:12.5px;color:var(--stone-dim);opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+.crn,.cdel{background:none;border:0;color:var(--stone-dim);padding:3px 6px;border-radius:6px;font-size:15px;line-height:1;flex:none}
+.crn:hover{color:var(--brass)}
+.cdel:hover{color:var(--madder)}
+.cdel.armed{color:var(--madder);border:1px solid var(--madder);font-size:11.5px;padding:3px 8px}
+
+/* ---------- settings modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(6,14,18,.72);backdrop-filter:blur(3px);z-index:80;display:flex;align-items:center;justify-content:center;padding:18px}
+.modal{background:var(--deep-2);border:1px solid var(--line-2);border-radius:18px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.6)}
+.modal h2{font-size:26px;margin-bottom:4px}
+.field{width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);padding:11px 14px;border-radius:11px;font-family:var(--mono);font-size:13px}
+.field:focus{border-color:var(--brass)}
+select.field{font-family:var(--body);font-size:15px}
+.gear{background:none;border:1px solid var(--line);color:var(--stone-dim);border-radius:9px;padding:5px 11px;font-size:12.5px;margin-top:10px}
+.gear:hover{color:var(--brass);border-color:var(--brass)}
+.dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.view{animation:fade .28s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ---------- mobile ---------- */
+@media (max-width:820px){
+  .shell{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line);padding:18px 16px}
+  .nav{flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .nav button{flex-direction:column;gap:0;align-items:center;white-space:nowrap;padding:7px 12px}
+  .nav button .en{display:none}
+  .rail-foot{margin-top:0}
+  .main{padding:22px 16px 70px}
+  .word .hr{min-width:110px;font-size:17px}
+  .msg{max-width:95%}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="rail">
+    <a class="brand" href="#" onclick="go('home');return false">
+      <div class="mark">Ple<em>ter</em></div>
+      <div class="tag">hrvatski &nbsp;·&nbsp; svaki dan</div>
+    </a>
+
+    <button class="gear" onclick="openSettings()"><span class="dot" id="dot"></span><span id="gearlbl">Postavke</span></button>
+
+    <nav class="nav" id="nav"></nav>
+
+    <div class="rail-foot">
+      <div class="stat-row">
+        <div class="stat"><b id="s-xp">0</b><span>bodova</span></div>
+        <div class="stat"><b id="s-streak">0</b><span>dana</span></div>
+        <div class="stat"><b id="s-words">0</b><span>riječi</span></div>
+      </div>
+      <svg class="pleter" viewBox="0 0 240 26" preserveAspectRatio="none" aria-hidden="true">
+        <path class="bg" d="M0,13 C15,1 30,1 45,13 C60,25 75,25 90,13 C105,1 120,1 135,13 C150,25 165,25 180,13 C195,1 210,1 225,13 C232,19 236,21 240,21"/>
+        <path class="bg" d="M0,13 C15,25 30,25 45,13 C60,1 75,1 90,13 C105,25 120,25 135,13 C150,1 165,1 180,13 C195,25 210,25 225,13 C232,7 236,5 240,5"/>
+        <g id="pl-fill"><path class="fg" id="pl-a" d="M0,13 C15,1 30,1 45,13 C60,25 75,25 90,13 C105,1 120,1 135,13 C150,25 165,25 180,13 C195,1 210,1 225,13 C232,19 236,21 240,21"/>
+        <path class="fg" id="pl-b" d="M0,13 C15,25 30,25 45,13 C60,1 75,1 90,13 C105,25 120,25 135,13 C150,1 165,1 180,13 C195,25 210,25 225,13 C232,7 236,5 240,5"/></g>
+      </svg>
+      <div style="margin-top:8px" id="pl-label">Pleter se plete kako učiš.</div>
+    </div>
+  </aside>
+
+  <main class="main" id="main"></main>
+</div>
+<div id="gloss" class="gloss hidden"></div>
+<div id="settings" class="hidden"></div>
+<script>
+/* ============================================================
+   PLETER — hrvatski
+   Standard Croatian only: ijekavian, Croatian lexicon.
+   ============================================================ */
+
+const VERSION = "2.0";
+const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
+
+const UNITS = [
+{
+  id:1, title:"Pozdravi i predstavljanje", sub:"Greetings & introducing yourself",
+  goal:"Say hello, give your name, ask someone theirs, and be polite.",
+  grammar:[
+    {h:"Formal vs. informal — the single biggest habit to build",
+     b:"Croatian splits <em>you</em> in two. <b>ti</b> is one person you know (friends, classmates, family, anyone your age). <b>vi</b> is a stranger, an older person, a teacher, a waiter, anyone in a shop. Using <b>ti</b> with a stranger sounds rude; using <b>vi</b> with a friend sounds cold. When in doubt with an adult you don't know: <b>vi</b>.<br><br>Same question, two forms:<br>Kako <b>si</b>? — How are you? (ti)<br>Kako <b>ste</b>? — How are you? (vi)"},
+    {h:"Bok does double duty",
+     b:"<b>Bok</b> is <em>both</em> hi and bye, informal. <b>Dobar dan</b> is the safe neutral greeting for any situation from about 10am to evening. <b>Doviđenja</b> is the polite goodbye."},
+    {h:"The letters that trip people up",
+     b:"<b>c</b> = ts (as in ca<em>ts</em>) — <em>cesta</em> is TSES-ta, never <em>kesta</em>.<br><b>j</b> = y (as in <em>y</em>es) — <em>ja</em> is YAH.<br><b>č</b> = ch, hard (<em>ch</em>urch). <b>ć</b> = ch, soft and lighter.<br><b>š</b> = sh. <b>ž</b> = the s in mea<em>s</em>ure. <b>đ</b> = the j in <em>j</em>eep.<br><b>r</b> is rolled, and can be a whole syllable on its own: <em>prst</em> (finger), <em>vrt</em> (garden), <em>Hrvatska</em>.<br><br>Good news: Croatian spelling is fully phonetic. Every letter is pronounced, always the same way. No silent letters, ever."}
+  ],
+  vocab:[
+    ["bok","hi / bye (informal)"],["dobro jutro","good morning (until ~10am)"],
+    ["dobar dan","good day / hello"],["dobra večer","good evening"],
+    ["laku noć","good night (going to bed)"],["doviđenja","goodbye (polite)"],
+    ["hvala","thank you"],["hvala lijepa","thank you very much"],
+    ["molim","please / you're welcome / pardon?"],["nema na čemu","you're welcome"],
+    ["oprostite","excuse me / sorry (vi)"],["oprosti","sorry (ti)"],
+    ["da","yes"],["ne","no"],["možda","maybe"],
+    ["gospodin","Mr / sir"],["gospođa","Mrs / ma'am"]
+  ],
+  phrases:[
+    ["Kako se zoveš?","What's your name? (ti)"],
+    ["Kako se zovete?","What's your name? (vi)"],
+    ["Zovem se Ana.","My name is Ana."],
+    ["Drago mi je.","Nice to meet you."],
+    ["Kako si?","How are you? (ti)"],
+    ["Dobro sam, hvala. A ti?","I'm well, thanks. And you?"],
+    ["Odakle si?","Where are you from?"],
+    ["Ja sam iz Amerike.","I'm from America."],
+    ["Govorim malo hrvatski.","I speak a little Croatian."],
+    ["Ne razumijem.","I don't understand."],
+    ["Možete li ponoviti, molim vas?","Could you repeat that, please?"],
+    ["Kako se kaže … na hrvatskom?","How do you say … in Croatian?"]
+  ],
+  drills:[
+    {t:"mc",q:"You walk into a bakery at 9am. What do you say?",o:["Laku noć","Dobro jutro","Doviđenja","Bok, stari"],a:1,e:"Dobro jutro — morning greeting, and it's neutral enough for a stranger."},
+    {t:"mc",q:"Your teacher asks how you are. Which is right?",o:["Kako si?","Kako ste?","Kako je?","Kako sam?"],a:1,e:"A teacher gets vi, so: Kako ste?"},
+    {t:"type",q:"Say: My name is Marko.",a:["zovem se marko","ja se zovem marko"],e:"Zovem se Marko. The verb zvati se is reflexive — the se is part of it and can't be dropped."},
+    {t:"type",q:"Say: I don't understand.",a:["ne razumijem","ja ne razumijem"],e:"Ne razumijem. Note the ije — that's the Croatian ijekavian spelling."},
+    {t:"mc",q:"How is 'cesta' (road) pronounced?",o:["KES-ta","TSES-ta","CHES-ta","SES-ta"],a:1,e:"Croatian c is always ts. Never k, never s."},
+    {t:"type",q:"Say: Nice to meet you.",a:["drago mi je"],e:"Drago mi je — literally 'it is dear to me'."}
+  ]
+},
+{
+  id:2, title:"Biti — the verb everything hangs on", sub:"To be, and the pronouns",
+  goal:"Build sentences with am / are / is, ask yes-no questions, and negate them.",
+  grammar:[
+    {h:"Personal pronouns",
+     b:"<b>ja</b> I · <b>ti</b> you (one, informal) · <b>on</b> he · <b>ona</b> she · <b>ono</b> it<br><b>mi</b> we · <b>vi</b> you (plural, or one person formally) · <b>oni</b> they (m/mixed) · <b>one</b> they (all f) · <b>ona</b> they (all n)<br><br>You usually <b>drop</b> them. The verb ending already tells you who. <em>Umoran sam</em> is the natural way to say I'm tired; <em>Ja sam umoran</em> adds emphasis, like <em>I'm</em> tired (as opposed to you)."},
+    {h:"biti — two present tenses, and it matters",
+     b:"<b>Short (unstressed):</b> sam, si, je, smo, ste, su — the everyday form. It can <em>never start a sentence</em>. It sits in second position.<br><b>Long (stressed):</b> jesam, jesi, jest, jesmo, jeste, jesu — used to start yes-no questions, to answer emphatically, and to contradict.<br><br>Ana <b>je</b> ovdje. — Ana is here.<br><b>Jesi</b> li umoran? — Are you tired?<br>— <b>Jesam</b>. — I am.<br><br><b>Negative:</b> nisam, nisi, nije, nismo, niste, nisu. One word, not <em>ne sam</em>.<br>Nisam iz Zagreba. — I'm not from Zagreb."},
+    {h:"Two ways to ask a yes-no question",
+     b:"1. <b>Jesi li</b> ti student? — Are you a student?<br>2. <b>Je li</b> ovo kava? — Is this coffee? (<em>je li</em> is often heard as <em>jel'</em> in speech)<br><br>The little word <b>li</b> is the question marker and always comes second."},
+    {h:"Adjectives change for gender",
+     b:"Because <em>umoran</em> describes <em>you</em>, it changes shape depending on whether you're male or female:<br>Umoran sam. (male speaker) · Umorna sam. (female speaker)<br>Gladan sam / Gladna sam. — I'm hungry.<br>Sretan sam / Sretna sam. — I'm happy."}
+  ],
+  vocab:[
+    ["student / studentica","(university) student m/f"],
+    ["učenik / učenica","(school) pupil m/f"],
+    ["prijatelj / prijateljica","friend m/f"],
+    ["dobro","well / good (adv)"],["loše","badly"],["odlično","excellent"],
+    ["umoran / umorna","tired m/f"],["gladan / gladna","hungry m/f"],
+    ["žedan / žedna","thirsty m/f"],["sretan / sretna","happy m/f"],
+    ["ovdje","here"],["tamo","there"],["ovo","this"],["to","that"],
+    ["tko","who"],["što","what"],["gdje","where"],["kada","when"],["zašto","why"]
+  ],
+  phrases:[
+    ["Ja sam Amerikanac / Amerikanka.","I'm American m/f."],
+    ["Nisam odavde.","I'm not from around here."],
+    ["Jesi li ti student?","Are you a student?"],
+    ["Je li ovo tvoje?","Is this yours?"],
+    ["Ona nije kod kuće.","She isn't at home."],
+    ["Mi smo prijatelji.","We are friends."],
+    ["Tko je to?","Who is that?"],
+    ["Što je ovo?","What is this?"],
+    ["Gdje si sada?","Where are you now?"]
+  ],
+  drills:[
+    {t:"type",q:"Say (male speaker): I am tired.",a:["umoran sam","ja sam umoran"],e:"Umoran sam. A woman would say Umorna sam."},
+    {t:"mc",q:"Which is a correct sentence?",o:["Sam student.","Ja sam student.","Student sam ja jesam.","Je sam student."],a:1,e:"The short form sam can never open a sentence. Either Ja sam student or Student sam."},
+    {t:"type",q:"Say: I'm not from Zagreb.",a:["nisam iz zagreba"],e:"Nisam iz Zagreba. Negation is one word: nisam."},
+    {t:"mc",q:"Complete: ___ li ti gladan?",o:["Je","Jesi","Si","Nisi"],a:1,e:"Second person needs jesi, and li marks the question."},
+    {t:"type",q:"Say: We are friends.",a:["mi smo prijatelji","smo prijatelji"],e:"Mi smo prijatelji."},
+    {t:"mc",q:"A woman says she's hungry:",o:["Gladan sam","Gladna sam","Gladno sam","Gladni sam"],a:1,e:"Feminine adjectives take -a: gladna."}
+  ]
+},
+{
+  id:3, title:"Rod i množina", sub:"Gender and plurals",
+  goal:"Know whether a noun is m/f/n and make it plural — the foundation for every case later.",
+  grammar:[
+    {h:"Three genders, and you can usually see them",
+     b:"<b>Muški (m)</b> — ends in a consonant: <em>grad, stol, prijatelj, auto</em><br><b>Ženski (f)</b> — ends in <b>-a</b>: <em>žena, knjiga, kava, škola</em><br><b>Srednji (n)</b> — ends in <b>-o</b> or <b>-e</b>: <em>more, selo, pivo, dijete</em><br><br>Reliable exceptions worth memorising now: <b>noć, stvar, ljubav, riječ, večer</b> end in consonants but are <b>feminine</b>. Nouns of that type usually name abstract things."},
+    {h:"Making plurals",
+     b:"<table><tr><th></th><th>jednina</th><th>množina</th></tr><tr><td class='cs'>m</td><td class='hr'>stol</td><td class='hr'>stolovi</td></tr><tr><td class='cs'>m</td><td class='hr'>prijatelj</td><td class='hr'>prijatelji</td></tr><tr><td class='cs'>f</td><td class='hr'>žena</td><td class='hr'>žene</td></tr><tr><td class='cs'>n</td><td class='hr'>selo</td><td class='hr'>sela</td></tr></table><br><b>m → -i</b> · <b>f → -e</b> · <b>n → -a</b><br><br>Short masculine nouns (one syllable) usually insert <b>-ov-</b> or <b>-ev-</b> first: stol → stol<b>ov</b>i, grad → grad<b>ov</b>i, but after č ć š ž đ j lj nj it's -ev-: muž → muž<b>ev</b>i."},
+    {h:"Adjectives agree with the noun",
+     b:"An adjective copies its noun's gender and number:<br><b>velik</b> grad · <b>velika</b> kuća · <b>veliko</b> more<br><b>veliki</b> gradovi · <b>velike</b> kuće · <b>velika</b> mora<br><br>Notice masculine plural adjective takes <b>-i</b> and neuter plural takes <b>-a</b> — the same shape as their nouns."},
+    {h:"There is no 'a' or 'the'",
+     b:"Croatian has no articles at all. <em>Imam knjigu</em> covers both <em>I have a book</em> and <em>I have the book</em>. Context does the work. Don't try to translate <em>the</em> — there's nothing to translate it into."}
+  ],
+  vocab:[
+    ["grad","city"],["selo","village"],["kuća","house"],["stan","apartment"],
+    ["soba","room"],["stol","table"],["stolica","chair"],["prozor","window"],
+    ["vrata","door (always plural)"],["knjiga","book"],["olovka","pen / pencil"],
+    ["more","sea"],["otok","island"],["planina","mountain"],["rijeka","river"],
+    ["pas","dog"],["mačka","cat"],["dijete","child (pl. djeca)"],
+    ["noć","night (f!)"],["stvar","thing (f!)"],["riječ","word (f!)"]
+  ],
+  phrases:[
+    ["Ovo je velika kuća.","This is a big house."],
+    ["Gradovi su lijepi.","The cities are beautiful."],
+    ["Hrvatska ima tisuću otoka.","Croatia has a thousand islands."],
+    ["More je toplo ljeti.","The sea is warm in summer."],
+    ["Imam dva psa.","I have two dogs."]
+  ],
+  drills:[
+    {t:"mc",q:"What gender is 'noć'?",o:["muški","ženski","srednji"],a:1,e:"Feminine, despite the consonant ending. Same group as stvar, riječ, ljubav."},
+    {t:"type",q:"Plural of 'knjiga':",a:["knjige"],e:"knjige — feminine nouns take -e."},
+    {t:"type",q:"Plural of 'grad':",a:["gradovi"],e:"gradovi — short masculine nouns insert -ov-."},
+    {t:"mc",q:"Which is correct?",o:["veliko more","velika more","veliki more","velik more"],a:0,e:"more is neuter, so the adjective is veliko."},
+    {t:"type",q:"Say: This is a big city.",a:["ovo je veliki grad","ovo je velik grad"],e:"Ovo je veliki grad. And remember — no word for 'a'."},
+    {t:"mc",q:"Plural of 'selo':",o:["seli","sele","sela","selovi"],a:2,e:"Neuter nouns take -a in the plural."}
+  ]
+},
+{
+  id:4, title:"Prezent — glagoli u sadašnjosti", sub:"The present tense",
+  goal:"Conjugate the three regular patterns plus the irregular verbs you'll use daily.",
+  grammar:[
+    {h:"Three endings, one system",
+     b:"Drop the infinitive <b>-ti</b>, then look at the <em>ja</em> form. It ends in <b>-am</b>, <b>-im</b>, or <b>-em</b>, and that decides the rest.<table><tr><th></th><th>-am · imati</th><th>-im · raditi</th><th>-em · pisati</th></tr><tr><td class='cs'>ja</td><td class='hr'>imam</td><td class='hr'>radim</td><td class='hr'>pišem</td></tr><tr><td class='cs'>ti</td><td class='hr'>imaš</td><td class='hr'>radiš</td><td class='hr'>pišeš</td></tr><tr><td class='cs'>on/ona</td><td class='hr'>ima</td><td class='hr'>radi</td><td class='hr'>piše</td></tr><tr><td class='cs'>mi</td><td class='hr'>imamo</td><td class='hr'>radimo</td><td class='hr'>pišemo</td></tr><tr><td class='cs'>vi</td><td class='hr'>imate</td><td class='hr'>radite</td><td class='hr'>pišete</td></tr><tr><td class='cs'>oni</td><td class='hr'>imaju</td><td class='hr'>rade</td><td class='hr'>pišu</td></tr></table>The endings after the first letter are identical: -m, -š, -, -mo, -te, and then -ju / -e / -u."},
+    {h:"The irregulars you can't avoid",
+     b:"<table><tr><th></th><th>ići (go)</th><th>moći (can)</th><th>htjeti (want)</th></tr><tr><td class='cs'>ja</td><td class='hr'>idem</td><td class='hr'>mogu</td><td class='hr'>hoću</td></tr><tr><td class='cs'>ti</td><td class='hr'>ideš</td><td class='hr'>možeš</td><td class='hr'>hoćeš</td></tr><tr><td class='cs'>on</td><td class='hr'>ide</td><td class='hr'>može</td><td class='hr'>hoće</td></tr><tr><td class='cs'>mi</td><td class='hr'>idemo</td><td class='hr'>možemo</td><td class='hr'>hoćemo</td></tr><tr><td class='cs'>vi</td><td class='hr'>idete</td><td class='hr'>možete</td><td class='hr'>hoćete</td></tr><tr><td class='cs'>oni</td><td class='hr'>idu</td><td class='hr'>mogu</td><td class='hr'>hoće</td></tr></table>Negative of htjeti: <b>neću, nećeš, neće, nećemo, nećete, neće</b> — written as one word."},
+    {h:"Negation",
+     b:"Put <b>ne</b> in front, as a separate word: <em>Ne radim danas.</em> Only three verbs fuse: <b>nisam</b> (biti), <b>nemam</b> (imati), <b>neću</b> (htjeti)."},
+    {h:"Double negatives are required",
+     b:"Where English says <em>I don't know anything</em>, Croatian says <em>I don't know nothing</em> — and it's correct:<br><b>Ne znam ništa.</b> · <b>Nikad ne idem tamo.</b> · <b>Nitko nije ovdje.</b><br>Leaving out the <em>ne</em> is the mistake."}
+  ],
+  vocab:[
+    ["imati","to have (imam)"],["raditi","to work / to do (radim)"],
+    ["govoriti","to speak (govorim)"],["učiti","to learn / study (učim)"],
+    ["znati","to know (znam)"],["misliti","to think (mislim)"],
+    ["živjeti","to live (živim)"],["gledati","to watch (gledam)"],
+    ["slušati","to listen (slušam)"],["čitati","to read (čitam)"],
+    ["pisati","to write (pišem)"],["jesti","to eat (jedem)"],
+    ["piti","to drink (pijem)"],["ići","to go (idem)"],
+    ["moći","can (mogu)"],["htjeti","to want (hoću)"],
+    ["trebati","to need (trebam)"],["voljeti","to love (volim)"],
+    ["razumjeti","to understand (razumijem)"]
+  ],
+  phrases:[
+    ["Učim hrvatski.","I'm learning Croatian."],
+    ["Ne znam.","I don't know."],
+    ["Što radiš?","What are you doing?"],
+    ["Idem u školu.","I'm going to school."],
+    ["Možeš li mi pomoći?","Can you help me?"],
+    ["Hoću kavu.","I want a coffee."],
+    ["Ne razumijem ništa.","I don't understand anything."],
+    ["Volim hrvatsku glazbu.","I love Croatian music."]
+  ],
+  drills:[
+    {t:"type",q:"Conjugate: mi + raditi",a:["radimo"],e:"radimo"},
+    {t:"type",q:"Say: I'm learning Croatian.",a:["učim hrvatski","ja učim hrvatski"],e:"Učim hrvatski. Croatian has no separate continuous tense — prezent covers both I learn and I'm learning."},
+    {t:"mc",q:"Which means 'I can't'?",o:["Ne mogu","Nemogu","Nisam moći","Ne možem"],a:0,e:"Ne mogu — two words. Only nisam, nemam and neću fuse."},
+    {t:"type",q:"Say: I don't know anything.",a:["ne znam ništa"],e:"Ne znam ništa — the double negative is obligatory in Croatian."},
+    {t:"mc",q:"oni + ići =",o:["ide","idu","idete","idemo"],a:1,e:"idu"},
+    {t:"type",q:"Say: What are you doing? (to a friend)",a:["što radiš","sto radis"],e:"Što radiš? Note što, not šta — that's the Croatian standard form."}
+  ]
+},
+{
+  id:5, title:"Brojevi, sati i dani", sub:"Numbers, time and the calendar",
+  goal:"Count, tell time, name the days and the months — and Croatian months are nothing like English.",
+  grammar:[
+    {h:"1–20",
+     b:"nula, <b>jedan</b>, dva, tri, četiri, pet, šest, sedam, osam, devet, deset,<br>jedanaest, dvanaest, trinaest, četrnaest, petnaest, šesnaest, sedamnaest, osamnaest, devetnaest, dvadeset.<br><br>From 11 up they're all just <em>digit + naest</em>. Tens: dvadeset, trideset, četrdeset, pedeset, šezdeset, sedamdeset, osamdeset, devedeset, <b>sto</b>, <b>tisuća</b>."},
+    {h:"What follows a number — the rule that surprises everyone",
+     b:"<b>1</b> → normal singular: <em>jedan stol, jedna kava</em><br><b>2, 3, 4</b> (and anything ending in them) → <em>dva stol<b>a</b>, tri kav<b>e</b></em><br><b>5 and up</b> → <em>pet stol<b>ova</b>, šest kav<b>a</b></em><br><br>So: <em>jedna kava, dvije kave, pet kava</em>. Also note <b>dva</b> for m/n but <b>dvije</b> for feminine."},
+    {h:"Telling time",
+     b:"<b>Koliko je sati?</b> — What time is it?<br>Jedan sat · Dva sata · Pet sati (the number rule again)<br><b>Pola tri</b> = 2:30 — literally <em>half three</em>, meaning half way <em>to</em> three. This catches everyone. Pola tri is NOT 3:30.<br>Deset i petnaest — 10:15 · Deset do pet — ten to five<br>U koliko sati? — At what time? · <b>U</b> osam sati."},
+    {h:"Days and months",
+     b:"<b>Dani:</b> ponedjeljak, utorak, srijeda, četvrtak, petak, subota, nedjelja.<br>The week starts Monday. <em>Nedjelja</em> is Sunday; the word for <em>week</em> is <b>tjedan</b>.<br><br><b>Mjeseci</b> — Croatian keeps the old Slavic names, and they describe nature, not Roman emperors:<br>siječanj, veljača, ožujak, travanj, svibanj, lipanj, srpanj, kolovoz, rujan, listopad, studeni, prosinac.<br><em>Listopad</em> (October) means leaf-fall. <em>Travanj</em> (April) is from grass. These have to be memorised — there's no shortcut, but they're one of the most distinctly Croatian things in the language."}
+  ],
+  vocab:[
+    ["sat","hour / clock"],["minuta","minute"],["dan","day"],["tjedan","week"],
+    ["mjesec","month / moon"],["godina","year"],["danas","today"],
+    ["jučer","yesterday"],["sutra","tomorrow"],["sada","now"],
+    ["ujutro","in the morning"],["popodne","in the afternoon"],
+    ["navečer","in the evening"],["uvijek","always"],["nikad","never"],
+    ["ponekad","sometimes"],["često","often"],["rano","early"],["kasno","late"]
+  ],
+  phrases:[
+    ["Koliko je sati?","What time is it?"],
+    ["Sada je pola tri.","It's half past two."],
+    ["U koliko sati počinje?","What time does it start?"],
+    ["Danas je srijeda.","Today is Wednesday."],
+    ["Vidimo se sutra!","See you tomorrow!"],
+    ["Imam sedamnaest godina.","I'm seventeen years old."],
+    ["Rođen sam u lipnju.","I was born in June. (m)"]
+  ],
+  drills:[
+    {t:"type",q:"What is 'pola tri' in digits? (e.g. 4:30)",a:["2:30","230","14:30"],e:"2:30. Pola tri = half way to three, not half past three."},
+    {t:"mc",q:"Which is October?",o:["kolovoz","listopad","studeni","rujan"],a:1,e:"listopad — 'leaf-fall'. kolovoz is August, rujan September, studeni November."},
+    {t:"type",q:"Say: Today is Monday.",a:["danas je ponedjeljak"],e:"Danas je ponedjeljak."},
+    {t:"mc",q:"Correct form after 'pet':",o:["pet kava","pet kave","pet kavu","pet kavi"],a:0,e:"Five and up takes the genitive plural: pet kava."},
+    {t:"type",q:"Say: I'm seventeen years old.",a:["imam sedamnaest godina"],e:"Imam sedamnaest godina — literally 'I have seventeen years'."},
+    {t:"mc",q:"'tjedan' means:",o:["Sunday","week","month","Tuesday"],a:1,e:"tjedan = week. nedjelja = Sunday."}
+  ]
+},
+{
+  id:6, title:"Akuzativ — the object of the sentence", sub:"Your first case",
+  goal:"Say what you have, want, see, eat and drink — the case you'll use most.",
+  grammar:[
+    {h:"What a case actually is",
+     b:"English shows who-does-what by word order: <em>the dog bites the man</em> ≠ <em>the man bites the dog</em>. Croatian marks it on the <b>word ending</b> instead, so word order is free. <em>Ana voli Marka</em> and <em>Marka voli Ana</em> both mean Ana loves Marko — the <b>-a</b> on Marko is what tells you he's the one being loved.<br><br>The <b>akuzativ</b> marks the direct object: the thing being had, wanted, seen, eaten, bought."},
+    {h:"The endings",
+     b:"<table><tr><th>gender</th><th>nominativ</th><th>akuzativ</th></tr><tr><td class='cs'>f</td><td class='hr'>kava</td><td class='hr'>kavu</td></tr><tr><td class='cs'>n</td><td class='hr'>pivo</td><td class='hr'>pivo</td></tr><tr><td class='cs'>m inanimate</td><td class='hr'>stol</td><td class='hr'>stol</td></tr><tr><td class='cs'>m animate</td><td class='hr'>pas</td><td class='hr'>psa</td></tr></table><b>Feminine -a → -u.</b> That's the one that changes most visibly, and it's the single most useful ending in the language.<br><br>Neuter never changes. Masculine changes <b>only if it's alive</b> — people and animals take <b>-a</b>; objects stay identical."},
+    {h:"Alive or not — why it matters",
+     b:"Vidim <b>stol</b>. — I see the table. (object, no change)<br>Vidim <b>psa</b>. — I see the dog. (alive, takes -a)<br>Vidim <b>Marka</b>. — I see Marko. (a person, takes -a)<br><br>Adjectives follow along: Imam <b>velikog</b> psa. Imam <b>veliku</b> kuću."},
+    {h:"Ordering things politely",
+     b:"<b>Molim vas jednu kavu.</b> — A coffee, please. (kava → kavu)<br><b>Htio bih</b> / <b>Htjela bih</b> jedno pivo. — I'd like a beer. (m / f speaker)<br><b>Želim čašu vode.</b> — I want a glass of water.<br><br><em>Htio/htjela bih</em> is softer and more polite than <em>hoću</em>. Use it in shops and cafés."}
+  ],
+  vocab:[
+    ["kava","coffee"],["čaj","tea"],["voda","water"],["mlijeko","milk"],
+    ["sok","juice"],["pivo","beer"],["vino","wine"],["kruh","bread"],
+    ["sir","cheese"],["meso","meat"],["riba","fish"],["juha","soup"],
+    ["salata","salad"],["voće","fruit"],["povrće","vegetables"],
+    ["jabuka","apple"],["rajčica","tomato"],["krumpir","potato"],
+    ["kolač","cake"],["sladoled","ice cream"],["račun","the bill"]
+  ],
+  phrases:[
+    ["Molim vas jednu kavu.","One coffee, please."],
+    ["Htio bih jedno pivo.","I'd like a beer. (m)"],
+    ["Htjela bih čašu vode.","I'd like a glass of water. (f)"],
+    ["Imam veliku kuću.","I have a big house."],
+    ["Vidim Marka.","I see Marko."],
+    ["Jedem kruh i sir.","I'm eating bread and cheese."],
+    ["Račun, molim vas.","The bill, please."],
+    ["Što preporučujete?","What do you recommend?"]
+  ],
+  drills:[
+    {t:"type",q:"Say: I'd like one coffee, please. (polite, ordering)",a:["molim vas jednu kavu","htio bih jednu kavu","htjela bih jednu kavu"],e:"Molim vas jednu kavu. kava → kavu in the accusative."},
+    {t:"mc",q:"Vidim ___ . (pas)",o:["pas","psu","psa","pasa"],a:2,e:"pas is animate, so accusative takes -a: psa."},
+    {t:"mc",q:"Vidim ___ . (stol)",o:["stol","stola","stolu","stolom"],a:0,e:"stol is an inanimate object — no change in the accusative."},
+    {t:"type",q:"Say: I have a big house.",a:["imam veliku kuću","imam veliku kucu"],e:"Imam veliku kuću — both adjective and noun take the feminine accusative -u."},
+    {t:"type",q:"Say: The bill, please.",a:["račun molim vas","racun molim vas","račun molim","molim vas račun"],e:"Račun, molim vas."},
+    {t:"mc",q:"Why does 'pivo' stay 'pivo' in the accusative?",o:["It's feminine","It's neuter and neuter never changes","It's plural","It's animate"],a:1,e:"Neuter nouns are identical in nominative and accusative."}
+  ]
+},
+{
+  id:7, title:"Genitiv", sub:"Of, from, without, and none",
+  goal:"Show possession, use the most common prepositions, and handle negation and quantities.",
+  grammar:[
+    {h:"The endings",
+     b:"<table><tr><th>gender</th><th>N</th><th>G</th></tr><tr><td class='cs'>m</td><td class='hr'>grad</td><td class='hr'>grada</td></tr><tr><td class='cs'>f</td><td class='hr'>kuća</td><td class='hr'>kuće</td></tr><tr><td class='cs'>n</td><td class='hr'>more</td><td class='hr'>mora</td></tr></table>m/n take <b>-a</b>, f takes <b>-e</b>. Genitive plural is usually <b>-a</b> for m and f (gradova, kuća) — a long, distinctive ending."},
+    {h:"Four jobs the genitive does",
+     b:"<b>1 · Possession</b> — where English uses <em>of</em> or <em>'s</em>:<br>knjiga <b>profesora</b> — the professor's book · centar <b>grada</b> — the city centre<br><br><b>2 · After these prepositions</b>: <b>iz</b> (from/out of), <b>od</b> (from), <b>do</b> (to/until), <b>bez</b> (without), <b>kod</b> (at someone's place), <b>blizu</b> (near), <b>poslije</b> (after), <b>prije</b> (before):<br>Ja sam iz <b>Amerike</b>. · Kava bez <b>šećera</b>. · Kod <b>doktora</b> sam.<br><br><b>3 · After quantities</b> — 5+, and words like <em>puno, malo, čaša, boca</em>:<br>puno <b>ljudi</b> · čaša <b>vode</b> · pet <b>eura</b><br><br><b>4 · After 'nema'</b> — to say something isn't there:<br><b>Nema</b> kruha. — There's no bread. · <b>Nema</b> problema. — No problem."},
+    {h:"ima / nema",
+     b:"<b>Ima</b> + noun = there is / there are. <b>Nema</b> + <em>genitive</em> = there isn't.<br>Ima kruha? — Is there bread?<br>Nema mlijeka. — There's no milk.<br>Ima li ovdje WC? — Is there a toilet here?"}
+  ],
+  vocab:[
+    ["bez","without (+G)"],["iz","from / out of (+G)"],["od","from (+G)"],
+    ["do","to / until (+G)"],["kod","at (someone's) (+G)"],["blizu","near (+G)"],
+    ["poslije","after (+G)"],["prije","before (+G)"],["oko","around (+G)"],
+    ["puno / mnogo","a lot of (+G)"],["malo","a little (+G)"],
+    ["šećer","sugar"],["sol","salt"],["novac","money"],["ljudi","people"],
+    ["čaša","glass"],["boca","bottle"],["šalica","cup"],["nema","there isn't (+G)"]
+  ],
+  phrases:[
+    ["Ja sam iz Amerike.","I'm from America."],
+    ["Kava bez šećera, molim.","Coffee without sugar, please."],
+    ["Nema problema.","No problem."],
+    ["Ima li ovdje WC?","Is there a toilet here?"],
+    ["Idem do trgovine.","I'm going to the shop."],
+    ["Ovo je knjiga moga brata.","This is my brother's book."],
+    ["Puno ljudi je ovdje.","There are a lot of people here."],
+    ["Vidimo se poslije škole.","See you after school."]
+  ],
+  drills:[
+    {t:"type",q:"Say: Coffee without sugar.",a:["kava bez šećera","kava bez secera"],e:"Kava bez šećera — bez always takes the genitive."},
+    {t:"mc",q:"Ja sam iz ___ . (Hrvatska)",o:["Hrvatska","Hrvatsku","Hrvatske","Hrvatskoj"],a:2,e:"iz + genitive, and feminine genitive is -e: Hrvatske."},
+    {t:"type",q:"Say: There's no bread.",a:["nema kruha"],e:"Nema kruha — nema is followed by the genitive."},
+    {t:"mc",q:"Which preposition does NOT take the genitive?",o:["bez","kod","do","u"],a:3,e:"u takes accusative (motion) or locative (position), never genitive."},
+    {t:"type",q:"Say: No problem.",a:["nema problema"],e:"Nema problema."},
+    {t:"mc",q:"'čaša ___' — a glass of water",o:["voda","vodu","vode","vodom"],a:2,e:"Quantity words take the genitive: čaša vode."}
+  ]
+},
+{
+  id:8, title:"Lokativ i kretanje", sub:"Where you are vs. where you're going",
+  goal:"Master the u/na split — the distinction that makes you sound like you know the language.",
+  grammar:[
+    {h:"The core contrast",
+     b:"The <em>same</em> preposition takes a <b>different case</b> depending on whether there's movement.<br><br><b>Motion → akuzativ:</b> Idem <b>u Zagreb</b>. — I'm going to Zagreb.<br><b>Position → lokativ:</b> Ja sam <b>u Zagrebu</b>. — I'm in Zagreb.<br><br>Idem <b>u školu</b>. (to school) vs. Ja sam <b>u školi</b>. (at school)<br>Idem <b>na plažu</b>. (to the beach) vs. Ja sam <b>na plaži</b>. (at the beach)<br><br>Ask yourself: am I <em>arriving</em> or am I <em>already there</em>?"},
+    {h:"Locative endings",
+     b:"<table><tr><th>gender</th><th>N</th><th>L</th></tr><tr><td class='cs'>m</td><td class='hr'>grad</td><td class='hr'>gradu</td></tr><tr><td class='cs'>f</td><td class='hr'>škola</td><td class='hr'>školi</td></tr><tr><td class='cs'>n</td><td class='hr'>more</td><td class='hr'>moru</td></tr></table>m/n take <b>-u</b>, f takes <b>-i</b>. The locative <em>only</em> appears after a preposition — never alone.<br><br>Used with: <b>u</b> (in), <b>na</b> (on/at), <b>o</b> (about), <b>po</b> (around), <b>pri</b> (near)."},
+    {h:"u or na? Croatian just decides",
+     b:"Some places take <b>u</b>, some take <b>na</b>, and you memorise them:<br><b>u</b> — u školi, u kući, u gradu, u kinu, u trgovini, u banci, u Hrvatskoj<br><b>na</b> — na poslu (at work), na plaži, na moru, na fakultetu, na ulici, na otoku, na kolodvoru, na tržnici<br><br>Rough logic: <em>na</em> tends to go with open surfaces, islands, and events, but the safest approach is to learn each place with its preposition attached."},
+    {h:"Asking and answering",
+     b:"<b>Gdje?</b> — Where (are you)? → locative<br><b>Kamo?</b> / <b>Gdje ideš?</b> — Where to? → accusative<br><b>Odakle?</b> — Where from? → genitive<br><br>Gdje si? — Na poslu sam.<br>Kamo ideš? — Idem u kino."}
+  ],
+  vocab:[
+    ["škola","school"],["posao","work / job"],["fakultet","university faculty"],
+    ["trgovina","shop"],["tržnica","market"],["kino","cinema"],
+    ["kazalište","theatre"],["restoran","restaurant"],["kafić","café"],
+    ["plaža","beach"],["ulica","street"],["trg","square"],
+    ["kolodvor","station"],["zračna luka","airport"],["bolnica","hospital"],
+    ["banka","bank"],["park","park"],["knjižnica","library"],["muzej","museum"]
+  ],
+  phrases:[
+    ["Gdje si?","Where are you?"],
+    ["U školi sam.","I'm at school."],
+    ["Na poslu sam.","I'm at work."],
+    ["Idem u kino.","I'm going to the cinema."],
+    ["Živim u Zagrebu.","I live in Zagreb."],
+    ["Ljeti smo na moru.","In summer we're at the seaside."],
+    ["Razgovaramo o filmu.","We're talking about the film."],
+    ["Gdje je kolodvor?","Where is the station?"]
+  ],
+  drills:[
+    {t:"mc",q:"Idem ___ . (Zagreb — I'm going there)",o:["u Zagreb","u Zagrebu","iz Zagreba","na Zagreb"],a:0,e:"Motion takes the accusative, which for Zagreb looks the same as the nominative."},
+    {t:"mc",q:"Ja sam ___ . (Zagreb — I'm there now)",o:["u Zagreb","u Zagrebu","do Zagreba","na Zagrebu"],a:1,e:"Position takes the locative: u Zagrebu."},
+    {t:"type",q:"Say: I'm at work.",a:["na poslu sam","ja sam na poslu"],e:"Na poslu sam — work takes na, not u."},
+    {t:"type",q:"Say: I live in Croatia.",a:["živim u hrvatskoj","zivim u hrvatskoj"],e:"Živim u Hrvatskoj."},
+    {t:"mc",q:"Which is right?",o:["Idem na plaži","Idem u plažu","Idem na plažu","Sam na plažu"],a:2,e:"Motion + na = accusative: na plažu."},
+    {t:"type",q:"Say: I'm at school.",a:["u školi sam","ja sam u školi","u skoli sam"],e:"U školi sam."}
+  ]
+},
+{
+  id:9, title:"Perfekt — prošlo vrijeme", sub:"The past tense",
+  goal:"Talk about yesterday, last week and your whole life — in one simple pattern.",
+  grammar:[
+    {h:"Two pieces, and that's it",
+     b:"<b>Past participle + short form of biti.</b><br><br>Take the infinitive, drop <b>-ti</b>, add:<br><b>-o</b> (male speaker) · <b>-la</b> (female) · <b>-lo</b> (neuter) · <b>-li</b> (plural m/mixed) · <b>-le</b> (plural f)<br><br>raditi → radi<b>o</b> sam / radi<b>la</b> sam — I worked<br>učiti → uči<b>o</b> si / uči<b>la</b> si — you studied<br>gledati → gleda<b>li</b> smo — we watched"},
+    {h:"The participle agrees with the SPEAKER, not the object",
+     b:"This is the part English speakers forget. The ending tells you the gender of whoever did the action:<br><br>Bio sam u Splitu. (a man says this)<br>Bila sam u Splitu. (a woman says this)<br>Bili smo u Splitu. (a group)<br><br>So every time you talk about your own past, you have to know your own ending. Pick yours now and drill it."},
+    {h:"biti in the past, and negation",
+     b:"bio / bila / bilo / bili / bile + sam, si, je, smo, ste, su<br><br><b>Negative:</b> swap the short form for nisam/nisi/nije/nismo/niste/nisu, and the participle moves after it:<br><b>Nisam radio</b> jučer. — I didn't work yesterday.<br><b>Nije bila</b> ovdje. — She wasn't here.<br><br><b>Question:</b> Jesi li bio u Hrvatskoj? — Have you been to Croatia?"},
+    {h:"Word order — the second-position rule",
+     b:"<em>sam, si, je, smo, ste, su</em> are clitics: they must sit in <b>second position</b> in the clause.<br>✓ Radio sam. ✓ Jučer sam radio. ✓ U Zagrebu sam radio.<br>✗ Sam radio. ✗ Jučer radio sam.<br><br>Whatever you put first, the clitic comes right after it."}
+  ],
+  vocab:[
+    ["prošli tjedan","last week"],["prošle godine","last year"],
+    ["sinoć","last night"],["prekjučer","the day before yesterday"],
+    ["nedavno","recently"],["već","already"],["još ne","not yet"],
+    ["putovati","to travel (putujem)"],["doći","to come (dođem)"],
+    ["otići","to leave (odem)"],["kupiti","to buy (kupim)"],
+    ["vidjeti","to see (vidim)"],["reći","to say (kažem)"],
+    ["pitati","to ask (pitam)"],["odgovoriti","to answer (odgovorim)"],
+    ["spavati","to sleep (spavam)"],["ustati","to get up (ustanem)"]
+  ],
+  phrases:[
+    ["Jučer sam radio.","I worked yesterday. (m)"],
+    ["Bila sam u Splitu prošle godine.","I was in Split last year. (f)"],
+    ["Jesi li bio u Hrvatskoj?","Have you been to Croatia? (m)"],
+    ["Nismo išli na more.","We didn't go to the seaside."],
+    ["Što si radio sinoć?","What did you do last night?"],
+    ["Kupio sam novu knjigu.","I bought a new book. (m)"],
+    ["Nisam još jeo.","I haven't eaten yet. (m)"]
+  ],
+  drills:[
+    {t:"type",q:"Say (female speaker): I was in Split.",a:["bila sam u splitu","ja sam bila u splitu"],e:"Bila sam u Splitu. A man would say Bio sam."},
+    {t:"mc",q:"Which is correctly ordered?",o:["Sam radio jučer.","Jučer radio sam.","Jučer sam radio.","Radio jučer sam."],a:2,e:"The clitic sam must be in second position."},
+    {t:"type",q:"Say (male speaker): I didn't work yesterday.",a:["nisam radio jučer","jučer nisam radio","nisam jučer radio"],e:"Nisam radio jučer."},
+    {t:"mc",q:"'gledati' → past participle, plural mixed group:",o:["gledao","gledala","gledali","gledale"],a:2,e:"gledali — plural masculine or mixed."},
+    {t:"type",q:"Ask a male friend: Have you been to Croatia?",a:["jesi li bio u hrvatskoj"],e:"Jesi li bio u Hrvatskoj?"},
+    {t:"mc",q:"A woman says 'we were' about herself and her sister:",o:["Bili smo","Bile smo","Bila smo","Bilo smo"],a:1,e:"An all-female group takes -le: bile smo."}
+  ]
+},
+{
+  id:10, title:"Futur i uvjetni način", sub:"The future, and being polite",
+  goal:"Make plans, offer, and soften requests so you don't sound blunt.",
+  grammar:[
+    {h:"Futur I",
+     b:"<b>Short form of htjeti + infinitive:</b> ću, ćeš, će, ćemo, ćete, će<br><br><b>Radit ću</b> sutra. — I'll work tomorrow.<br><b>Ići ćemo</b> na more. — We'll go to the seaside.<br>Što <b>ćeš raditi</b>? — What will you do?<br><br>Note the spelling: when the verb comes first, the infinitive drops its final <b>-i</b> and stays a separate word — <b>radit ću</b>, not <em>raditi ću</em> and not <em>radiću</em>. Writing it as one word is a Serbian convention, not Croatian."},
+    {h:"Negative and question",
+     b:"<b>Neću raditi.</b> — I won't work. (full form + infinitive, normal order)<br><b>Hoćeš li doći?</b> — Will you come?<br><b>Nećemo ići.</b> — We won't go."},
+    {h:"Kondicional — the politeness engine",
+     b:"<b>bih, bi, bi, bismo, biste, bi</b> + past participle<br><br><b>Htio bih</b> / <b>Htjela bih</b> kavu. — I'd like a coffee.<br><b>Mogli biste</b> mi pomoći? — Could you help me?<br><b>Volio bih</b> ići u Dubrovnik. — I'd love to go to Dubrovnik.<br><br>In everyday shops and cafés this is what you actually want. <em>Hoću kavu</em> is grammatical but reads as demanding; <em>Htio bih kavu</em> is what a polite person says."},
+    {h:"Imperativ — giving instructions",
+     b:"Formed off the present stem:<br>Čekaj! / Čekajte! — Wait!<br>Dođi! / Dođite! — Come!<br>Oprosti! / Oprostite! — Sorry!<br>Idemo! — Let's go!<br><br>The <b>-te</b> ending is the vi form. Negative: <b>nemoj</b> / <b>nemojte</b> + infinitive — <em>Nemoj ići!</em> Don't go!"}
+  ],
+  vocab:[
+    ["sutra","tomorrow"],["prekosutra","the day after tomorrow"],
+    ["sljedeći tjedan","next week"],["uskoro","soon"],["kasnije","later"],
+    ["planirati","to plan"],["putovanje","a trip"],["odmor","holiday / rest"],
+    ["ljeto","summer"],["zima","winter"],["proljeće","spring"],["jesen","autumn"],
+    ["nadam se","I hope"],["možda","maybe"],["sigurno","surely / definitely"],
+    ["obećati","to promise"],["čekati","to wait"],["pomoći","to help"]
+  ],
+  phrases:[
+    ["Što ćeš raditi sutra?","What will you do tomorrow?"],
+    ["Ići ćemo na more.","We'll go to the seaside."],
+    ["Neću ići.","I won't go."],
+    ["Htio bih rezervirati stol.","I'd like to book a table. (m)"],
+    ["Možete li mi pomoći, molim vas?","Could you help me, please?"],
+    ["Vidimo se sljedeći tjedan.","See you next week."],
+    ["Nadam se da ćeš doći.","I hope you'll come."]
+  ],
+  drills:[
+    {t:"mc",q:"Which spelling is standard Croatian?",o:["Radiću sutra.","Raditi ću sutra.","Radit ću sutra.","Radit-ću sutra."],a:2,e:"Radit ću — infinitive loses -i, stays a separate word. The one-word form is Serbian."},
+    {t:"type",q:"Say: We'll go to the seaside.",a:["ići ćemo na more","ici cemo na more","mi ćemo ići na more"],e:"Ići ćemo na more."},
+    {t:"type",q:"Say politely (male speaker): I'd like a coffee.",a:["htio bih kavu"],e:"Htio bih kavu. A woman says Htjela bih kavu."},
+    {t:"mc",q:"'I won't come' =",o:["Ne ću doći","Neću doći","Nisam doći","Ne hoću dolaziti"],a:1,e:"Neću doći — written as one word in modern standard Croatian."},
+    {t:"type",q:"Say: Could you help me, please? (formal)",a:["možete li mi pomoći molim vas","mozete li mi pomoci molim vas","možete li mi pomoći"],e:"Možete li mi pomoći, molim vas?"},
+    {t:"mc",q:"Polite imperative 'Wait!' to a stranger:",o:["Čekaj!","Čekajte!","Čekamo!","Čekati!"],a:1,e:"The -te ending is the vi form."}
+  ]
+},
+{
+  id:11, title:"Dativ i instrumental", sub:"To whom, and with what",
+  goal:"Complete all seven cases and handle giving, sending, liking and going with people.",
+  grammar:[
+    {h:"Dativ — the indirect object",
+     b:"Endings are the <em>same as the locative</em>: m/n <b>-u</b>, f <b>-i</b>. The difference is that the dative works without a preposition.<br><br>Dajem knjigu <b>prijatelju</b>. — I'm giving the book to my friend.<br>Pišem <b>Ani</b>. — I'm writing to Ana.<br>Kako <b>ti</b> se sviđa? — How do you like it?<br><br>Also used after <b>prema</b> (towards) and <b>zahvaljujući</b> (thanks to)."},
+    {h:"Sviđati se — how liking works",
+     b:"Croatian flips it. The thing you like is the <em>subject</em>, and you are in the dative — literally <em>it is pleasing to me</em>:<br><br><b>Sviđa mi se</b> Zagreb. — I like Zagreb.<br><b>Sviđaju mi se</b> ove knjige. — I like these books. (plural thing → plural verb)<br>Kako ti se sviđa Hrvatska? — How do you like Croatia?<br><br>Compare <b>voljeti</b>, which is normal: <em>Volim Zagreb.</em> Use <em>voljeti</em> for love and strong preference, <em>sviđati se</em> for ordinary liking."},
+    {h:"Instrumental — with, and by means of",
+     b:"m/n take <b>-om</b>, f takes <b>-om</b> too (from -a).<br>(After č ć š ž đ j lj nj, use <b>-em</b>: <em>s prijateljem</em>, <em>nožem</em>.)<br><br><b>With a person → use s / sa:</b><br>Idem <b>s prijateljem</b>. — I'm going with a friend.<br>Kava <b>s mlijekom</b>. — Coffee with milk.<br><br><b>By means of → no preposition:</b><br>Idem <b>autobusom</b>. — I go by bus.<br>Pišem <b>olovkom</b>. — I write with a pen.<br><br>That contrast is the whole trick: a companion needs <em>s</em>, a tool doesn't."},
+    {h:"All seven, in order",
+     b:"<b>Nominativ</b> (tko? što?) — the subject<br><b>Genitiv</b> (koga? čega?) — of, from, without<br><b>Dativ</b> (komu? čemu?) — to, for<br><b>Akuzativ</b> (koga? što?) — the object<br><b>Vokativ</b> — calling someone: <em>Ana → Ano! Marko → Marko! prijatelj → prijatelju!</em><br><b>Lokativ</b> (o komu? o čemu?) — position, about<br><b>Instrumental</b> (s kim? čime?) — with, by<br><br>Croatian speakers memorise them in exactly this order in school. Learning the order pays off, because reference tables everywhere use it."}
+  ],
+  vocab:[
+    ["dati","to give (dam)"],["poslati","to send (pošaljem)"],
+    ["pokazati","to show (pokažem)"],["pomagati","to help (pomažem)"],
+    ["sviđati se","to be pleasing / to like"],["s / sa","with (+I)"],
+    ["autobus","bus"],["vlak","train"],["auto","car"],["bicikl","bicycle"],
+    ["zrakoplov","aeroplane"],["brod","boat / ship"],["pješice","on foot"],
+    ["obitelj","family (f)"],["majka","mother"],["otac","father"],
+    ["brat","brother"],["sestra","sister"],["djed","grandfather"],["baka","grandmother"]
+  ],
+  phrases:[
+    ["Sviđa mi se Zagreb.","I like Zagreb."],
+    ["Kako ti se sviđa Hrvatska?","How do you like Croatia?"],
+    ["Idem s prijateljem.","I'm going with a friend."],
+    ["Putujem vlakom.","I'm travelling by train."],
+    ["Kava s mlijekom, molim.","Coffee with milk, please."],
+    ["Dajem knjigu sestri.","I'm giving the book to my sister."],
+    ["Živim s obitelji.","I live with my family."]
+  ],
+  drills:[
+    {t:"type",q:"Say: I like Zagreb.",a:["sviđa mi se zagreb","svida mi se zagreb"],e:"Sviđa mi se Zagreb — literally 'Zagreb is pleasing to me'."},
+    {t:"mc",q:"'I'm going by bus' =",o:["Idem s autobusom","Idem autobusom","Idem u autobusu","Idem autobus"],a:1,e:"A means of transport takes bare instrumental — no s."},
+    {t:"mc",q:"'I'm going with a friend' =",o:["Idem prijateljem","Idem s prijateljem","Idem prijatelju","Idem za prijatelja"],a:1,e:"A companion needs s + instrumental."},
+    {t:"type",q:"Say: Coffee with milk, please.",a:["kava s mlijekom molim","kava s mlijekom molim vas"],e:"Kava s mlijekom, molim."},
+    {t:"mc",q:"Which case answers 'komu?'",o:["genitiv","dativ","lokativ","instrumental"],a:1,e:"Dativ — to whom."},
+    {t:"type",q:"Say: I live with my family.",a:["živim s obitelji","zivim s obitelji","živim sa obitelji"],e:"Živim s obitelji."}
+  ]
+},
+{
+  id:12, title:"Svakodnevni razgovor", sub:"Putting it together",
+  goal:"Handle a real conversation: opinions, small talk, problems, and keeping it going.",
+  grammar:[
+    {h:"Opinions and reactions",
+     b:"<b>Mislim da…</b> — I think that…<br><b>Slažem se.</b> — I agree. · <b>Ne slažem se.</b> — I disagree.<br><b>Imaš pravo.</b> — You're right.<br><b>Nije mi jasno.</b> — It's not clear to me.<br><b>Ovisi.</b> — It depends.<br><b>Baš me zanima.</b> — I'm really curious.<br><br><b>Da</b> here means <em>that</em> (a conjunction), not <em>yes</em>. Context tells them apart."},
+    {h:"Buying yourself time — memorise these",
+     b:"When you're stuck mid-sentence, these keep the conversation alive instead of killing it:<br><b>Kako da kažem…</b> — How do I put it…<br><b>Samo malo.</b> — Just a moment.<br><b>Ne znam kako se kaže na hrvatskom.</b> — I don't know how to say it in Croatian.<br><b>Možete li govoriti sporije?</b> — Could you speak more slowly?<br><b>Što znači to?</b> — What does that mean?<br><br>Fluency is much more about recovering smoothly than about never making mistakes."},
+    {h:"Comparatives",
+     b:"Add <b>-iji</b> (or -ji) and use <b>od</b> + genitive, or <b>nego</b>:<br>Zagreb je <b>veći od</b> Splita. — Zagreb is bigger than Split.<br>Ovo je <b>bolje nego</b> ono. — This is better than that.<br><br>Irregulars you'll actually use: dobar → <b>bolji</b> · loš → <b>gori</b> · velik → <b>veći</b> · malen → <b>manji</b> · dug → <b>duži</b><br>Superlative: put <b>naj-</b> in front — <b>najbolji</b>, <b>najveći</b>, <b>najljepši</b>."},
+    {h:"Sounding natural",
+     b:"<b>pa</b> — so, well (filler at the start of a reply)<br><b>baš</b> — really, just (intensifier): <em>Baš je lijepo!</em><br><b>ma</b> — oh come on, nah: <em>Ma ne!</em><br><b>evo</b> / <b>eto</b> — here / there you go<br><b>zapravo</b> — actually<br><b>naravno</b> — of course<br><br>Sprinkling two or three of these into your speech does more for how natural you sound than another fifty vocabulary words."}
+  ],
+  vocab:[
+    ["misliti","to think"],["slagati se","to agree"],["zanimljivo","interesting"],
+    ["dosadno","boring"],["teško","difficult"],["lako","easy"],
+    ["naravno","of course"],["zapravo","actually"],["stvarno","really"],
+    ["baš","really / just"],["pa","so / well"],["evo","here you go"],
+    ["problem","problem"],["ideja","idea"],["pitanje","question"],
+    ["odgovor","answer"],["primjer","example"],["razlika","difference"],
+    ["osjećati se","to feel"],["nadati se","to hope"]
+  ],
+  phrases:[
+    ["Mislim da je to dobra ideja.","I think that's a good idea."],
+    ["Slažem se s tobom.","I agree with you."],
+    ["Ne slažem se, zapravo.","I disagree, actually."],
+    ["Možete li govoriti sporije?","Could you speak more slowly?"],
+    ["Što to znači?","What does that mean?"],
+    ["Kako da kažem… nisam siguran.","How do I put it… I'm not sure. (m)"],
+    ["Zagreb je veći od Splita.","Zagreb is bigger than Split."],
+    ["Ovo je najbolja kava u gradu.","This is the best coffee in town."],
+    ["Baš mi je drago!","I'm really glad!"]
+  ],
+  drills:[
+    {t:"type",q:"Say: I think that's a good idea.",a:["mislim da je to dobra ideja"],e:"Mislim da je to dobra ideja. Here da = 'that'."},
+    {t:"mc",q:"Comparative of 'dobar':",o:["dobriji","bolji","najbolji","gori"],a:1,e:"bolji is the comparative; najbolji is the superlative."},
+    {t:"type",q:"Ask: Could you speak more slowly? (formal)",a:["možete li govoriti sporije","mozete li govoriti sporije"],e:"Možete li govoriti sporije?"},
+    {t:"mc",q:"'Zagreb je veći ___ Splita.'",o:["nego","od","kao","s"],a:1,e:"od + genitive, or nego + nominative (veći nego Split)."},
+    {t:"type",q:"Say: I disagree.",a:["ne slažem se","ne slazem se"],e:"Ne slažem se."},
+    {t:"mc",q:"'najljepši' means:",o:["beautiful","more beautiful","the most beautiful","less beautiful"],a:2,e:"naj- makes the superlative."}
+  ]
+}
+];
+
+/* ---------- grammar reference ---------- */
+const CASES = {
+  head:["padež","žena (f)","grad (m)","more (n)","pitanje"],
+  sg:[
+    ["Nominativ","žena","grad","more","tko? što?"],
+    ["Genitiv","žene","grada","mora","koga? čega?"],
+    ["Dativ","ženi","gradu","moru","komu? čemu?"],
+    ["Akuzativ","ženu","grad","more","koga? što?"],
+    ["Vokativ","ženo","grade","more","(oslovljavanje)"],
+    ["Lokativ","ženi","gradu","moru","o komu? o čemu?"],
+    ["Instrumental","ženom","gradom","morem","s kim? čime?"]
+  ],
+  pl:[
+    ["Nominativ","žene","gradovi","mora",""],
+    ["Genitiv","žena","gradova","mora",""],
+    ["Dativ","ženama","gradovima","morima",""],
+    ["Akuzativ","žene","gradove","mora",""],
+    ["Vokativ","žene","gradovi","mora",""],
+    ["Lokativ","ženama","gradovima","morima",""],
+    ["Instrumental","ženama","gradovima","morima",""]
+  ]
+};
+
+const VERBTABLES = [
+  {n:"biti — to be", r:[["ja","sam / jesam"],["ti","si / jesi"],["on, ona","je / jest"],["mi","smo / jesmo"],["vi","ste / jeste"],["oni","su / jesu"]], neg:"nisam · nisi · nije · nismo · niste · nisu"},
+  {n:"imati — to have", r:[["ja","imam"],["ti","imaš"],["on, ona","ima"],["mi","imamo"],["vi","imate"],["oni","imaju"]], neg:"nemam · nemaš · nema · nemamo · nemate · nemaju"},
+  {n:"raditi — to work, to do", r:[["ja","radim"],["ti","radiš"],["on, ona","radi"],["mi","radimo"],["vi","radite"],["oni","rade"]], neg:"ne radim …"},
+  {n:"pisati — to write", r:[["ja","pišem"],["ti","pišeš"],["on, ona","piše"],["mi","pišemo"],["vi","pišete"],["oni","pišu"]], neg:"ne pišem …"},
+  {n:"ići — to go", r:[["ja","idem"],["ti","ideš"],["on, ona","ide"],["mi","idemo"],["vi","idete"],["oni","idu"]], neg:"ne idem …"},
+  {n:"moći — can, to be able", r:[["ja","mogu"],["ti","možeš"],["on, ona","može"],["mi","možemo"],["vi","možete"],["oni","mogu"]], neg:"ne mogu …"},
+  {n:"htjeti — to want", r:[["ja","hoću (ću)"],["ti","hoćeš (ćeš)"],["on, ona","hoće (će)"],["mi","hoćemo (ćemo)"],["vi","hoćete (ćete)"],["oni","hoće (će)"]], neg:"neću · nećeš · neće · nećemo · nećete · neće"},
+  {n:"jesti — to eat", r:[["ja","jedem"],["ti","jedeš"],["on, ona","jede"],["mi","jedemo"],["vi","jedete"],["oni","jedu"]], neg:"ne jedem …"},
+  {n:"piti — to drink", r:[["ja","pijem"],["ti","piješ"],["on, ona","pije"],["mi","pijemo"],["vi","pijete"],["oni","piju"]], neg:"ne pijem …"},
+  {n:"govoriti — to speak", r:[["ja","govorim"],["ti","govoriš"],["on, ona","govori"],["mi","govorimo"],["vi","govorite"],["oni","govore"]], neg:"ne govorim …"}
+];
+
+const ALPHABET = [
+  ["A a","ah — as in father"],["B b","b"],["C c","ts — cats, never k"],
+  ["Č č","ch — hard, church"],["Ć ć","ch — soft, lighter"],["D d","d"],
+  ["Dž dž","j — jungle, hard"],["Đ đ","j — jeep, soft"],["E e","eh — bed"],
+  ["F f","f"],["G g","g — always hard, go"],["H h","h — slightly raspy, Bach"],
+  ["I i","ee — machine"],["J j","y — yes"],["K k","k"],["L l","l"],
+  ["Lj lj","lli — million"],["M m","m"],["N n","n"],["Nj nj","ny — canyon"],
+  ["O o","oh — short"],["P p","p"],["R r","rolled; can be a syllable: prst"],
+  ["S s","s — always hissed, never z"],["Š š","sh"],["T t","t"],
+  ["U u","oo — boot"],["V v","v"],["Z z","z"],["Ž ž","zh — measure"]
+];
+
+const CROATIAN_ONLY = [
+  ["kruh","hljeb / hleb","bread"],
+  ["kava","kafa","coffee"],
+  ["tisuća","hiljada","thousand"],
+  ["vlak","voz","train"],
+  ["tjedan","sedmica / nedjelja","week"],
+  ["zrak","vazduh","air"],
+  ["povijest","istorija","history"],
+  ["glazba","muzika","music"],
+  ["kazalište","pozorište","theatre"],
+  ["tvrtka","firma / preduzeće","company"],
+  ["obitelj","porodica","family"],
+  ["juha","supa","soup"],
+  ["nogomet","fudbal","football"],
+  ["knjižnica","biblioteka","library"],
+  ["časnik","oficir","officer"],
+  ["mrkva","šargarepa","carrot"],
+  ["rajčica","paradajz","tomato"],
+  ["tko / što","ko / šta","who / what"],
+  ["radit ću","radiću","I will work"],
+  ["uvjet, vrijeme, lijep","uslov, vreme, lep","ijekavian vs. ekavian"]
+];
+
+const SCENARIOS = [
+  {k:"kafic", l:"U kafiću", en:"At the café", s:"You are a friendly waiter at a café in Zagreb. Take the learner's order, chat a little about their day."},
+  {k:"upoznavanje", l:"Upoznavanje", en:"Meeting someone", s:"You are a Croatian student the learner has just met at a party in Zagreb. Get to know them: name, where they're from, what they study."},
+  {k:"trznica", l:"Na tržnici", en:"At the market", s:"You are a vendor at Dolac market in Zagreb selling fruit and vegetables. Help the learner buy things, quote prices in euros."},
+  {k:"put", l:"Traženje puta", en:"Asking directions", s:"You are a helpful passerby in Split. The learner is lost and needs directions to places like the Riva, the bus station, or Diocletian's Palace."},
+  {k:"hotel", l:"U hotelu", en:"At the hotel", s:"You are a hotel receptionist in Dubrovnik. Handle check-in, room questions, breakfast times and local tips."},
+  {k:"lijecnik", l:"Kod liječnika", en:"At the doctor", s:"You are a doctor at a clinic. The learner isn't feeling well. Ask about symptoms gently and give simple advice."},
+  {k:"skola", l:"Škola i planovi", en:"School & plans", s:"You are a curious Croatian friend the same age as the learner. Talk about school, subjects, exams, and plans after school."},
+  {k:"hobi", l:"Hobiji i slobodno vrijeme", en:"Hobbies & free time", s:"You are a Croatian friend. Talk about hobbies, sport, music, films, and what the learner does at the weekend."},
+  {k:"trgovina", l:"U trgovini", en:"Shopping", s:"You are a shop assistant in a clothing shop. Help the learner find sizes, colours and prices."},
+  {k:"obitelj", l:"Obitelj i dom", en:"Family & home", s:"You are a Croatian friend asking about the learner's family, their house, their city and daily routine."},
+  {k:"putovanje", l:"Putovanje po Hrvatskoj", en:"Travelling in Croatia", s:"You are a Croatian local giving travel advice about the coast, islands, Plitvice, Istria and Slavonia."},
+  {k:"slobodno", l:"Slobodna tema", en:"Anything", s:"You are a warm Croatian conversation partner. Follow the learner's lead on any topic they raise."}
+];
+
+const READING_TOPICS = [
+  "Zagreb i Gornji grad","Dalmacija i more","hrvatska hrana","Plitvička jezera",
+  "jedan dan u školi","obitelj i kućni ljubimci","kava i kafići","Dubrovnik",
+  "Istra i tartufi","hrvatski otoci","nogomet u Hrvatskoj","godišnja doba",
+  "advent u Zagrebu","tržnica Dolac","putovanje vlakom","glazba i festivali"
+];
+
+/* ============================================================
+   STATE + STORAGE
+   ============================================================ */
+const Store = (()=>{
+  const mem = {};
+  let LS = null;
+  try{ const t="__pl"; window.localStorage.setItem(t,"1"); window.localStorage.removeItem(t); LS = window.localStorage; }catch(e){ LS = null; }
+  const CS = (typeof window!=="undefined" && window.storage && typeof window.storage.get==="function") ? window.storage : null;
+  const mode = LS ? "local" : CS ? "claude" : "none";
+  return {
+    mode, persistent: mode!=="none",
+    async get(k){
+      if(LS){ try{ const v = LS.getItem(k); if(v!=null) return JSON.parse(v); }catch(e){} }
+      if(CS){ try{ const r = await CS.get(k); if(r) return JSON.parse(r.value); }catch(e){} }
+      return mem[k] ?? null;
+    },
+    async set(k,v){
+      mem[k] = v;
+      if(LS){ try{ LS.setItem(k, JSON.stringify(v)); return; }catch(e){} }
+      if(CS){ try{ await CS.set(k, JSON.stringify(v)); }catch(e){} }
+    },
+    async del(k){
+      delete mem[k];
+      if(LS){ try{ LS.removeItem(k); }catch(e){} }
+      if(CS){ try{ await CS.delete(k); }catch(e){} }
+    }
+  };
+})();
+
+/* API key lives on its own, deliberately OUTSIDE the state object,
+   so it never ends up inside an exported save code. */
+const KEY_K = "pleter:gemini_key", MODEL_K = "pleter:gemini_model";
+let GKEY = "", GMODEL = "gemini-2.5-flash";
+const MODELS = ["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.5-pro","gemini-3.5-flash"];
+async function loadKey(){
+  GKEY   = (await Store.get(KEY_K))   || "";
+  GMODEL = (await Store.get(MODEL_K)) || "gemini-2.5-flash";
+}
+const maskKey = k => !k ? "" : k.length<12 ? "•".repeat(k.length) : k.slice(0,6)+"…"+k.slice(-4);
+
+let S = {
+  name:"", xp:0, streak:0, lastDay:null,
+  done:{},                 // unitId -> {read:true, drill:score}
+  cards:{},                // "hr|en" -> {box:1..5, seen:n}
+  level:"A1",
+  scenario:"kafic",
+  showEn:true
+};
+
+async function loadState(){
+  const saved = await Store.get("pleter:state");
+  if(saved) S = Object.assign(S, saved);
+  const today = new Date().toISOString().slice(0,10);
+  if(S.lastDay !== today){
+    const y = new Date(Date.now()-864e5).toISOString().slice(0,10);
+    S.streak = (S.lastDay === y) ? (S.streak||0)+1 : 1;
+    S.lastDay = today;
+    await save();
+  }
+}
+async function save(){ await Store.set("pleter:state", S); paintStats(); }
+function addXP(n){ S.xp = (S.xp||0) + n; save(); }
+
+function paintStats(){
+  const total = UNITS.length*2;
+  let d = 0;
+  UNITS.forEach(u=>{ const x=S.done[u.id]; if(x){ if(x.read) d++; if(x.drill!=null) d++; } });
+  $("#s-xp").textContent = S.xp||0;
+  $("#s-streak").textContent = S.streak||0;
+  $("#s-words").textContent = Object.keys(S.cards||{}).length;
+  const pct = Math.min(1, d/total);
+  ["#pl-a","#pl-b"].forEach(sel=>{
+    const p = $(sel); if(!p) return;
+    const L = p.getTotalLength();
+    p.style.strokeDasharray = L;
+    p.style.strokeDashoffset = L*(1-pct);
+  });
+  const lab = $("#pl-label");
+  if(lab) lab.textContent = d===0 ? "Pleter se plete kako učiš."
+        : d>=total ? "Pleter je gotov. Bravo!"
+        : Math.round(pct*100) + "% programa gotovo";
+}
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const $  = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => String(s).toLowerCase().trim()
+  .replace(/[.,!?;:]/g,"").replace(/\s+/g," ")
+  .replace(/č/g,"c").replace(/ć/g,"c").replace(/š/g,"s").replace(/ž/g,"z").replace(/đ/g,"d");
+const shuffle = a => a.map(v=>[Math.random(),v]).sort((x,y)=>x[0]-y[0]).map(v=>v[1]);
+const cardKey = (hr,en) => hr+"|"+en;
+
+/* --- speech --- */
+let VOICES = [];
+function loadVoices(){ try{ VOICES = speechSynthesis.getVoices()||[]; }catch(e){} }
+if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+function speak(text){
+  if(!window.speechSynthesis) return;
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(String(text).replace(/\s*\/\s*/g," , "));
+    u.lang = "hr-HR"; u.rate = .88;
+    const v = VOICES.find(v=>/^hr/i.test(v.lang)) || VOICES.find(v=>/^(bs|sr|sl|pl|cs)/i.test(v.lang));
+    if(v) u.voice = v;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+const spk = t => `<button class="spk" title="Poslušaj" onclick="speak(${JSON.stringify(t).replace(/"/g,'&quot;')})">🔊</button>`;
+
+/* --- word rows --- */
+function wordRow(hr,en){
+  const k = cardKey(hr,en), on = !!(S.cards||{})[k];
+  return `<div class="word">${spk(hr)}<span class="hr">${esc(hr)}</span><span class="en">${esc(en)}</span>
+    <button class="save" aria-pressed="${on}" title="Dodaj u kartice" data-card="${esc(k)}">${on?"★":"☆"}</button></div>`;
+}
+document.addEventListener("click", e=>{
+  const b = e.target.closest("[data-card]"); if(!b) return;
+  const k = b.getAttribute("data-card");
+  S.cards = S.cards||{};
+  if(S.cards[k]){ delete S.cards[k]; b.setAttribute("aria-pressed","false"); b.textContent="☆"; }
+  else { S.cards[k] = {box:1, seen:0}; b.setAttribute("aria-pressed","true"); b.textContent="★"; }
+  save();
+});
+
+/* ============================================================
+   CLAUDE API
+   ============================================================ */
+const STYLE_RULES = `
+You teach STANDARD CROATIAN (hrvatski standardni jezik) and nothing else.
+NON-NEGOTIABLE LANGUAGE RULES:
+- Ijekavian only: lijep, mlijeko, vrijeme, dijete, razumijem, prije. Never ekavian (lep, mleko, vreme).
+- Croatian lexicon only: kruh (not hljeb), kava (not kafa), tisuća (not hiljada), vlak (not voz), tjedan (not sedmica), zrak (not vazduh), povijest (not istorija), glazba (not muzika), kazalište (not pozorište), tvrtka (not firma), juha (not supa), nogomet (not fudbal), knjižnica (not biblioteka), obitelj (not porodica), rajčica (not paradajz), mrkva (not šargarepa), listopad/siječanj etc. for months (never oktobar/januar).
+- tko and što, never ko and šta.
+- Future tense written separately: "radit ću", never "radiću".
+- Standard štokavian-based literary Croatian only. No Kajkavian or Čakavian dialect, no regional slang (no "kaj", no "ča"), no Serbian/Bosnian/Montenegrin variants.
+- Croatian months: siječanj, veljača, ožujak, travanj, svibanj, lipanj, srpanj, kolovoz, rujan, listopad, studeni, prosinac.
+- Currency in Croatia is the euro (€).
+`;
+
+async function askClaude(system, messages){
+  const res = await fetch("https://api.anthropic.com/v1/messages", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ model:"claude-sonnet-4-6", max_tokens: 1000, system, messages })
+  });
+  if(!res.ok) throw new Error("HTTP " + res.status);
+  const data = await res.json();
+  return (data.content||[]).map(b => b.type === "text" ? b.text : "").join("\n").trim();
+}
+
+async function askGemini(system, messages, maxTokens, key, model){
+  const body = {
+    system_instruction: { parts:[{ text: system }] },
+    contents: messages.map(m => ({
+      role: m.role === "assistant" ? "model" : "user",
+      parts: [{ text: m.content }]
+    })),
+    generationConfig: {
+      maxOutputTokens: Math.max(2048, maxTokens || 2048),
+      temperature: 0.85,
+      thinkingConfig: { thinkingBudget: 0 }
+    }
+  };
+  const url = "https://generativelanguage.googleapis.com/v1beta/models/" +
+              encodeURIComponent(model || GMODEL) + ":generateContent";
+  const send = async payload => fetch(url, {
+    method:"POST",
+    headers:{ "Content-Type":"application/json", "x-goog-api-key": key || GKEY },
+    body: JSON.stringify(payload)
+  });
+
+  let res = await send(body);
+  if(res.status === 400){                       // some models reject thinkingConfig
+    const b2 = JSON.parse(JSON.stringify(body));
+    delete b2.generationConfig.thinkingConfig;
+    res = await send(b2);
+  }
+  if(!res.ok){
+    let msg = "";
+    try{ const j = await res.json(); msg = (j.error && j.error.message) || ""; }catch(e){}
+    if(res.status === 400 && /API key not valid/i.test(msg)) throw new Error("BADKEY");
+    if(res.status === 403) throw new Error("BADKEY");
+    if(res.status === 404) throw new Error("NOMODEL");
+    if(res.status === 429) throw new Error("RATE");
+    throw new Error("Gemini " + res.status + (msg ? ": " + msg : ""));
+  }
+  const d = await res.json();
+  const c = (d.candidates || [])[0];
+  const txt = (((c || {}).content || {}).parts || []).map(p => p.text || "").join("");
+  if(!txt.trim()){
+    const fr = c && c.finishReason;
+    throw new Error(fr === "MAX_TOKENS" ? "Odgovor je predugačak — pokušaj ponovno."
+                  : fr === "SAFETY"     ? "Gemini je blokirao odgovor."
+                  : "Prazan odgovor od Geminija.");
+  }
+  return txt.trim();
+}
+
+const PROXY = "/.netlify/functions/chat";
+let PROXY_OK = null;   // null = untested, true = live, false = not deployed here
+
+async function askProxy(system, messages, maxTokens){
+  let res;
+  try{
+    res = await fetch(PROXY, {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ system, messages, maxTokens: maxTokens || 2048 })
+    });
+  }catch(e){ throw new Error("NOPROXY"); }          // offline, or opened as a local file
+
+  if(res.status === 404 || res.status === 405){ throw new Error("NOPROXY"); }
+
+  let data = null;
+  try{ data = await res.json(); }catch(e){ throw new Error("NOPROXY"); }
+
+  if(!res.ok){
+    if(res.status === 429) throw new Error(data.error || "RATE");
+    if(res.status === 500) throw new Error("NOKEY");
+    throw new Error(data.error || ("Server " + res.status));
+  }
+  if(!data || !data.text) throw new Error("Prazan odgovor.");
+  PROXY_OK = true;
+  return data.text.trim();
+}
+
+async function ask(system, messages, maxTokens){
+  if(GKEY) return askGemini(system, messages, maxTokens);   // personal key wins, for local dev
+  if(PROXY_OK !== false){
+    try{ return await askProxy(system, messages, maxTokens); }
+    catch(e){
+      if(e.message === "NOPROXY"){ PROXY_OK = false; }        // fall through to Claude
+      else throw e;
+    }
+  }
+  return askClaude(system, messages);
+}
+function parseJSON(txt){
+  let t = String(txt).replace(/```json/gi,"").replace(/```/g,"").trim();
+  const a = t.indexOf("{"), b = t.lastIndexOf("}");
+  const c = t.indexOf("["), d = t.lastIndexOf("]");
+  if(c > -1 && (c < a || a === -1)) t = t.slice(c, d+1); else if(a > -1) t = t.slice(a, b+1);
+  return JSON.parse(t);
+}
+function apiError(e){
+  const m = String((e && e.message) || "");
+  if(m === "NOKEY") return `<div class="err"><b>Poslužitelj nije spreman.</b> The site is deployed but <code>GEMINI_API_KEY</code> isn't set. In Netlify: <b>Site configuration → Environment variables → Add a variable</b>, then redeploy — env vars only take effect on a new deploy.</div>`;
+  if(m === "RATE" || /limit|Prebrzo|preopterećen|sutra/i.test(m)) return `<div class="err"><b>Uspori malo.</b> ${esc(m === "RATE" ? "Rate limit reached. Wait a minute." : m)}</div>`;
+  if(m === "BADKEY")  return `<div class="err"><b>Ključ ne radi.</b> Google rejected that API key. Open <b>Postavke</b>, check you pasted the whole thing, and make sure the Generative Language API is enabled for the key.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
+  if(m === "NOMODEL") return `<div class="err"><b>Model nije pronađen.</b> Your key doesn't have access to <b>${esc(GMODEL)}</b>. Pick a different one in <b>Postavke</b>.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Promijeni model</button></div></div>`;
+  if(m === "RATE")    return `<div class="err"><b>Previše zahtjeva.</b> You've hit Gemini's rate limit. Wait a minute and try again — the free tier is generous but not unlimited.</div>`;
+  if(!GKEY) return `<div class="err"><b>Nema veze s AI-jem.</b> This copy can't reach the server function, isn't running inside Claude, and has no personal key set. Lessons, grammar, drills and flashcards all work without it.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
+  return `<div class="err"><b>Nije uspjelo.</b> ${esc(m) || "Unknown error."} Try again, or check your key in <b>Postavke</b>.</div>`;
+}
+
+/* ============================================================
+   ROUTER
+   ============================================================ */
+const VIEWS = [
+  {k:"home",    hr:"Početna",   en:"Home"},
+  {k:"lekcije", hr:"Lekcije",   en:"Lessons"},
+  {k:"razgovor",hr:"Razgovor",  en:"Talk"},
+  {k:"provjera",hr:"Provjera",  en:"Quiz"},
+  {k:"citanje", hr:"Čitanje",   en:"Reading"},
+  {k:"kartice", hr:"Kartice",   en:"Cards"},
+  {k:"gramatika",hr:"Gramatika",en:"Grammar"},
+  {k:"napredak", hr:"Napredak",  en:"Save"}
+];
+let CUR = "home";
+function paintNav(){
+  $("#nav").innerHTML = VIEWS.map(v=>
+    `<button aria-current="${CUR===v.k}" onclick="go('${v.k}')"><span class="hr">${v.hr}</span><span class="en">${v.en}</span></button>`
+  ).join("");
+}
+function go(v, arg){
+  CUR = v; paintNav();
+  window.scrollTo({top:0, behavior:"instant"});
+  ({home:vHome, lekcije:vLessons, unit:vUnit, razgovor:vTalk, provjera:vQuiz,
+    citanje:vRead, kartice:vCards, gramatika:vGrammar, napredak:vSave}[v] || vHome)(arg);
+}
+function shell(eyebrow, title, lede, body){
+  $("#main").innerHTML = `<div class="view"><div class="eyebrow">${eyebrow}</div>
+    <h1 class="page-h">${title}</h1>${lede?`<p class="lede">${lede}</p>`:""}${body}</div>`;
+}
+
+/* ============================================================
+   POČETNA
+   ============================================================ */
+function nextUnit(){
+  for(const u of UNITS){ const d = S.done[u.id]; if(!d || !d.read || d.drill==null) return u; }
+  return UNITS[UNITS.length-1];
+}
+function vHome(){
+  const u = nextUnit();
+  const doneCount = UNITS.filter(x=>S.done[x.id]&&S.done[x.id].read).length;
+  const wordCount = UNITS.reduce((n,x)=>n+x.vocab.length+x.phrases.length,0);
+  shell(S.name ? `bok, ${esc(S.name)} — nastavljamo` : "dobro došao — welcome", `Naučimo <i>hrvatski</i>.`,
+    "Seven cases, one alphabet where every letter says exactly what it looks like, and a country that will talk back to you. Twelve units, a tutor who only speaks standard Croatian, and as much practice as you want.",
+    `<div class="grid g2">
+      <div class="card">
+        <div class="kicker">nastavi ovdje · pick up here</div>
+        <h2 style="font-size:26px;margin-bottom:4px">${u.id}. ${esc(u.title)}</h2>
+        <p style="color:var(--stone-dim);font-size:14.5px">${esc(u.goal)}</p>
+        <button class="btn" onclick="go('unit',${u.id})">Otvori lekciju</button>
+      </div>
+      <div class="card">
+        <div class="kicker">razgovor · talk to someone</div>
+        <h2 style="font-size:26px;margin-bottom:4px">Pričaj sa mnom</h2>
+        <p style="color:var(--stone-dim);font-size:14.5px">Type back in Croatian. You get corrections, a translation, and something to say next when you freeze.</p>
+        <button class="btn brass" onclick="go('razgovor')">Započni razgovor</button>
+      </div>
+    </div>
+
+    <div class="grid g3" style="margin-top:14px">
+      <div class="card"><div class="kicker">lekcije</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${doneCount}<span style="font-size:16px;color:var(--stone-dim)">/${UNITS.length}</span></div><div style="font-size:13px;color:var(--stone-dim)">units read</div></div>
+      <div class="card"><div class="kicker">rječnik</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${wordCount}</div><div style="font-size:13px;color:var(--stone-dim)">words & phrases in the course</div></div>
+      <div class="card"><div class="kicker">kartice</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${Object.keys(S.cards||{}).length}</div><div style="font-size:13px;color:var(--stone-dim)">saved for review</div></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">fraza dana · phrase of the day</div>
+      <div style="font-family:var(--display);font-size:28px;font-weight:700">${esc(POTD[0])} ${spk(POTD[0])}</div>
+      <div style="color:var(--stone-dim)">${esc(POTD[1])}</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">kako ovo radi · how to use this</div>
+      <p style="font-size:14.5px;color:var(--stone-dim);margin:0">Read a unit, do its six drills, then take the same material into <b style="color:var(--stone)">Razgovor</b> and try to use it on a real question. That loop — learn it, test it, then be forced to produce it under mild pressure — is what moves a word from recognised to owned. Star any word you want back later; it lands in <b style="color:var(--stone)">Kartice</b>.</p>
+    </div>`);
+}
+const ALLP = UNITS.flatMap(u=>u.phrases);
+const POTD = ALLP[Math.floor(Date.now()/864e5) % ALLP.length];
+
+/* ============================================================
+   LEKCIJE
+   ============================================================ */
+function vLessons(){
+  const rows = UNITS.map(u=>{
+    const d = S.done[u.id]||{};
+    const tick = (d.read && d.drill!=null) ? "✓" : d.read ? "·" : "";
+    return `<button class="unit" onclick="go('unit',${u.id})">
+      <span class="ord"><b>${u.id}</b>${ORD[u.id]||""}</span>
+      <span class="body"><span class="t">${esc(u.title)}</span><br><span class="s">${esc(u.sub)}</span></span>
+      <span class="tick">${tick}</span></button>`;
+  }).join("");
+  shell("program · the course", "Dvanaest <i>cjelina</i>",
+    "In order. Each unit explains the grammar in plain English, gives you the words, then makes you produce them. The numbers double as an ordinals lesson — prva, druga, treća.", rows);
+}
+
+function vUnit(id){
+  const u = UNITS.find(x=>x.id===id) || UNITS[0];
+  const gram = u.grammar.map(g=>`<div class="card"><h3 style="font-size:20px;margin-bottom:8px">${g.h}</h3><div style="font-size:15px">${g.b}</div></div>`).join("");
+  const vocab = `<div class="wordlist">${u.vocab.map(v=>wordRow(v[0],v[1])).join("")}</div>`;
+  const phr   = `<div class="wordlist">${u.phrases.map(v=>wordRow(v[0],v[1])).join("")}</div>`;
+  const next = UNITS.find(x=>x.id===id+1);
+  shell(`${u.id}. cjelina · ${ORD[u.id]||""}`, esc(u.title),
+    esc(u.goal),
+    `<div class="chips" style="margin-bottom:18px">
+      <button class="btn ghost sm" onclick="go('lekcije')">← Sve lekcije</button>
+      <button class="btn sm" onclick="startDrill(${u.id})">Vježbaj (${u.drills.length})</button>
+      <button class="btn ghost sm" onclick="genPractice(${u.id})">Još vježbi s AI-jem</button>
+    </div>
+    ${gram}
+    <hr class="rule">
+    <div class="kicker">rječnik · vocabulary</div>${vocab}
+    <div class="kicker" style="margin-top:22px">fraze · phrases</div>${phr}
+    <div id="extra"></div>
+    <div style="margin-top:26px;display:flex;gap:9px;flex-wrap:wrap">
+      <button class="btn" onclick="startDrill(${u.id})">Vježbaj sada</button>
+      ${next?`<button class="btn ghost" onclick="go('unit',${next.id})">Sljedeća: ${esc(next.title)} →</button>`:""}
+    </div>`);
+  if(!S.done[id]) S.done[id] = {};
+  if(!S.done[id].read){ S.done[id].read = true; addXP(10); } else save();
+}
+
+async function genPractice(id){
+  const u = UNITS.find(x=>x.id===id);
+  const box = $("#extra");
+  box.innerHTML = `<div class="card" style="margin-top:18px"><span class="spin"></span> Pišem nove rečenice…</div>`;
+  try{
+    const txt = await ask(STYLE_RULES + `You write practice sentences for a Croatian course.`,
+      [{role:"user", content:`Unit topic: "${u.title}" — ${u.goal}
+Vocabulary in play: ${u.vocab.map(v=>v[0]).join(", ")}.
+Write 8 fresh example sentences in standard Croatian at CEFR ${S.level} using this unit's grammar and words. Vary the persons and include a couple of questions.
+Return ONLY a JSON array, no prose, no markdown: [{"hr":"...","en":"..."}]`}]);
+    const arr = parseJSON(txt);
+    box.innerHTML = `<div class="kicker" style="margin-top:24px">nove rečenice · fresh from the tutor</div>
+      <div class="wordlist">${arr.map(x=>wordRow(x.hr,x.en)).join("")}</div>
+      <button class="btn ghost sm" style="margin-top:10px" onclick="genPractice(${id})">Još osam</button>`;
+  }catch(e){ box.innerHTML = apiError(e); }
+}
+
+/* ============================================================
+   VJEŽBA / DRILL ENGINE
+   ============================================================ */
+let D = null;
+function startDrill(id, custom){
+  const u = UNITS.find(x=>x.id===id);
+  D = { unit:id, title: custom ? "Provjera" : u.title, q: shuffle((custom||u.drills).slice()), i:0, score:0 };
+  paintDrill();
+}
+function paintDrill(){
+  if(D.i >= D.q.length){ return endDrill(); }
+  const q = D.q[D.i];
+  const bar = `<div class="progressline"><i style="width:${(D.i/D.q.length)*100}%"></i></div>`;
+  const body = q.t === "mc"
+    ? `<div class="opts">${q.o.map((o,i)=>`<button class="opt" onclick="pick(${i})">${esc(o)}</button>`).join("")}</div>`
+    : `<input class="answer" id="ans" placeholder="Napiši na hrvatskom…" autocomplete="off" autocapitalize="off" spellcheck="false">
+       <div style="margin-top:12px"><button class="btn" onclick="pick(-1)">Provjeri</button></div>`;
+  shell(`pitanje ${D.i+1} od ${D.q.length}`, esc(D.title), "",
+    `${bar}<div class="card"><div class="q">${esc(q.q)}</div>${body}<div id="verdict"></div></div>`);
+  const a = $("#ans");
+  if(a){ a.focus(); a.addEventListener("keydown", e=>{ if(e.key==="Enter") pick(-1); }); }
+}
+function pick(i){
+  const q = D.q[D.i];
+  let ok;
+  if(q.t === "mc"){
+    ok = i === q.a;
+    $$(".opt").forEach((b,j)=>{ b.disabled = true; if(j===q.a) b.classList.add("right"); else if(j===i) b.classList.add("wrong"); });
+  } else {
+    const v = norm($("#ans").value);
+    if(!v) return;
+    ok = q.a.some(x => norm(x) === v);
+    $("#ans").disabled = true;
+    $("#ans").style.borderColor = ok ? "var(--olive)" : "var(--madder)";
+  }
+  if(ok){ D.score++; addXP(5); }
+  $("#verdict").innerHTML = `<div class="verdict ${ok?"ok":"no"}">
+    <b style="color:${ok?"var(--olive)":"var(--madder)"}">${ok?"Točno!":"Nije točno."}</b> ${esc(q.e||"")}
+    </div><div style="margin-top:12px"><button class="btn" id="nx">${D.i+1>=D.q.length?"Rezultat":"Dalje →"}</button></div>`;
+  $("#nx").focus();
+  $("#nx").onclick = ()=>{ D.i++; paintDrill(); };
+}
+function endDrill(){
+  const pct = Math.round(D.score/D.q.length*100);
+  const msg = pct===100 ? "Savršeno. Sve točno." : pct>=75 ? "Vrlo dobro." : pct>=50 ? "Dobar početak — ponovi lekciju." : "Vrati se na lekciju pa probaj opet.";
+  if(D.unit){ S.done[D.unit] = S.done[D.unit]||{}; S.done[D.unit].drill = Math.max(S.done[D.unit].drill||0, pct); save(); }
+  const next = D.unit ? UNITS.find(x=>x.id===D.unit+1) : null;
+  shell("gotovo · done", "Rezultat", "",
+    `<div class="card" style="text-align:center;padding:40px">
+      <div style="font-family:var(--mono);font-size:56px;color:var(--brass);line-height:1">${D.score}<span style="font-size:26px;color:var(--stone-dim)">/${D.q.length}</span></div>
+      <p style="font-family:var(--display);font-size:22px;margin-top:8px">${msg}</p>
+      <div class="chips" style="justify-content:center;margin-top:16px">
+        ${D.unit?`<button class="btn ghost sm" onclick="startDrill(${D.unit})">Opet</button>
+        <button class="btn ghost sm" onclick="go('unit',${D.unit})">Natrag na lekciju</button>`:""}
+        ${next?`<button class="btn sm" onclick="go('unit',${next.id})">Sljedeća cjelina →</button>`:`<button class="btn sm" onclick="go('razgovor')">Idi na razgovor →</button>`}
+      </div></div>`);
+}
+
+/* ============================================================
+   RAZGOVOR — live tutor
+   ============================================================ */
+let CH = { busy:false };
+// CH.hist stays a live pointer into the current saved conversation,
+// so every existing call site keeps working unchanged.
+Object.defineProperty(CH, "hist", {
+  get(){ return curChat().hist; },
+  set(v){ curChat().hist = v; save(); }
+});
+
+function newChat(scenario, level){
+  const id = "c" + Date.now().toString(36) + Math.random().toString(36).slice(2,6);
+  S.chats = S.chats || {};
+  S.chats[id] = { id, title:"", scenario: scenario || S.scenario, level: level || S.level,
+                  created: Date.now(), updated: Date.now(), hist: [] };
+  S.chatId = id;
+  return S.chats[id];
+}
+function curChat(){
+  S.chats = S.chats || {};
+  if(!S.chatId || !S.chats[S.chatId]) newChat();
+  return S.chats[S.chatId];
+}
+function touchChat(){
+  const c = curChat();
+  c.updated = Date.now();
+  if(!c.title){
+    const first = c.hist.find(m => m.who === "me");
+    const sc = SCENARIOS.find(x => x.k === c.scenario);
+    c.title = first ? first.hr.slice(0,42) : (sc ? sc.l : "Razgovor");
+  }
+  save();
+}
+function openChat(id){
+  if(!S.chats[id]) return;
+  S.chatId = id;
+  S.scenario = S.chats[id].scenario;
+  S.level = S.chats[id].level || S.level;
+  save(); vTalk();
+}
+function startChat(){
+  const c = curChat();
+  if(c.hist.length) newChat(S.scenario, S.level);
+  save(); vTalk();
+}
+let DELARM = null;
+function delChat(id, ev){
+  ev.stopPropagation();
+  if(DELARM !== id){ DELARM = id; vTalk(); setTimeout(()=>{ if(DELARM===id){ DELARM=null; if(CUR==="razgovor") vTalk(); } }, 3500); return; }
+  DELARM = null;
+  delete S.chats[id];
+  if(S.chatId === id){ S.chatId = Object.keys(S.chats)[0] || null; if(!S.chatId) newChat(); }
+  save(); vTalk();
+}
+function renameChat(id, ev){
+  ev.stopPropagation();
+  const c = S.chats[id]; if(!c) return;
+  const v = prompt("Novi naziv razgovora:", c.title || "");
+  if(v !== null){ c.title = v.trim().slice(0,60) || c.title; save(); vTalk(); }
+}
+function ago(t){
+  const d = Math.floor((Date.now()-t)/1000);
+  if(d < 60) return "sada";
+  if(d < 3600) return Math.floor(d/60) + " min";
+  if(d < 86400) return Math.floor(d/3600) + " h";
+  const days = Math.floor(d/86400);
+  return days === 1 ? "jučer" : days + " dana";
+}
+const LEVELS = [
+  {k:"A1", l:"Početnik", en:"beginner", d:"very short sentences, present tense, common words, lots of scaffolding"},
+  {k:"A2", l:"Osnovni",  en:"elementary", d:"short everyday sentences, past and future allowed, basic cases"},
+  {k:"B1", l:"Srednji",  en:"intermediate", d:"normal conversational Croatian, full case system, some idiom"}
+];
+
+function vTalk(){
+  const cur = curChat();
+  const list = Object.values(S.chats||{}).sort((a,b)=>(b.updated||b.created)-(a.updated||a.created));
+  const sc = SCENARIOS.find(x=>x.k===S.scenario) || SCENARIOS[0];
+  shell("razgovor · conversation", "Pričaj sa <i>mnom</i>",
+    "Pick a situation and type back in Croatian. Every reply comes with a translation you can ignore once you don't need it, a gentle correction when you slip, and three things you could say next.",
+    `<div class="card">
+      <div class="kicker">situacija</div>
+      <div class="chips" style="margin-bottom:14px">${SCENARIOS.map(s=>
+        `<button class="chip" aria-pressed="${s.k===S.scenario}" onclick="setScenario('${s.k}')">${s.l}</button>`).join("")}</div>
+      <div class="kicker">razina · level</div>
+      <div class="chips">${LEVELS.map(l=>
+        `<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevel('${l.k}')">${l.k} · ${l.l}</button>`).join("")}
+        <button class="chip" aria-pressed="${S.showEn}" onclick="S.showEn=!S.showEn;save();vTalk()">Prijevod</button></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
+        <div class="kicker" style="margin:0">razgovori · ${list.length} spremljeno</div>
+        <button class="btn sm" onclick="startChat()">+ Novi razgovor</button>
+      </div>
+      ${list.length ? `<div class="chatlist">${list.map(c=>{
+        const sc = SCENARIOS.find(x=>x.k===c.scenario);
+        const last = c.hist[c.hist.length-1];
+        const on = c.id === S.chatId;
+        return `<div class="chatrow${on?" on":""}" onclick="openChat('${c.id}')">
+          <div class="cmeta">
+            <div class="ct">${esc(c.title || (sc?sc.l:"Razgovor"))}</div>
+            <div class="cs2">${esc(sc?sc.l:"")} · ${esc(c.level||"A1")} · ${c.hist.length} poruka · ${ago(c.updated||c.created)}</div>
+            ${last ? `<div class="cprev">${esc(String(last.hr||"").slice(0,70))}</div>` : ""}
+          </div>
+          <button class="crn" title="Preimenuj" onclick="renameChat('${c.id}',event)">✎</button>
+          <button class="cdel${DELARM===c.id?" armed":""}" onclick="delChat('${c.id}',event)">${DELARM===c.id?"Obriši?":"×"}</button>
+        </div>`;
+      }).join("")}</div>` : `<p style="font-size:14px;color:var(--stone-dim);margin:0">Nema spremljenih razgovora. Napiši nešto ispod i razgovor se sprema sam.</p>`}
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">${esc(sc.l)} · ${esc(sc.en)}</div>
+      <div class="chat" id="chat"></div>
+      <div id="sugg" class="hintbar"></div>
+      <div class="composer">
+        <input id="say" placeholder="Napiši nešto na hrvatskom…" autocomplete="off" autocapitalize="sentences">
+        <button class="btn" id="send" onclick="sendMsg()">Pošalji</button>
+      </div>
+      <div style="font-size:12.5px;color:var(--stone-dim);margin-top:9px">Stuck? Write <b style="color:var(--brass)">?</b> and press send — I'll rephrase in easier Croatian and tell you what to say.</div>
+      <div id="cherr"></div>
+    </div>`);
+  paintChat();
+  if(!CH.hist.length) openLine();
+  const i = $("#say"); if(i){ i.focus(); i.addEventListener("keydown", e=>{ if(e.key==="Enter") sendMsg(); }); }
+}
+function setScenario(k){
+  const c = curChat();
+  S.scenario = k;
+  if(c.hist.length) newChat(k, S.level); else { c.scenario = k; }
+  save(); vTalk();
+}
+function setLevel(k){ S.level = k; curChat().level = k; save(); vTalk(); }
+
+function paintChat(){
+  const c = $("#chat"); if(!c) return;
+  c.innerHTML = CH.hist.map(m=>{
+    if(m.who==="me") return `<div class="msg me"><div class="cro">${esc(m.hr)}</div></div>`;
+    return `<div class="msg bot"><div class="cro">${esc(m.hr)} ${spk(m.hr)}</div>
+      ${S.showEn && m.tr ? `<div class="tr">${esc(m.tr)}</div>` : ""}
+      ${m.fix ? `<div class="fix"><b>Skoro:</b> ${esc(m.fix.fixed)}<br><span style="color:var(--stone-dim)">${esc(m.fix.note)}</span></div>` : ""}</div>`;
+  }).join("");
+  c.scrollTop = c.scrollHeight;
+  const s = $("#sugg");
+  const last = CH.hist[CH.hist.length-1];
+  if(s) s.innerHTML = (last && last.sugg ? last.sugg : []).map(x=>
+    `<button onclick="useSugg(${JSON.stringify(x).replace(/"/g,'&quot;')})">${esc(x)}</button>`).join("");
+}
+function useSugg(t){ const i=$("#say"); i.value=t; i.focus(); }
+
+function tutorSystem(){
+  const sc = SCENARIOS.find(x=>x.k===S.scenario) || SCENARIOS[0];
+  const lv = LEVELS.find(x=>x.k===S.level) || LEVELS[0];
+  return STYLE_RULES + `
+ROLE: ${sc.s}
+The learner is a teenage English speaker at CEFR ${lv.k} (${lv.en}). Match that: ${lv.d}.
+
+HOW TO BEHAVE:
+- Speak ONLY Croatian in the "reply" field. Keep it to 1-2 sentences and always end with a question so the conversation continues.
+- Stay in character. Be warm, curious and a bit funny. React to what they actually said.
+- If the learner writes "?" or asks in English, rephrase your previous question more simply in Croatian and put the explanation in "note".
+- Correct only meaningful errors (wrong case, wrong verb form, wrong word choice, non-Croatian words). Ignore missing diacritics and capitalisation — a learner typing on a US keyboard cannot easily type č ž š ć đ.
+- If they wrote a Serbian/Bosnian form (kafa, hleb, voz, šta, ko, hiljada, ekavian), always correct it and say briefly what the Croatian word is.
+- If their Croatian was fine, set "correction" to null and do not invent a nitpick.
+- "suggestions" = three short, natural things THEY could say next, in Croatian at their level.
+
+OUTPUT: return ONLY valid JSON, no markdown fences, no text outside it:
+{"reply":"<Croatian>","translation":"<English of reply>","correction":null or {"fixed":"<their sentence corrected>","note":"<one short English sentence explaining why>"},"suggestions":["...","...","..."]}`;
+}
+
+async function openLine(){
+  if(CH.busy) return; CH.busy = true;
+  try{
+    const txt = await ask(tutorSystem(), [{role:"user", content:"Start the conversation. Greet me in character and ask me one easy opening question."}]);
+    const j = parseJSON(txt);
+    CH.hist.push({who:"bot", hr:j.reply, tr:j.translation, sugg:j.suggestions||[]});
+    touchChat(); paintChat();
+  }catch(e){ if($("#cherr")) $("#cherr").innerHTML = apiError(e); }
+  CH.busy = false;
+}
+
+async function sendMsg(){
+  const i = $("#say"); if(!i) return;
+  const t = i.value.trim(); if(!t || CH.busy) return;
+  i.value = ""; CH.busy = true; $("#send").disabled = true;
+  CH.hist.push({who:"me", hr:t}); touchChat(); paintChat();
+  const c = $("#chat");
+  c.insertAdjacentHTML("beforeend", `<div class="msg bot" id="typing"><span class="spin"></span></div>`);
+  c.scrollTop = c.scrollHeight;
+  try{
+    const msgs = [];
+    CH.hist.forEach(m=>{
+      if(m.who==="me") msgs.push({role:"user", content:m.hr});
+      else msgs.push({role:"assistant", content:JSON.stringify({reply:m.hr, translation:m.tr, correction:m.fix||null, suggestions:m.sugg||[]})});
+    });
+    const txt = await ask(tutorSystem(), msgs);
+    const j = parseJSON(txt);
+    CH.hist.push({who:"bot", hr:j.reply, tr:j.translation, fix:j.correction||null, sugg:j.suggestions||[]});
+    touchChat(); addXP(3);
+  }catch(e){
+    CH.hist.push({who:"bot", hr:"Oprosti, nešto nije u redu.", tr:"Sorry, something went wrong.", sugg:[]});
+    if($("#cherr")) $("#cherr").innerHTML = apiError(e);
+  }
+  const ty = $("#typing"); if(ty) ty.remove();
+  CH.busy = false; if($("#send")) $("#send").disabled = false;
+  paintChat(); if($("#say")) $("#say").focus();
+}
+
+/* ============================================================
+   PROVJERA — quiz builder
+   ============================================================ */
+let QSEL = {unit:"mix", type:"mixed"};
+function vQuiz(){
+  shell("provjera · test yourself", "Koliko <i>znaš</i>?",
+    "Two ways to test: a mixed round pulled straight from the course, or a fresh set written for you on the spot. The generated ones never repeat, so you can't pass by remembering the answer order.",
+    `<div class="card">
+      <div class="kicker">gradivo · material</div>
+      <div class="chips" style="margin-bottom:14px">
+        <button class="chip" aria-pressed="${QSEL.unit==='mix'}" onclick="QSEL.unit='mix';vQuiz()">Sve cjeline</button>
+        ${UNITS.map(u=>`<button class="chip" aria-pressed="${QSEL.unit==u.id}" onclick="QSEL.unit=${u.id};vQuiz()">${u.id}</button>`).join("")}
+      </div>
+      <div class="kicker">vrsta pitanja · question type</div>
+      <div class="chips">
+        ${[["mixed","Mješovito"],["mc","Višestruki izbor"],["type","Prijevod (pisanje)"],["case","Padeži"],["verb","Glagoli"]].map(x=>
+          `<button class="chip" aria-pressed="${QSEL.type===x[0]}" onclick="QSEL.type='${x[0]}';vQuiz()">${x[1]}</button>`).join("")}
+      </div>
+      <div style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">
+        <button class="btn brass" onclick="genQuiz()">Novi test s AI-jem (8 pitanja)</button>
+        <button class="btn ghost" onclick="localQuiz()">Brzi test iz gradiva</button>
+      </div>
+      <div id="qout"></div>
+    </div>`);
+}
+function localQuiz(){
+  let pool = QSEL.unit==="mix" ? UNITS.flatMap(u=>u.drills) : UNITS.find(u=>u.id==QSEL.unit).drills;
+  if(QSEL.type==="mc" || QSEL.type==="type") pool = pool.filter(q=>q.t===QSEL.type);
+  if(!pool.length){ $("#qout").innerHTML = `<div class="err">No questions of that type in this selection. Try Mješovito.</div>`; return; }
+  D = {unit:null, title:"Brzi test", q:shuffle(pool).slice(0,10), i:0, score:0};
+  paintDrill();
+}
+async function genQuiz(){
+  const out = $("#qout");
+  out.innerHTML = `<div style="margin-top:16px"><span class="spin"></span> Sastavljam pitanja…</div>`;
+  const scope = QSEL.unit==="mix"
+    ? UNITS.map(u=>`${u.id}. ${u.title}`).join("; ")
+    : (()=>{ const u=UNITS.find(x=>x.id==QSEL.unit); return `${u.title} — ${u.goal}. Vocabulary: ${u.vocab.map(v=>v[0]).join(", ")}`; })();
+  const focus = {mixed:"a mix of everything", mc:"multiple choice only", type:"translation-into-Croatian only",
+                 case:"noun case endings (genitiv, akuzativ, dativ, lokativ, instrumental)",
+                 verb:"verb conjugation in present, past and future"}[QSEL.type];
+  try{
+    const txt = await ask(STYLE_RULES + "You write quiz questions for a Croatian course. Explanations are in English; all Croatian must be standard Croatian.",
+      [{role:"user", content:`Material: ${scope}
+Learner level: CEFR ${S.level}. Focus: ${focus}.
+Write 8 questions. Use these two shapes only:
+{"t":"mc","q":"<question in English>","o":["a","b","c","d"],"a":<index of correct option>,"e":"<one sentence explanation in English>"}
+{"t":"type","q":"<instruction in English, e.g. Say: I'd like a coffee>","a":["<accepted answer>","<another accepted variant>"],"e":"<explanation>"}
+For "type", list every reasonable correct variant (with and without the pronoun, both word orders).
+Return ONLY a JSON array of 8 objects. No markdown, no commentary.`}], 1600);
+    const arr = parseJSON(txt).filter(q=>q && q.q && (q.t==="mc" ? Array.isArray(q.o) : Array.isArray(q.a)));
+    if(!arr.length) throw new Error("empty");
+    D = {unit:null, title:"Test", q:arr, i:0, score:0};
+    paintDrill();
+  }catch(e){ out.innerHTML = apiError(e); }
+}
+
+/* ============================================================
+   ČITANJE — generated readings
+   ============================================================ */
+let RD = null, GLOSSCACHE = {};
+function vRead(){
+  shell("čitanje · reading", "Pročitaj pa <i>odgovori</i>",
+    "A short text written at your level, then questions about it. Tap any word you don't know and it'll tell you — including what its dictionary form is, which matters a lot in a language where every noun has seven shapes.",
+    `<div class="card">
+      <div class="kicker">tema · topic</div>
+      <div class="chips" style="margin-bottom:14px">${READING_TOPICS.map(t=>
+        `<button class="chip" onclick="genRead(${JSON.stringify(t).replace(/"/g,'&quot;')})">${esc(t)}</button>`).join("")}</div>
+      <div class="chips">${LEVELS.map(l=>`<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevelR('${l.k}')">${l.k} · ${l.l}</button>`).join("")}
+        <button class="chip" onclick="genRead(READING_TOPICS[Math.floor(Math.random()*READING_TOPICS.length)])">Iznenadi me</button></div>
+    </div>
+    <div id="rout"></div>`);
+  if(RD) paintRead();
+}
+function setLevelR(k){ S.level=k; save(); vRead(); }
+
+async function genRead(topic){
+  const out = $("#rout");
+  out.innerHTML = `<div class="card" style="margin-top:14px"><span class="spin"></span> Pišem tekst o temi „${esc(topic)}"…</div>`;
+  try{
+    const txt = await ask(STYLE_RULES + "You write graded reading texts for a Croatian course.",
+      [{role:"user", content:`Topic: ${topic}. Level: CEFR ${S.level}.
+Write a short original text in standard Croatian: ${S.level==="A1"?"60-90":S.level==="A2"?"110-150":"170-220"} words. Natural, warm, specific, with real Croatian detail. Present tense dominant at A1.
+Then: a glossary of the 10-14 hardest words (give the DICTIONARY form plus the English), and 4 comprehension questions in Croatian with 4 options each.
+Return ONLY this JSON, no markdown:
+{"title":"<Croatian title>","text":"<the text>","translation":"<full English translation>","glossary":[["<dictionary form>","<English>"]],"questions":[{"q":"<question in Croatian>","o":["","","",""],"a":<index>,"e":"<short English explanation>"}]}`}], 2000);
+    RD = parseJSON(txt); RD.topic = topic; GLOSSCACHE = {};
+    (RD.glossary||[]).forEach(g=>{ GLOSSCACHE[norm(g[0])] = g[1]; });
+    paintRead(); addXP(8);
+  }catch(e){ out.innerHTML = apiError(e); }
+}
+
+function markup(t){
+  const re = /[A-Za-zČčĆćŠšŽžĐđ]{2,}/g;
+  let out = "", last = 0, m;
+  while((m = re.exec(t))){
+    out += esc(t.slice(last, m.index));
+    out += '<w onclick="gloss(event,&quot;'+esc(m[0])+'&quot;)">'+esc(m[0])+'</w>';
+    last = m.index + m[0].length;
+  }
+  return out + esc(t.slice(last));
+}
+function paintRead(){
+  const out = $("#rout"); if(!out || !RD) return;
+  const body = String(RD.text||"").split(/\n+/).map(p=>"<p>"+markup(p)+"</p>").join("");
+  out.innerHTML = `<div class="card" style="margin-top:14px">
+      <div class="kicker">${esc(RD.topic||"")} · ${S.level}</div>
+      <h2 style="font-size:27px;margin-bottom:12px">${esc(RD.title||"")} ${spk(RD.title||"")}</h2>
+      <div class="read">${body}</div>
+      <div class="chips" style="margin-top:18px">
+        <button class="btn ghost sm" onclick="speak(${JSON.stringify(RD.text||"").replace(/"/g,'&quot;')})">🔊 Poslušaj cijeli tekst</button>
+        <button class="btn ghost sm" onclick="$('#tr').classList.toggle('hidden')">Prijevod</button>
+        <button class="btn sm" onclick="readQuiz()">Odgovori na pitanja</button>
+      </div>
+      <div id="tr" class="note hidden" style="margin-top:14px">${esc(RD.translation||"")}</div>
+    </div>
+    ${(RD.glossary||[]).length?`<div class="kicker" style="margin-top:22px">rječnik iz teksta</div>
+      <div class="wordlist">${RD.glossary.map(g=>wordRow(g[0],g[1])).join("")}</div>`:""}`;
+}
+function readQuiz(){
+  if(!RD || !RD.questions) return;
+  D = {unit:null, title:RD.title||"Pitanja", q:RD.questions.map(q=>({t:"mc",q:q.q,o:q.o,a:q.a,e:q.e})), i:0, score:0};
+  paintDrill();
+}
+
+async function gloss(ev, word){
+  const g = $("#gloss");
+  const key = norm(word);
+  const put = txt=>{
+    g.innerHTML = `<b>${esc(word)}</b>${txt}`;
+    g.classList.remove("hidden");
+    const r = ev.target.getBoundingClientRect();
+    g.style.left = Math.min(window.innerWidth-260, Math.max(8, r.left)) + "px";
+    g.style.top  = (r.bottom + 8) + "px";
+    clearTimeout(g._t); g._t = setTimeout(()=>g.classList.add("hidden"), 4500);
+  };
+  let hit = GLOSSCACHE[key];
+  if(!hit){ const k = Object.keys(GLOSSCACHE).find(x => key.startsWith(x.slice(0, Math.max(3, x.length-2)))); if(k) hit = GLOSSCACHE[k]; }
+  if(hit) return put(esc(hit));
+  put(`<span class="spin"></span>`);
+  try{
+    const txt = await ask(STYLE_RULES + "You are a Croatian dictionary. Be terse.",
+      [{role:"user", content:`The word "${word}" appears in this Croatian text: "${String(RD&&RD.text||"").slice(0,400)}".
+Reply with ONLY this, one line, no JSON, no extra words:
+<dictionary form> — <English meaning> (<grammatical note, e.g. genitiv jednine, 1. lice prezenta>)`}], 200);
+    GLOSSCACHE[key] = txt;
+    put(esc(txt));
+  }catch(e){ put(" — nije dostupno"); }
+}
+document.addEventListener("scroll", ()=>{ const g=$("#gloss"); if(g) g.classList.add("hidden"); }, true);
+
+/* ============================================================
+   KARTICE — Leitner flashcards
+   ============================================================ */
+let FC = null;
+function vCards(){
+  const keys = Object.keys(S.cards||{});
+  if(!keys.length){
+    return shell("kartice · flashcards", "Tvoje <i>kartice</i>", "",
+      `<div class="card" style="text-align:center;padding:44px">
+        <p style="font-family:var(--display);font-size:22px">Još nema kartica.</p>
+        <p style="color:var(--stone-dim);font-size:14.5px;max-width:44ch;margin:0 auto 16px">Star any word in a lesson, a reading, or a generated sentence list and it lands here. Cards you get right move up a box and come back less often; ones you miss drop to box one.</p>
+        <button class="btn" onclick="go('lekcije')">Idi na lekcije</button>
+        <button class="btn ghost" onclick="seedCards()">Napuni s 40 osnovnih riječi</button>
+      </div>`);
+  }
+  const boxes = [1,2,3,4,5].map(b=>keys.filter(k=>(S.cards[k].box||1)===b).length);
+  shell("kartice · flashcards", "Tvoje <i>kartice</i>",
+    "Leitner boxes. Box one comes back every session, box five almost never. Getting a card wrong sends it straight back to box one — that's the point.",
+    `<div class="card">
+      <div class="kicker">raspored · distribution</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">${boxes.map((n,i)=>
+        `<div style="flex:1;min-width:70px;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px">
+          <div style="font-family:var(--mono);font-size:22px;color:${i===0?'var(--madder)':i===4?'var(--olive)':'var(--brass)'}">${n}</div>
+          <div style="font-size:11px;color:var(--stone-dim)">kutija ${i+1}</div></div>`).join("")}</div>
+      <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
+        <button class="btn" onclick="startCards('hr')">Vježbaj — hrvatski → engleski</button>
+        <button class="btn ghost" onclick="startCards('en')">Obrnuto — engleski → hrvatski</button>
+      </div>
+    </div>
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">sve kartice (${keys.length})</div>
+      <div class="wordlist">${keys.map(k=>{const p=k.split("|");return wordRow(p[0],p[1]);}).join("")}</div>
+    </div>`);
+}
+function seedCards(){
+  S.cards = S.cards||{};
+  UNITS.slice(0,4).forEach(u=>u.vocab.slice(0,10).forEach(v=>{ S.cards[cardKey(v[0],v[1])] = {box:1,seen:0}; }));
+  save(); vCards();
+}
+function startCards(dir){
+  const keys = shuffle(Object.keys(S.cards)).sort((a,b)=>(S.cards[a].box||1)-(S.cards[b].box||1)).slice(0,20);
+  FC = {q:keys, i:0, dir, right:0, flipped:false};
+  paintCard();
+}
+function paintCard(){
+  if(FC.i >= FC.q.length){
+    return shell("gotovo", "Kraj runde", "",
+      `<div class="card" style="text-align:center;padding:40px">
+        <div style="font-family:var(--mono);font-size:52px;color:var(--brass)">${FC.right}<span style="font-size:24px;color:var(--stone-dim)">/${FC.q.length}</span></div>
+        <div class="chips" style="justify-content:center;margin-top:16px">
+          <button class="btn" onclick="startCards('${FC.dir}')">Još jedna runda</button>
+          <button class="btn ghost" onclick="go('kartice')">Natrag</button></div></div>`);
+  }
+  const k = FC.q[FC.i], p = k.split("|");
+  const front = FC.dir==="hr" ? p[0] : p[1];
+  const back  = FC.dir==="hr" ? p[1] : p[0];
+  shell(`kartica ${FC.i+1} od ${FC.q.length} · kutija ${S.cards[k].box||1}`, "Kartice", "",
+    `<div class="progressline"><i style="width:${FC.i/FC.q.length*100}%"></i></div>
+    <div class="flash">
+      <div class="front">${esc(front)}</div>
+      ${FC.dir==="hr"?spk(p[0]):""}
+      <div class="back" id="bk">${FC.flipped?esc(back):'<span style="opacity:.4">· · ·</span>'}</div>
+    </div>
+    <div style="margin-top:16px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
+      ${FC.flipped
+        ? `<button class="btn ghost" onclick="gradeCard(false)">Ne znam</button><button class="btn" onclick="gradeCard(true)">Znam</button>`
+        : `<button class="btn brass" onclick="FC.flipped=true;paintCard()">Okreni</button>`}
+    </div>`);
+}
+function gradeCard(ok){
+  const k = FC.q[FC.i], c = S.cards[k];
+  c.seen = (c.seen||0)+1;
+  c.box = ok ? Math.min(5,(c.box||1)+1) : 1;
+  if(ok){ FC.right++; addXP(2); } else save();
+  FC.i++; FC.flipped = false; paintCard();
+}
+
+/* ============================================================
+   GRAMATIKA — reference
+   ============================================================ */
+function vGrammar(){
+  const tbl = rows => `<div class="tblwrap"><table><tr>${CASES.head.map(h=>`<th>${h}</th>`).join("")}</tr>
+    ${rows.map(r=>`<tr><td class="cs">${r[0]}</td><td class="hr">${r[1]}</td><td class="hr">${r[2]}</td><td class="hr">${r[3]}</td><td style="color:var(--stone-dim);font-size:13px">${r[4]||""}</td></tr>`).join("")}</table></div>`;
+  shell("gramatika · reference", "Sve na <i>jednom</i> mjestu",
+    "The tables you'll come back to. Croatian schools drill the cases in this exact order, so learning the sequence pays off every time you open a dictionary or a textbook.",
+    `<div class="card">
+      <div class="kicker">padeži — jednina · singular</div>${tbl(CASES.sg)}
+      <div class="kicker" style="margin-top:22px">padeži — množina · plural</div>${tbl(CASES.pl)}
+      <div class="note"><b>Shortcut:</b> dativ and lokativ are always identical. In the plural, dativ, lokativ and instrumental are all identical too. That means seven cases really only cost you five sets of endings.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">glagoli — prezent</div>
+      <div class="grid g2" style="margin-top:8px">${VERBTABLES.map(v=>
+        `<div><h3 style="font-size:17px;margin-bottom:6px">${esc(v.n)}</h3>
+          <table>${v.r.map(r=>`<tr><td class="cs">${r[0]}</td><td class="hr">${r[1]}</td></tr>`).join("")}</table>
+          <div style="font-size:12.5px;color:var(--stone-dim);margin-top:5px">niječno: ${esc(v.neg)}</div></div>`).join("")}</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">vremena · the three tenses, side by side</div>
+      <div class="tblwrap"><table>
+        <tr><th></th><th>raditi (m)</th><th>raditi (f)</th><th>niječno</th></tr>
+        <tr><td class="cs">prezent</td><td class="hr">radim</td><td class="hr">radim</td><td class="hr">ne radim</td></tr>
+        <tr><td class="cs">perfekt</td><td class="hr">radio sam</td><td class="hr">radila sam</td><td class="hr">nisam radio/radila</td></tr>
+        <tr><td class="cs">futur I</td><td class="hr">radit ću</td><td class="hr">radit ću</td><td class="hr">neću raditi</td></tr>
+        <tr><td class="cs">kondicional</td><td class="hr">radio bih</td><td class="hr">radila bih</td><td class="hr">ne bih radio/radila</td></tr>
+      </table></div>
+      <div class="note">Only the past and the conditional change with the speaker's gender. Present and future don't care who you are.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">abeceda · 30 letters, all phonetic</div>
+      <div class="wordlist">${ALPHABET.map(a=>`<div class="word">${spk(a[0].split(" ")[1]||a[0])}<span class="hr">${esc(a[0])}</span><span class="en">${esc(a[1])}</span></div>`).join("")}</div>
+      <div class="note">Croatian uses <b>Latin script only</b>. Dž, Lj and Nj are single letters, not pairs. There are no silent letters and no exceptions: spell it as you hear it, read it as it's written.</div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">hrvatski, a ne …  · what makes it Croatian</div>
+      <p style="font-size:14.5px;color:var(--stone-dim)">You'll meet the words on the right online, in subtitles, and in a lot of apps that lump these languages together. This course never uses them. Learn the left column.</p>
+      <div class="tblwrap"><table><tr><th>hrvatski ✓</th><th>izbjegavaj ✗</th><th>English</th></tr>
+        ${CROATIAN_ONLY.map(r=>`<tr><td class="hr" style="color:var(--olive)">${esc(r[0])}</td><td style="color:var(--madder);opacity:.8">${esc(r[1])}</td><td style="color:var(--stone-dim);font-size:13.5px">${esc(r[2])}</td></tr>`).join("")}
+      </table></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">red riječi · the second-position rule</div>
+      <p style="font-size:15px">The little unstressed words — <b>sam, si, je, smo, ste, su · ću, ćeš, će · bih, bi · me, te, ga, joj, mu, se · li</b> — cluster in <b>second position</b> in the clause, and they go in this order:</p>
+      <p style="font-family:var(--display);font-size:19px;color:var(--brass)">li → ću/bih → mi/ti/mu/joj → me/te/ga/je → se → je (biti)</p>
+      <p style="font-size:15px">Dao <b>mi ga je</b>. — He gave it to me.<br>Kako <b>ti se</b> sviđa? — How do you like it?<br>Jučer <b>sam ga</b> vidio. — I saw him yesterday.</p>
+      <div class="note">This is the single thing that most separates a learner's Croatian from a native's. You can be perfect on cases and still sound foreign if the clitics sit in the wrong place. Read them as one glued-together chunk that slots in after the first word.</div>
+    </div>`);
+}
+
+/* ============================================================
+   NAPREDAK — save codes
+   ============================================================ */
+function b64enc(str){
+  const bytes = new TextEncoder().encode(str);
+  let bin = ""; bytes.forEach(b => bin += String.fromCharCode(b));
+  return btoa(bin);
+}
+function b64dec(b64){
+  const bin = atob(b64.trim());
+  const bytes = new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
+  return new TextDecoder().decode(bytes);
+}
+const TAG = "PLETER1:";
+let INCL_CHATS = false;
+function exportObj(withChats){
+  const o = JSON.parse(JSON.stringify(S));
+  if(!withChats){ delete o.chats; delete o.chatId; }
+  o._v = VERSION;
+  return o;
+}
+function saveCode(){ return TAG + b64enc(JSON.stringify(exportObj(INCL_CHATS))); }
+
+function downloadSave(){
+  try{
+    const blob = new Blob([JSON.stringify(exportObj(true), null, 2)], {type:"application/json"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "pleter-save-" + new Date().toISOString().slice(0,10) + ".json";
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 1000);
+  }catch(e){
+    $("#rmsg").innerHTML = `<div class="err">Download blocked here. Use the save code instead, or open the site in a normal browser tab.</div>`;
+  }
+}
+
+function uploadSave(input){
+  const f = input.files && input.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = async () => {
+    const m = $("#rmsg");
+    try{
+      const obj = JSON.parse(r.result);
+      if(typeof obj !== "object" || obj === null) throw new Error("shape");
+      applyState(obj);
+      await save();
+      m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Učitano.</b> ${S.xp||0} bodova · ${Object.keys(S.cards||{}).length} kartica · ${Object.keys(S.chats||{}).length} razgovora.</div>`;
+      setTimeout(()=>go("napredak"), 1100);
+    }catch(e){ m.innerHTML = `<div class="err">That file isn't a Pleter backup.</div>`; }
+  };
+  r.readAsText(f);
+}
+
+function applyState(obj){
+  const base = {name:"", xp:0, streak:0, lastDay:null, done:{}, cards:{}, chats:{}, chatId:null,
+                level:"A1", scenario:"kafic", showEn:true};
+  const keepChats = obj.chats ? obj.chats : S.chats;      // a progress-only code shouldn't wipe your conversations
+  const keepId    = obj.chats ? obj.chatId : S.chatId;
+  S = Object.assign(base, obj, {chats: keepChats || {}, chatId: keepId || null});
+  delete S._v;
+}
+
+function vSave(){
+  const p = Store.persistent;
+  const code = saveCode();
+  const units = UNITS.filter(u=>S.done[u.id] && S.done[u.id].read).length;
+  const drilled = UNITS.filter(u=>S.done[u.id] && S.done[u.id].drill!=null).length;
+  shell("napredak · your save", "Gdje ti je <i>napredak</i>",
+    "There's no account and no server here — this is one file. Instead your progress lives in the app, and a save code lets you carry it anywhere: another browser, another laptop, or a downloaded copy of the file.",
+    `<div class="card">
+      <div class="kicker">stanje · status</div>
+      <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
+        <span style="font-family:var(--display);font-size:24px;font-weight:700;color:${p?'var(--olive)':'var(--madder)'}">${p?'Sprema se automatski':'Ne sprema se'}</span>
+        <span class="pill">${Store.mode === "local" ? "localStorage · ovaj preglednik" : Store.mode === "claude" ? "Claude · ova aplikacija" : "samo u memoriji"}</span>
+      </div>
+      <p style="font-size:14.5px;color:var(--stone-dim);margin-top:8px;margin-bottom:0">${
+        Store.mode === "local"
+        ? "Everything saves as you go — XP, streak, finished units, flashcard boxes — in this browser on this device. Clearing your browser data wipes it, and a different browser or phone starts fresh. That's what the save code below is for."
+        : Store.mode === "claude"
+        ? "Everything saves as you go, tied to this app inside Claude. Close the tab and come back and it'll be here."
+        : "Nothing persists in this environment. Copy your save code before you close the tab, or your progress goes with it."}</p>
+      <hr class="rule">
+      <div class="kicker">sažetak</div>
+      <div class="grid g3">
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${S.xp||0}</div><div style="font-size:12px;color:var(--stone-dim)">bodova</div></div>
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${units}/${UNITS.length}</div><div style="font-size:12px;color:var(--stone-dim)">lekcija pročitano</div></div>
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${drilled}/${UNITS.length}</div><div style="font-size:12px;color:var(--stone-dim)">vježbi riješeno</div></div>
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${Object.keys(S.cards||{}).length}</div><div style="font-size:12px;color:var(--stone-dim)">kartica</div></div>
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${S.streak||0}</div><div style="font-size:12px;color:var(--stone-dim)">dana zaredom</div></div>
+        <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${Object.keys(S.chats||{}).length}</div><div style="font-size:12px;color:var(--stone-dim)">razgovora</div></div>
+      </div>
+      <div style="margin-top:14px"><span class="pill">Pleter v${VERSION}</span></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">ime · what should I call you</div>
+      <div style="display:flex;gap:9px;flex-wrap:wrap">
+        <input class="answer" id="nm" style="flex:1;min-width:180px;font-size:17px" value="${esc(S.name||"")}" placeholder="npr. Yur" maxlength="24">
+        <button class="btn ghost" onclick="S.name=$('#nm').value.trim();save();vSave()">Spremi ime</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">kod za spremanje · your save code</div>
+      <p style="font-size:14.5px;color:var(--stone-dim)">Paste this into Pleter on any other device to land where you left off. Your API key is <b style="color:var(--stone)">not</b> in here, so the code is safe to email yourself.</p>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--stone-dim);margin-bottom:9px">
+        <input type="checkbox" ${INCL_CHATS?"checked":""} onchange="INCL_CHATS=this.checked;go('napredak')">
+        Uključi i razgovore <span style="opacity:.7">(${Object.keys(S.chats||{}).length} spremljeno — makes the code much longer)</span>
+      </label>
+      <textarea id="code" readonly rows="4" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone-dim);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical">${saveCode()}</textarea>
+      <div style="font-size:12px;color:var(--stone-dim);margin-top:6px">${code.length.toLocaleString()} znakova${code.length>20000?" — long enough that copying gets fragile. Use the file backup below instead.":""}</div>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn brass" id="cpy" onclick="copyCode()">Kopiraj kod</button>
+        <button class="btn ghost" onclick="downloadSave()">Preuzmi .json (sve, s razgovorima)</button>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">vrati napredak · restore</div>
+      <textarea id="restore" rows="4" placeholder="Zalijepi kod ovdje…" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical"></textarea>
+      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+        <button class="btn" onclick="restoreCode()">Vrati iz koda</button>
+        <label class="btn ghost" style="cursor:pointer">Učitaj .json<input type="file" accept=".json,application/json" style="display:none" onchange="uploadSave(this)"></label>
+      </div>
+      <div style="font-size:12px;color:var(--stone-dim);margin-top:8px">A progress-only code leaves your saved conversations alone — it won't delete them.</div>
+      <div id="rmsg"></div>
+    </div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="kicker">početak ispočetka · start over</div>
+      <p style="font-size:14.5px;color:var(--stone-dim)">Wipes XP, streak, finished units and every flashcard. Grab your save code first if you might want it back.</p>
+      <button class="btn ghost" id="wipe" onclick="wipe()">Obriši sav napredak</button>
+    </div>`);
+}
+
+async function copyCode(){
+  const b = $("#cpy"), t = $("#code");
+  try{ await navigator.clipboard.writeText(t.value); b.textContent = "Kopirano ✓"; }
+  catch(e){ t.focus(); t.select(); b.textContent = "Označeno — pritisni Ctrl/Cmd + C"; }
+  setTimeout(()=>{ if($("#cpy")) $("#cpy").textContent = "Kopiraj kod"; }, 2600);
+}
+
+async function restoreCode(){
+  const v = ($("#restore").value||"").trim();
+  const m = $("#rmsg");
+  if(!v){ m.innerHTML = `<div class="err">Paste a save code first.</div>`; return; }
+  if(v.indexOf(TAG) !== 0){ m.innerHTML = `<div class="err">That doesn't look like a Pleter code — it should start with ${TAG}</div>`; return; }
+  try{
+    const obj = JSON.parse(b64dec(v.slice(TAG.length)));
+    if(typeof obj !== "object" || obj === null) throw new Error("shape");
+    applyState(obj);
+    await save();
+    m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Vraćeno.</b> ${S.xp||0} bodova · ${Object.keys(S.cards||{}).length} kartica${obj.chats?" · "+Object.keys(S.chats||{}).length+" razgovora":""}.</div>`;
+    setTimeout(()=>go("napredak"), 1100);
+  }catch(e){ m.innerHTML = `<div class="err">Couldn't read that code. It may have been cut off when copying — make sure you got the whole thing, with no line breaks added.</div>`; }
+}
+
+let WIPEARM = false;
+async function wipe(){
+  const b = $("#wipe");
+  if(!WIPEARM){ WIPEARM = true; b.textContent = "Sigurno? Klikni opet."; b.style.borderColor = "var(--madder)"; b.style.color = "var(--madder)";
+    setTimeout(()=>{ WIPEARM = false; if($("#wipe")){ $("#wipe").textContent = "Obriši sav napredak"; $("#wipe").style.borderColor=""; $("#wipe").style.color=""; } }, 4000);
+    return; }
+  WIPEARM = false;
+  S = {name:"", xp:0, streak:0, lastDay:new Date().toISOString().slice(0,10), done:{}, cards:{}, level:"A1", scenario:"kafic", showEn:true};
+  await save(); go("napredak");
+}
+
+/* ============================================================
+   POSTAVKE — API key modal
+   ============================================================ */
+function paintGear(){
+  const d = $("#dot"), l = $("#gearlbl");
+  if(!d) return;
+  const ok = GKEY || PROXY_OK === true || (PROXY_OK === null) || Store.mode === "claude";
+  d.style.background = PROXY_OK === false && !GKEY && Store.mode !== "claude" ? "var(--madder)"
+                     : GKEY ? "var(--brass)" : "var(--olive)";
+  l.textContent = GKEY ? "Osobni ključ"
+                : PROXY_OK === false ? (Store.mode === "claude" ? "Preko Claudea" : "Bez AI-ja")
+                : "Postavke";
+}
+
+function openSettings(){
+  const box = $("#settings");
+  box.className = "scrim";
+  box.onclick = e => { if(e.target === box) closeSettings(); };
+  const mode = GKEY ? "key" : PROXY_OK === false ? "off" : "server";
+  box.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Postavke">
+    <div class="eyebrow">postavke · settings</div>
+    <h2>Veza s <i style="color:var(--brass)">AI-jem</i></h2>
+
+    <div style="display:flex;align-items:center;gap:9px;margin:14px 0 6px">
+      <span class="dot" style="width:9px;height:9px;background:${mode==="off"?"var(--madder)":mode==="key"?"var(--brass)":"var(--olive)"}"></span>
+      <span style="font-family:var(--display);font-size:20px;font-weight:700">${
+        mode === "server" ? "Preko poslužitelja" : mode === "key" ? "Osobni ključ" : "Nema veze"}</span>
+    </div>
+    <p style="color:var(--stone-dim);font-size:14px;margin:0">${
+      mode === "server"
+        ? "Requests go to this site's own function, which holds the key server-side. Nothing to set up and nothing to paste — it just works."
+        : mode === "key"
+        ? "You've set a personal key, so it's being used instead of the server. Clear it to go back to the shared server key."
+        : "The server function isn't reachable from here. That's expected if you opened the file directly from your computer rather than through the site."}</p>
+
+    <div style="margin-top:16px"><button class="btn" onclick="testConn()">Provjeri vezu</button></div>
+    <div id="kmsg" style="margin-top:12px"></div>
+
+    <hr class="rule">
+    <details ${GKEY?"open":""}>
+      <summary style="cursor:pointer;font-size:13.5px;color:var(--stone-dim)">Napredno — vlastiti Gemini ključ</summary>
+      <p style="font-size:13px;color:var(--stone-dim);margin-top:10px">Only needed if you're running the file locally with no server behind it. On the live site, leave this empty.</p>
+      <input class="field" id="k" type="password" autocomplete="off" spellcheck="false"
+             placeholder="${GKEY ? maskKey(GKEY) : "AIza…"}" value="">
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--stone-dim);margin-top:8px">
+        <input type="checkbox" onchange="$('#k').type = this.checked ? 'text' : 'password'"> Prikaži ključ
+      </label>
+      <div class="kicker" style="margin-top:14px">model</div>
+      <select class="field" id="m">${MODELS.map(m=>`<option value="${m}" ${m===GMODEL?"selected":""}>${m}</option>`).join("")}</select>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
+        <button class="btn ghost" onclick="saveKey()">Spremi ključ</button>
+        ${GKEY ? `<button class="btn ghost" onclick="clearKey()">Obriši ključ</button>` : ""}
+      </div>
+      <p style="font-size:12.5px;color:var(--stone-dim);margin-top:12px;margin-bottom:0">A personal key is stored in this browser only and is deliberately excluded from your save codes and backups. If a key of yours has ever been pasted somewhere public, delete it in AI Studio and make a new one.</p>
+    </details>
+
+    <div style="margin-top:18px"><button class="btn ghost" onclick="closeSettings()">Zatvori</button></div>
+  </div>`;
+  document.addEventListener("keydown", escClose);
+}
+
+async function testConn(){
+  const msg = $("#kmsg");
+  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Provjeravam…</div>`;
+  try{
+    const out = await ask("Odgovaraj isključivo na standardnom hrvatskom jeziku.",
+      [{role:"user", content:"Pozdravi me u jednoj kratkoj rečenici."}], 256);
+    const via = GKEY ? "osobni ključ" : PROXY_OK ? "poslužitelj" : "Claude";
+    msg.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Radi</b> — preko: ${via}.<br>„${esc(out.slice(0,140))}"</div>`;
+    paintGear();
+  }catch(e){ msg.innerHTML = apiError(e); }
+}
+
+function escClose(e){ if(e.key === "Escape") closeSettings(); }
+function closeSettings(){
+  const box = $("#settings");
+  box.className = "hidden"; box.innerHTML = "";
+  document.removeEventListener("keydown", escClose);
+}
+
+async function saveKey(){
+  const v = ($("#k").value || "").trim();
+  const m = $("#m").value;
+  GMODEL = m; await Store.set(MODEL_K, m);
+  if(v){ GKEY = v; await Store.set(KEY_K, v); }
+  paintGear();
+  $("#kmsg").innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Spremljeno.</b> ${GKEY ? "Ključ "+esc(maskKey(GKEY))+" · model "+esc(GMODEL) : "Model "+esc(GMODEL)+". Ključ nije unesen."}</div>`;
+}
+
+async function clearKey(){
+  GKEY = ""; PROXY_OK = null; await Store.del(KEY_K); paintGear();
+  $("#kmsg").innerHTML = `<div class="verdict no">Ključ obrisan s ovog uređaja.</div>`;
+  setTimeout(openSettings, 900);
+}
+
+async function testKey(){
+  const msg = $("#kmsg");
+  const k = ($("#k").value || "").trim() || GKEY;
+  const m = $("#m").value;
+  if(!k){ msg.innerHTML = `<div class="err">Paste a key first.</div>`; return; }
+  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Zovem Gemini…</div>`;
+  try{
+    const out = await askGemini("Odgovaraj isključivo na standardnom hrvatskom jeziku.",
+      [{role:"user", content:"Pozdravi me u jednoj kratkoj rečenici."}], 256, k, m);
+    msg.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Radi.</b> ${esc(m)} kaže: „${esc(out.slice(0,120))}"</div>`;
+  }catch(e){
+    msg.innerHTML = apiError(e);
+  }
+}
+
+/* ============================================================
+   INIT
+   ============================================================ */
+(async function(){
+  await loadKey();
+  await loadState();
+  paintNav();
+  paintStats();
+  paintGear();
+  go("home");
+})();
+</script>
+
+</body>
+</html>
