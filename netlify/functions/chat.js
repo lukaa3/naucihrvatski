@@ -42,6 +42,7 @@ function allowedOrigins(){
   if(process.env.ALLOWED_ORIGIN) list.push(...process.env.ALLOWED_ORIGIN.split(",").map(s => s.trim()));
   if(process.env.URL) list.push(process.env.URL);           // Netlify sets these
   if(process.env.DEPLOY_PRIME_URL) list.push(process.env.DEPLOY_PRIME_URL);
+  if(process.env.DEPLOY_URL) list.push(process.env.DEPLOY_URL);
   return list.filter(Boolean);
 }
 
@@ -70,7 +71,25 @@ exports.handler = async (event) => {
   const origin = h.origin || h.Origin || "";
 
   if(event.httpMethod === "OPTIONS") return json(204, {}, origin);
-  if(event.httpMethod !== "POST")    return json(405, { error: "Method not allowed" }, origin);
+
+  // Health check. Reports whether the function is deployed, whether a key is
+  // configured, and whether this origin passes — without exposing the key.
+  if(event.httpMethod === "GET"){
+    const q = event.queryStringParameters || {};
+    if(q.ping !== undefined){
+      return json(200, {
+        ok: true,
+        deployed: true,
+        keyConfigured: !!process.env.GEMINI_API_KEY,
+        originAllowed: originOk(h),
+        originsConfigured: allowedOrigins(),
+        model: DEFAULT_MODEL
+      }, origin);
+    }
+    return json(405, { error: "Method not allowed" }, origin);
+  }
+
+  if(event.httpMethod !== "POST") return json(405, { error: "Method not allowed" }, origin);
 
   if(!originOk(h)) return json(403, { error: "Forbidden" }, origin);
 
