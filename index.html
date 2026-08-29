@@ -313,7 +313,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "2.0";
+const VERSION = "2.2";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -1101,7 +1101,34 @@ async function askGemini(system, messages, maxTokens, key, model){
 }
 
 const PROXY = "/.netlify/functions/chat";
-let PROXY_OK = null;   // null = untested, true = live, false = not deployed here
+let PROXY_OK = null;   // null = untested, true = live, false = not usable
+let DIAG = null;       // what the health check actually found
+
+async function probe(){
+  // Informational only. The health check tells us what's wrong when it can,
+  // but an older function build has no ping endpoint — that's not a failure,
+  // so we never rule the proxy out on anything except 404 or no response.
+  try{
+    const r = await fetch(PROXY + "?ping=1");
+    if(r.status === 404){
+      DIAG = { deployed:false, key:false, origin:false, http:404 };
+      PROXY_OK = false; paintGear(); return;
+    }
+    let j = null;
+    try{ j = await r.json(); }catch(e){}
+    if(j && j.ok === true && typeof j.keyConfigured === "boolean"){
+      DIAG = { deployed:true, known:true, key:!!j.keyConfigured, origin:!!j.originAllowed,
+               origins:j.originsConfigured || [], http:r.status };
+    }else{
+      // function is alive but predates ?ping — status unknown, so let the real call decide
+      DIAG = { deployed:true, known:false, key:null, origin:null, http:r.status };
+    }
+  }catch(e){
+    DIAG = { deployed:false, key:false, origin:false, http:0 };
+    PROXY_OK = false;
+  }
+  paintGear();
+}
 
 async function askProxy(system, messages, maxTokens){
   let res;
@@ -1553,8 +1580,9 @@ async function sendMsg(){
     CH.hist.push({who:"bot", hr:j.reply, tr:j.translation, fix:j.correction||null, sugg:j.suggestions||[]});
     touchChat(); addXP(3);
   }catch(e){
-    CH.hist.push({who:"bot", hr:"Oprosti, nešto nije u redu.", tr:"Sorry, something went wrong.", sugg:[]});
+    CH.hist.push({who:"bot", hr:"Oprosti, nešto nije u redu.", tr:"Sorry — the connection failed. Details below.", sugg:[]});
     if($("#cherr")) $("#cherr").innerHTML = apiError(e);
+    console.error("Pleter AI call failed:", e);
   }
   const ty = $("#typing"); if(ty) ty.remove();
   CH.busy = false; if($("#send")) $("#send").disabled = false;
@@ -2019,37 +2047,63 @@ async function wipe(){
 /* ============================================================
    POSTAVKE — API key modal
    ============================================================ */
+function connState(){
+  if(GKEY) return { k:"key",     c:"var(--brass)", t:"Osobni ključ" };
+  if(DIAG === null) return { k:"probing", c:"var(--stone-dim)", t:"Provjeravam…" };
+  if(!DIAG.deployed) return Store.mode === "claude"
+      ? { k:"claude", c:"var(--brass)", t:"Preko Claudea" }
+      : { k:"nofunc", c:"var(--madder)", t:"Funkcija nije nađena" };
+  if(DIAG.known === false) return { k:"unknown", c:"var(--brass)", t:"Funkcija radi" };
+  if(!DIAG.key)    return { k:"nokey",  c:"var(--madder)", t:"Ključ nije postavljen" };
+  if(!DIAG.origin) return { k:"origin", c:"var(--madder)", t:"Origin blokiran" };
+  return { k:"server", c:"var(--olive)", t:"Poslužitelj spreman" };
+}
 function paintGear(){
   const d = $("#dot"), l = $("#gearlbl");
   if(!d) return;
-  const ok = GKEY || PROXY_OK === true || (PROXY_OK === null) || Store.mode === "claude";
-  d.style.background = PROXY_OK === false && !GKEY && Store.mode !== "claude" ? "var(--madder)"
-                     : GKEY ? "var(--brass)" : "var(--olive)";
-  l.textContent = GKEY ? "Osobni ključ"
-                : PROXY_OK === false ? (Store.mode === "claude" ? "Preko Claudea" : "Bez AI-ja")
-                : "Postavke";
+  const s = connState();
+  d.style.background = s.c;
+  l.textContent = s.t;
 }
 
 function openSettings(){
   const box = $("#settings");
   box.className = "scrim";
   box.onclick = e => { if(e.target === box) closeSettings(); };
-  const mode = GKEY ? "key" : PROXY_OK === false ? "off" : "server";
+  const st = connState();
+  const row = (ok, label, detail) =>
+    `<div style="display:flex;gap:9px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--line)">
+       <span style="color:${ok?"var(--olive)":"var(--madder)"};font-size:15px;line-height:1.4">${ok?"✓":"✗"}</span>
+       <div style="flex:1"><div style="font-size:14.5px">${label}</div>
+       ${detail?`<div style="font-size:12.5px;color:var(--stone-dim)">${detail}</div>`:""}</div></div>`;
+  const diag = GKEY ? "" : `
+    <div class="kicker" style="margin-top:18px">dijagnostika</div>
+    ${DIAG === null
+      ? `<div style="font-size:14px"><span class="spin"></span> Provjeravam poslužitelj…</div>`
+      : row(DIAG.deployed, "Funkcija je objavljena",
+             DIAG.deployed ? "/.netlify/functions/chat odgovara ("+DIAG.http+")" : "404 — netlify/functions/chat.js didn't deploy") +
+        (DIAG.known === false
+          ? `<div style="font-size:13px;color:var(--stone-dim);padding:8px 0">This function build has no health check, so the key and origin can't be read from here. It's an older <code>chat.js</code> — everything may still work. Press <b>Provjeri vezu</b> to find out for real.</div>`
+          : row(DIAG.key, "GEMINI_API_KEY je postavljen",
+                 DIAG.key ? "" : "Set it in Netlify, then redeploy — env vars only apply to new deploys") +
+            row(DIAG.origin, "Origin je dopušten",
+                 DIAG.origin ? "" : "This URL isn't in the allow list" + (DIAG.origins && DIAG.origins.length ? " — configured: " + DIAG.origins.map(esc).join(", ") : "")))}
+    <div style="margin-top:10px"><button class="btn ghost sm" onclick="DIAG=null;openSettings();probe().then(openSettings)">Provjeri ponovno</button></div>`;
   box.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Postavke">
     <div class="eyebrow">postavke · settings</div>
     <h2>Veza s <i style="color:var(--brass)">AI-jem</i></h2>
 
     <div style="display:flex;align-items:center;gap:9px;margin:14px 0 6px">
-      <span class="dot" style="width:9px;height:9px;background:${mode==="off"?"var(--madder)":mode==="key"?"var(--brass)":"var(--olive)"}"></span>
-      <span style="font-family:var(--display);font-size:20px;font-weight:700">${
-        mode === "server" ? "Preko poslužitelja" : mode === "key" ? "Osobni ključ" : "Nema veze"}</span>
+      <span class="dot" style="width:9px;height:9px;background:${st.c}"></span>
+      <span style="font-family:var(--display);font-size:20px;font-weight:700">${esc(st.t)}</span>
     </div>
     <p style="color:var(--stone-dim);font-size:14px;margin:0">${
-      mode === "server"
-        ? "Requests go to this site's own function, which holds the key server-side. Nothing to set up and nothing to paste — it just works."
-        : mode === "key"
-        ? "You've set a personal key, so it's being used instead of the server. Clear it to go back to the shared server key."
-        : "The server function isn't reachable from here. That's expected if you opened the file directly from your computer rather than through the site."}</p>
+      st.k === "server" ? "Requests go to this site's own function, which holds the key server-side. Nothing to paste."
+      : st.k === "key"  ? "A personal key is set in this browser, so it's used instead of the server. Clear it below to test the server path."
+      : st.k === "claude" ? "Running inside Claude, so the tutor works through Claude and no key is needed."
+      : st.k === "probing" ? "Checking the server…"
+      : "The server path isn't usable yet. The checks below say why."}</p>
+    ${diag}
 
     <div style="margin-top:16px"><button class="btn" onclick="testConn()">Provjeri vezu</button></div>
     <div id="kmsg" style="margin-top:12px"></div>
@@ -2131,6 +2185,7 @@ async function testKey(){
    ============================================================ */
 (async function(){
   await loadKey();
+  if(!GKEY) probe();          // non-blocking; paints the indicator when it lands
   await loadState();
   paintNav();
   paintStats();
