@@ -234,6 +234,14 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
 .hidden{display:none !important}
 hr.rule{border:0;border-top:1px solid var(--line);margin:22px 0}
 
+/* ---------- Netlify Identity widget must sit above the whole app ---------- */
+#netlify-identity-widget{z-index:9999 !important}
+#netlify-identity-widget iframe{z-index:9999 !important}
+
+/* ---------- invite banner ---------- */
+.invite{position:fixed;left:0;right:0;bottom:0;z-index:200;background:var(--deep-3);border-top:1px solid var(--brass);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.invite p{margin:0;flex:1;min-width:200px;font-size:14px}
+
 /* ---------- chat list ---------- */
 .chatlist{display:grid;gap:6px;max-height:260px;overflow-y:auto}
 .chatrow{display:flex;align-items:center;gap:8px;background:var(--deep);border:1px solid var(--line);border-radius:11px;padding:9px 12px;cursor:pointer;transition:.13s}
@@ -315,7 +323,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "3.1";
+const VERSION = "3.2";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -1922,15 +1930,56 @@ const CLOUD = {
       return;
     }
     this.available = true;
+
+    // Invite / recovery links arrive as  #invite_token=...  in the URL.
+    // The widget is meant to pick these up on its own; when it doesn't, the
+    // page just sits there. So detect it ourselves and open the dialog.
+    const hash = window.location.hash || "";
+    this.token_kind = (hash.match(/(invite_token|recovery_token|confirmation_token)=/) || [])[1] || "";
+
     try{
       netlifyIdentity.on("init", u => { this.user = u; this.email = u ? u.email : ""; this.ready = true;
-        paintCloud(); if(u) this.sync(); });
+        paintCloud();
+        if(u){ this.clearHash(); this.sync(); }
+        else if(this.token_kind){ this.showInvite(); setTimeout(()=>this.openToken(), 400); }
+      });
+      netlifyIdentity.on("error", err => {
+        this.lastErr = "IDENTITY: " + ((err && err.message) || "unknown");
+        paintCloud(); if(CUR === "napredak") vSave();
+      });
       netlifyIdentity.on("login", u => { this.user = u; this.email = u.email; netlifyIdentity.close();
-        paintCloud(); this.sync(); });
+        this.clearHash(); paintCloud(); this.sync();
+        if(CUR === "napredak") vSave(); });
       netlifyIdentity.on("logout", () => { this.user = null; this.email = ""; paintCloud();
         if(CUR === "napredak") vSave(); });
       netlifyIdentity.init();
     }catch(e){ this.ready = true; this.available = false; }
+  },
+
+  clearHash(){
+    this.token_kind = "";
+    const b = $("#invitebar"); if(b) b.remove();
+    try{ history.replaceState(null, "", window.location.pathname + window.location.search); }catch(e){}
+  },
+
+  openToken(){
+    try{
+      netlifyIdentity.open(this.token_kind === "recovery_token" ? "login" : "signup");
+    }catch(e){
+      this.lastErr = "OPEN_FAILED: " + (e && e.message ? e.message : "widget refused to open");
+      paintCloud();
+    }
+  },
+
+  showInvite(){
+    if($("#invitebar")) return;
+    const kind = this.token_kind === "recovery_token" ? "reset your password" : "finish setting up your account";
+    const el = document.createElement("div");
+    el.id = "invitebar"; el.className = "invite";
+    el.innerHTML = `<p><b>Pozivnica primljena.</b> Click below to ${kind}. If nothing opens, your browser may be blocking the popup.</p>
+      <button class="btn sm" onclick="CLOUD.openToken()">Postavi lozinku</button>
+      <button class="btn ghost sm" onclick="CLOUD.clearHash()">Odbaci</button>`;
+    document.body.appendChild(el);
   },
 
   open(tab){
@@ -2015,6 +2064,7 @@ function cloudErrText(m){
   if(m === "TOO_LARGE")          return "Your save is over 900 KB. Delete some old conversations.";
   if(m === "EMPTY")              return "Nothing saved in the cloud yet.";
   if(m === "WIDGET")             return "The Netlify Identity widget didn't load. Usually this means Identity isn't enabled on the site yet: Netlify → your site → Identity → Enable. A browser extension blocking scripts can also cause it.";
+  if(m.indexOf("IDENTITY") === 0) return "Netlify Identity reported: " + m.replace("IDENTITY: ","") + ". If this mentions an expired or used token, ask for a fresh invite — invite links only work once.";
   if(m.indexOf("OPEN_FAILED") === 0) return "The login window wouldn't open. Enable Identity in Netlify, then hard-refresh (Ctrl/Cmd + Shift + R).";
   return m;
 }
