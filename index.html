@@ -317,7 +317,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "4.1";
+const VERSION = "4.2";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -1135,9 +1135,9 @@ async function askGemini(system, messages, maxTokens, key, model){
   const txt = (((c || {}).content || {}).parts || []).map(p => p.text || "").join("");
   if(!txt.trim()){
     const fr = c && c.finishReason;
-    throw new Error(fr === "MAX_TOKENS" ? "Odgovor je predugačak — pokušaj ponovno."
-                  : fr === "SAFETY"     ? "Gemini je blokirao odgovor."
-                  : "Prazan odgovor od Geminija.");
+    throw new Error(fr === "MAX_TOKENS" ? "The reply got cut off. Try again."
+                  : fr === "SAFETY"     ? "Gemini blocked the reply."
+                  : "Empty reply from Gemini.");
   }
   return txt.trim();
 }
@@ -1197,7 +1197,7 @@ async function askProxy(system, messages, maxTokens){
     if(res.status === 405) throw new Error("OLDFN");
     throw new Error("HTTP " + res.status + " — " + (data.error || "no detail"));
   }
-  if(!data || !data.text) throw new Error("Prazan odgovor.");
+  if(!data || !data.text) throw new Error("Empty reply.");
   PROXY_OK = true;
   return data.text.trim();
 }
@@ -1224,25 +1224,25 @@ function parseJSON(txt){
 }
 function apiError(e){
   const m = String((e && e.message) || "");
-  if(/^KEY_INVALID/.test(m))  return `<div class="err"><b>Ključ nije valjan.</b> Google rejected the key itself. In Netlify, re-paste <code>GEMINI_API_KEY</code> — watch for a trailing space or a key you've since deleted in AI Studio — then <b>Trigger deploy</b>.</div>`;
-  if(/^KEY_EXPIRED/.test(m))  return `<div class="err"><b>Ključ je istekao.</b> Make a fresh one in Google AI Studio, update the Netlify variable, and redeploy.</div>`;
-  if(/^API_DISABLED/.test(m)) return `<div class="err"><b>API nije uključen.</b> The Generative Language API isn't enabled for this key's project. Enable it in Google Cloud, wait a minute, then try again.</div>`;
-  if(/^PERMISSION/.test(m))   return `<div class="err"><b>Ključ nema dopuštenje.</b> The key exists but is restricted from calling this API. Check its API restrictions in Google Cloud.</div>`;
-  if(/^BILLING/.test(m))      return `<div class="err"><b>Naplata nije uključena.</b> This Google project needs billing enabled.</div>`;
-  if(/^QUOTA/.test(m))        return `<div class="err"><b>Kvota je potrošena.</b> The key's quota is used up. Wait, or check your limits in AI Studio.</div>`;
-  if(/^MODEL/.test(m))        return `<div class="err"><b>Model nije dostupan.</b> This key can't reach <code>${esc(GMODEL)}</code>.</div>`;
-  if(/^UPSTREAM_/.test(m))    return `<div class="err"><b>Gemini je odbio zahtjev.</b> The full reason is in Netlify → Logs → Functions → chat.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim)">${esc(m)}</div></div>`;
-  if(m === "ORIGIN") return `<div class="err"><b>Origin blokiran (403).</b> The function is running but rejected this site's address. In Netlify, either delete the <code>ALLOWED_ORIGIN</code> variable, or set it to exactly the URL in your address bar — including <code>https://</code> and no trailing slash. Redeploy after changing it.</div>`;
-  if(m === "OLDFN") return `<div class="err"><b>Stara verzija funkcije (405).</b> The deployed <code>chat.js</code> is an older build that rejects this request shape. Replace <code>netlify/functions/chat.js</code> on GitHub with the latest one and commit.</div>`;
-  if(m.indexOf("NOPROXY") === 0) return `<div class="err"><b>Funkcija nije pronađena (404).</b> Netlify has no function at <code>/.netlify/functions/chat</code>. Check the file is at exactly that path in your repo and that the deploy finished.</div>`;
-  if(m.indexOf("BADRESP") === 0) return `<div class="err"><b>Neočekivan odgovor.</b> The server replied with something that isn't JSON — usually Netlify's own error page.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m)}</div></div>`;
-  if(m === "NOKEY") return `<div class="err"><b>Poslužitelj nije spreman.</b> The site is deployed but <code>GEMINI_API_KEY</code> isn't set. In Netlify: <b>Site configuration → Environment variables → Add a variable</b>, then redeploy — env vars only take effect on a new deploy.</div>`;
-  if(m === "RATE" || /limit|Prebrzo|preopterećen|sutra/i.test(m)) return `<div class="err"><b>Uspori malo.</b> ${esc(m === "RATE" ? "Rate limit reached. Wait a minute." : m)}</div>`;
+  if(/^KEY_INVALID/.test(m))  return `<div class="err"><b>API key is not valid.</b> Google rejected the key itself. In Netlify, re-paste <code>GEMINI_API_KEY</code> — watch for a trailing space or a key you've since deleted in AI Studio — then <b>Trigger deploy</b>.</div>`;
+  if(/^KEY_EXPIRED/.test(m))  return `<div class="err"><b>API key has expired.</b> Make a fresh one in Google AI Studio, update the Netlify variable, and redeploy.</div>`;
+  if(/^API_DISABLED/.test(m)) return `<div class="err"><b>API is not enabled.</b> The Generative Language API isn't enabled for this key's project. Enable it in Google Cloud, wait a minute, then try again.</div>`;
+  if(/^PERMISSION/.test(m))   return `<div class="err"><b>Key lacks permission.</b> The key exists but is restricted from calling this API. Check its API restrictions in Google Cloud.</div>`;
+  if(/^BILLING/.test(m))      return `<div class="err"><b>Billing is not enabled.</b> This Google project needs billing enabled.</div>`;
+  if(/^QUOTA/.test(m))        return `<div class="err"><b>Quota used up.</b> The key's quota is used up. Wait, or check your limits in AI Studio.</div>`;
+  if(/^MODEL/.test(m))        return `<div class="err"><b>Model unavailable.</b> This key can't reach <code>${esc(GMODEL)}</code>.</div>`;
+  if(/^UPSTREAM_/.test(m))    return `<div class="err"><b>Gemini refused the request.</b> The full reason is in Netlify → Logs → Functions → chat.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim)">${esc(m)}</div></div>`;
+  if(m === "ORIGIN") return `<div class="err"><b>Origin blocked (403).</b> The function is running but rejected this site's address. In Netlify, either delete the <code>ALLOWED_ORIGIN</code> variable, or set it to exactly the URL in your address bar — including <code>https://</code> and no trailing slash. Redeploy after changing it.</div>`;
+  if(m === "OLDFN") return `<div class="err"><b>Old version of the function (405).</b> The deployed <code>chat.js</code> is an older build that rejects this request shape. Replace <code>netlify/functions/chat.js</code> on GitHub with the latest one and commit.</div>`;
+  if(m.indexOf("NOPROXY") === 0) return `<div class="err"><b>Function not found (404).</b> Netlify has no function at <code>/.netlify/functions/chat</code>. Check the file is at exactly that path in your repo and that the deploy finished.</div>`;
+  if(m.indexOf("BADRESP") === 0) return `<div class="err"><b>Unexpected response.</b> The server replied with something that isn't JSON — usually Netlify's own error page.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m)}</div></div>`;
+  if(m === "NOKEY") return `<div class="err"><b>Server is not ready.</b> The site is deployed but <code>GEMINI_API_KEY</code> isn't set. In Netlify: <b>Site configuration → Environment variables → Add a variable</b>, then redeploy — env vars only take effect on a new deploy.</div>`;
+  if(/^QUOTA/.test(m) || m === "RATE" || /quota|rate limit|Too fast|Daily limit/i.test(m)) return `<div class="err"><b>Out of AI quota for now.</b> ${esc(m.replace(/^QUOTA:\s*/,""))}<br><br>Nothing is broken — Google's free tier has a daily cap and it's been reached. Lessons, grammar, drills and flashcards all still work. Check usage at <b>aistudio.google.com</b>.</div>`;
   if(m === "BADKEY")  return `<div class="err"><b>Ključ ne radi.</b> Google rejected that API key. Open <b>Postavke</b>, check you pasted the whole thing, and make sure the Generative Language API is enabled for the key.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
   if(m === "NOMODEL") return `<div class="err"><b>Model nije pronađen.</b> Your key doesn't have access to <b>${esc(GMODEL)}</b>. Pick a different one in <b>Postavke</b>.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Promijeni model</button></div></div>`;
   if(m === "RATE")    return `<div class="err"><b>Previše zahtjeva.</b> You've hit Gemini's rate limit. Wait a minute and try again — the free tier is generous but not unlimited.</div>`;
-  if(!GKEY) return `<div class="err"><b>Nema veze s AI-jem.</b> Lessons, grammar, drills and flashcards all work without it.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m) || "no error message"}</div><div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
-  return `<div class="err"><b>Nije uspjelo.</b> ${esc(m) || "Unknown error."} Try again, or check your key in <b>Postavke</b>.</div>`;
+  if(!GKEY) return `<div class="err"><b>AI is not connected.</b> Lessons, grammar, drills and flashcards all work without it.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m) || "no error message"}</div><div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
+  return `<div class="err"><b>That did not work.</b> ${esc(m) || "Unknown error."} Try again, or check your key in <b>Postavke</b>.</div>`;
 }
 
 /* ============================================================
