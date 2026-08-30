@@ -122,7 +122,10 @@ input,textarea,select{font-family:inherit;font-size:inherit}
 .chip{
   background:transparent;border:1px solid var(--line-2);color:var(--stone-dim);
   padding:5px 12px;border-radius:999px;font-size:13.5px;transition:.15s;
+  line-height:1.25;text-align:center;
 }
+.c2{display:block;font-size:10px;opacity:.62;font-style:italic;letter-spacing:.01em;margin-top:1px}
+.btn .c2{opacity:.75;font-size:10px}
 .chip:hover{color:var(--stone);border-color:var(--stone-dim)}
 .chip[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#05132B;font-weight:600}
 
@@ -314,7 +317,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "4.0";
+const VERSION = "4.1";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -326,6 +329,8 @@ const UNITS = [
      b:"Croatian splits <em>you</em> in two. <b>ti</b> is one person you know (friends, classmates, family, anyone your age). <b>vi</b> is a stranger, an older person, a teacher, a waiter, anyone in a shop. Using <b>ti</b> with a stranger sounds rude; using <b>vi</b> with a friend sounds cold. When in doubt with an adult you don't know: <b>vi</b>.<br><br>Same question, two forms:<br>Kako <b>si</b>? — How are you? (ti)<br>Kako <b>ste</b>? — How are you? (vi)"},
     {h:"Bok does double duty",
      b:"<b>Bok</b> is <em>both</em> hi and bye, informal. <b>Dobar dan</b> is the safe neutral greeting for any situation from about 10am to evening. <b>Doviđenja</b> is the polite goodbye."},
+    {h:"Learn the spoken word, not the dictionary word",
+     b:"Croatian has a formal written standard and a relaxed spoken reality, and textbooks love the formal one. A few places where they differ, with what you should actually say first:<br><br><b>avion</b>, not <em>zrakoplov</em> (plane)<br><b>aerodrom</b>, not <em>zračna luka</em> (airport)<br><b>dućan</b> is what people say for a shop; <em>trgovina</em> is the sign above the door<br><b>pješke</b>, not <em>pješice</em> (on foot)<br><b>kompjuter</b> is far more common in speech than <em>računalo</em><br><b>frižider</b> beats <em>hladnjak</em>, <b>lift</b> beats <em>dizalo</em><br><br>These are still Croatian, not Serbian — that's a separate question, and this course keeps the Croatian side of that line throughout. This is about formal versus everyday, and everyday is what gets you understood in a café.<br><br>Where the standard word <em>is</em> the normal word, this course uses it: <b>kruh</b>, <b>kava</b>, <b>tjedan</b>, <b>vlak</b>, <b>glazba</b>, <b>kazalište</b>, <b>nogomet</b> and <b>tisuća</b> are all completely ordinary speech."},
     {h:"The letters that trip people up",
      b:"<b>c</b> = ts (as in ca<em>ts</em>) — <em>cesta</em> is TSES-ta, never <em>kesta</em>.<br><b>j</b> = y (as in <em>y</em>es) — <em>ja</em> is YAH.<br><b>č</b> = ch, hard (<em>ch</em>urch). <b>ć</b> = ch, soft and lighter.<br><b>š</b> = sh. <b>ž</b> = the s in mea<em>s</em>ure. <b>đ</b> = the j in <em>j</em>eep.<br><b>r</b> is rolled, and can be a whole syllable on its own: <em>prst</em> (finger), <em>vrt</em> (garden), <em>Hrvatska</em>.<br><br>Good news: Croatian spelling is fully phonetic. Every letter is pronounced, always the same way. No silent letters, ever."}
   ],
@@ -579,9 +584,9 @@ const UNITS = [
   vocab:[
     ["bez","without (+G)"],["iz","from / out of (+G)"],["od","from (+G)"],
     ["do","to / until (+G)"],["kod","at (someone's) (+G)"],["blizu","near (+G)"],
-    ["poslije","after (+G)"],["prije","before (+G)"],["oko","around (+G)"],
+    ["poslije / nakon","after (+G)"],["prije","before (+G)"],["oko","around (+G)"],
     ["puno / mnogo","a lot of (+G)"],["malo","a little (+G)"],
-    ["šećer","sugar"],["sol","salt"],["novac","money"],["ljudi","people"],
+    ["šećer","sugar"],["sol","salt"],["novac","money (lova is the slang everyone uses)"],["ljudi","people"],
     ["čaša","glass"],["boca","bottle"],["šalica","cup"],["nema","there isn't (+G)"]
   ],
   phrases:[
@@ -618,10 +623,10 @@ const UNITS = [
   ],
   vocab:[
     ["škola","school"],["posao","work / job"],["fakultet","university faculty"],
-    ["trgovina","shop"],["tržnica","market"],["kino","cinema"],
+    ["dućan / trgovina","shop — dućan is the everyday word"],["tržnica","market"],["kino","cinema"],
     ["kazalište","theatre"],["restoran","restaurant"],["kafić","café"],
     ["plaža","beach"],["ulica","street"],["trg","square"],
-    ["kolodvor","station"],["zračna luka","airport"],["bolnica","hospital"],
+    ["kolodvor","station"],["aerodrom","airport — zračna luka is the sign at the airport"],["bolnica","hospital"],
     ["banka","bank"],["park","park"],["knjižnica","library"],["muzej","museum"]
   ],
   phrases:[
@@ -741,7 +746,7 @@ const UNITS = [
     ["pokazati","to show (pokažem)"],["pomagati","to help (pomažem)"],
     ["sviđati se","to be pleasing / to like"],["s / sa","with (+I)"],
     ["autobus","bus"],["vlak","train"],["auto","car"],["bicikl","bicycle"],
-    ["zrakoplov","aeroplane"],["brod","boat / ship"],["pješice","on foot"],
+    ["avion","plane — this is what people say; zrakoplov is official-only"],["brod","boat / ship"],["pješke","on foot (pješice is the bookish form)"],
     ["obitelj","family (f)"],["majka","mother"],["otac","father"],
     ["brat","brother"],["sestra","sister"],["djed","grandfather"],["baka","grandmother"]
   ],
@@ -773,17 +778,22 @@ const UNITS = [
      b:"When you're stuck mid-sentence, these keep the conversation alive instead of killing it:<br><b>Kako da kažem…</b> — How do I put it…<br><b>Samo malo.</b> — Just a moment.<br><b>Ne znam kako se kaže na hrvatskom.</b> — I don't know how to say it in Croatian.<br><b>Možete li govoriti sporije?</b> — Could you speak more slowly?<br><b>Što znači to?</b> — What does that mean?<br><br>Fluency is much more about recovering smoothly than about never making mistakes."},
     {h:"Comparatives",
      b:"Add <b>-iji</b> (or -ji) and use <b>od</b> + genitive, or <b>nego</b>:<br>Zagreb je <b>veći od</b> Splita. — Zagreb is bigger than Split.<br>Ovo je <b>bolje nego</b> ono. — This is better than that.<br><br>Irregulars you'll actually use: dobar → <b>bolji</b> · loš → <b>gori</b> · velik → <b>veći</b> · malen → <b>manji</b> · dug → <b>duži</b><br>Superlative: put <b>naj-</b> in front — <b>najbolji</b>, <b>najveći</b>, <b>najljepši</b>."},
+    {h:"The words you'll hear constantly",
+     b:"None of these appear in a grammar table, and all of them appear in every real conversation:<br><br><b>Može?</b> — OK? / Works for you? · <b>Može!</b> — Sure, fine<br><b>Ajde</b> — come on, let's go, alright<br><b>Dobro</b> — OK (agreeing to anything)<br><b>Kako ide?</b> — How's it going? (more common than <em>Kako si?</em> among friends)<br><b>Nema veze</b> — never mind, doesn't matter<br><b>Nema frke</b> — no worries<br><b>Fakat?</b> — Really?<br><b>Super / Odlično</b> — great<br><b>Vidimo se</b> — see you<br><b>Hvala ti / Hvala vam</b> — thanks (informal / formal)<br><br>Learn <b>Može</b>, <b>Ajde</b> and <b>Nema veze</b> tonight. They cover an enormous amount of everyday ground for three short words."},
     {h:"Sounding natural",
      b:"<b>pa</b> — so, well (filler at the start of a reply)<br><b>baš</b> — really, just (intensifier): <em>Baš je lijepo!</em><br><b>ma</b> — oh come on, nah: <em>Ma ne!</em><br><b>evo</b> / <b>eto</b> — here / there you go<br><b>zapravo</b> — actually<br><b>naravno</b> — of course<br><br>Sprinkling two or three of these into your speech does more for how natural you sound than another fifty vocabulary words."}
   ],
   vocab:[
-    ["misliti","to think"],["slagati se","to agree"],["zanimljivo","interesting"],
+    ["misliti","to think (mislim)"],["slagati se","to agree"],["zanimljivo","interesting"],
     ["dosadno","boring"],["teško","difficult"],["lako","easy"],
     ["naravno","of course"],["zapravo","actually"],["stvarno","really"],
     ["baš","really / just"],["pa","so / well"],["evo","here you go"],
     ["problem","problem"],["ideja","idea"],["pitanje","question"],
     ["odgovor","answer"],["primjer","example"],["razlika","difference"],
-    ["osjećati se","to feel"],["nadati se","to hope"]
+    ["osjećati se","to feel"],["nadati se","to hope"],
+    ["može","OK / sure"],["ajde","come on / let's go"],
+    ["nema veze","never mind"],["nema frke","no worries"],
+    ["fakat","really? (colloquial)"],["super","great"]
   ],
   phrases:[
     ["Mislim da je to dobra ideja.","I think that's a good idea."],
@@ -794,7 +804,10 @@ const UNITS = [
     ["Kako da kažem… nisam siguran.","How do I put it… I'm not sure. (m)"],
     ["Zagreb je veći od Splita.","Zagreb is bigger than Split."],
     ["Ovo je najbolja kava u gradu.","This is the best coffee in town."],
-    ["Baš mi je drago!","I'm really glad!"]
+    ["Baš mi je drago!","I'm really glad!"],
+    ["Može, vidimo se!","Sure, see you!"],
+    ["Kako ide?","How's it going?"],
+    ["Nema veze, u redu je.","Never mind, it's fine."]
   ],
   drills:[
     {t:"type",q:"Say: I think that's a good idea.",a:["mislim da je to dobra ideja"],e:"Mislim da je to dobra ideja. Here da = 'that'."},
@@ -878,6 +891,8 @@ const CROATIAN_ONLY = [
   ["uvjet, vrijeme, lijep","uslov, vreme, lep","ijekavian vs. ekavian"]
 ];
 
+const dual = (en, hr) => `${en}<span class="c2">${hr}</span>`;
+
 const SCENARIOS = [
   {k:"kafic", l:"U kafiću", en:"At the café", s:"You are a friendly waiter at a café in Zagreb. Take the learner's order, chat a little about their day."},
   {k:"upoznavanje", l:"Upoznavanje", en:"Meeting someone", s:"You are a Croatian student the learner has just met at a party in Zagreb. Get to know them: name, where they're from, what they study."},
@@ -894,10 +909,14 @@ const SCENARIOS = [
 ];
 
 const READING_TOPICS = [
-  "Zagreb i Gornji grad","Dalmacija i more","hrvatska hrana","Plitvička jezera",
-  "jedan dan u školi","obitelj i kućni ljubimci","kava i kafići","Dubrovnik",
-  "Istra i tartufi","hrvatski otoci","nogomet u Hrvatskoj","godišnja doba",
-  "advent u Zagrebu","tržnica Dolac","putovanje vlakom","glazba i festivali"
+  ["Zagreb i Gornji grad","Zagreb & the Upper Town"],["Dalmacija i more","Dalmatia & the sea"],
+  ["hrvatska hrana","Croatian food"],["Plitvička jezera","Plitvice Lakes"],
+  ["jedan dan u školi","A day at school"],["obitelj i kućni ljubimci","Family & pets"],
+  ["kava i kafići","Coffee & cafés"],["Dubrovnik","Dubrovnik"],
+  ["Istra i tartufi","Istria & truffles"],["hrvatski otoci","The Croatian islands"],
+  ["nogomet u Hrvatskoj","Football in Croatia"],["godišnja doba","The seasons"],
+  ["advent u Zagrebu","Christmas in Zagreb"],["tržnica Dolac","Dolac market"],
+  ["putovanje vlakom","Travelling by train"],["glazba i festivali","Music & festivals"]
 ];
 
 /* ============================================================
@@ -1060,6 +1079,7 @@ NON-NEGOTIABLE LANGUAGE RULES:
 - Future tense written separately: "radit ću", never "radiću".
 - Standard štokavian-based literary Croatian only. No Kajkavian or Čakavian dialect, no regional slang (no "kaj", no "ča"), no Serbian/Bosnian/Montenegrin variants.
 - Croatian months: siječanj, veljača, ožujak, travanj, svibanj, lipanj, srpanj, kolovoz, rujan, listopad, studeni, prosinac.
+- REGISTER: use the everyday spoken word, not the bureaucratic one. Say avion (not zrakoplov), aerodrom (not zračna luka), dućan or trgovina, pješke, kompjuter, frižider, lift. Use natural conversational particles: može, ajde, dobro, evo, pa, baš, nema veze, nema frke, super. Write the way a friendly Croatian person actually speaks, not the way a government form is written. This is about formal vs. casual register only — never substitute Serbian or Bosnian words.
 - Currency in Croatia is the euro (€).
 `;
 
@@ -1270,33 +1290,33 @@ function vHome(){
     "Seven cases, one alphabet where every letter says exactly what it looks like, and a country that will talk back to you. Twelve units, a tutor who only speaks standard Croatian, and as much practice as you want.",
     `<div class="grid g2">
       <div class="card">
-        <div class="kicker">nastavi ovdje · pick up here</div>
+        <div class="kicker">pick up here · nastavi ovdje</div>
         <h2 style="font-size:26px;margin-bottom:4px">${u.id}. ${esc(u.title)}</h2>
         <p style="color:var(--stone-dim);font-size:14.5px">${esc(u.goal)}</p>
-        <button class="btn" onclick="go('unit',${u.id})">Otvori lekciju</button>
+        <button class="btn" onclick="go('unit',${u.id})">${dual("Open lesson","Otvori lekciju")}</button>
       </div>
       <div class="card">
-        <div class="kicker">razgovor · talk to someone</div>
-        <h2 style="font-size:26px;margin-bottom:4px">Pričaj sa mnom</h2>
+        <div class="kicker">talk to someone · razgovor</div>
+        <h2 style="font-size:26px;margin-bottom:4px">Talk with me</h2>
         <p style="color:var(--stone-dim);font-size:14.5px">Type back in Croatian. You get corrections, a translation, and something to say next when you freeze.</p>
-        <button class="btn brass" onclick="go('razgovor')">Započni razgovor</button>
+        <button class="btn brass" onclick="go('razgovor')">${dual("Start talking","Započni razgovor")}</button>
       </div>
     </div>
 
     <div class="grid g3" style="margin-top:14px">
-      <div class="card"><div class="kicker">lekcije</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${doneCount}<span style="font-size:16px;color:var(--stone-dim)">/${UNITS.length}</span></div><div style="font-size:13px;color:var(--stone-dim)">units read</div></div>
-      <div class="card"><div class="kicker">rječnik</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${wordCount}</div><div style="font-size:13px;color:var(--stone-dim)">words & phrases in the course</div></div>
-      <div class="card"><div class="kicker">kartice</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${Object.keys(S.cards||{}).length}</div><div style="font-size:13px;color:var(--stone-dim)">saved for review</div></div>
+      <div class="card"><div class="kicker">lessons · lekcije</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${doneCount}<span style="font-size:16px;color:var(--stone-dim)">/${UNITS.length}</span></div><div style="font-size:13px;color:var(--stone-dim)">units read</div></div>
+      <div class="card"><div class="kicker">vocabulary · rječnik</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${wordCount}</div><div style="font-size:13px;color:var(--stone-dim)">words & phrases in the course</div></div>
+      <div class="card"><div class="kicker">flashcards · kartice</div><div style="font-family:var(--mono);font-size:30px;color:var(--brass)">${Object.keys(S.cards||{}).length}</div><div style="font-size:13px;color:var(--stone-dim)">saved for review</div></div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">fraza dana · phrase of the day</div>
+      <div class="kicker">phrase of the day · fraza dana</div>
       <div style="font-family:var(--display);font-size:28px;font-weight:700">${esc(POTD[0])} ${spk(POTD[0])}</div>
       <div style="color:var(--stone-dim)">${esc(POTD[1])}</div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">kako ovo radi · how to use this</div>
+      <div class="kicker">how to use this · kako ovo radi</div>
       <p style="font-size:14.5px;color:var(--stone-dim);margin:0">Read a unit, do its six drills, then take the same material into <b style="color:var(--stone)">Razgovor</b> and try to use it on a real question. That loop — learn it, test it, then be forced to produce it under mild pressure — is what moves a word from recognised to owned. Star any word you want back later; it lands in <b style="color:var(--stone)">Kartice</b>.</p>
     </div>`);
 }
@@ -1328,18 +1348,18 @@ function vUnit(id){
   shell(`${u.id}. cjelina · ${ORD[u.id]||""}`, esc(u.title),
     esc(u.goal),
     `<div class="chips" style="margin-bottom:18px">
-      <button class="btn ghost sm" onclick="go('lekcije')">← Sve lekcije</button>
-      <button class="btn sm" onclick="startDrill(${u.id})">Vježbaj (${u.drills.length})</button>
-      <button class="btn ghost sm" onclick="genPractice(${u.id})">Još vježbi s AI-jem</button>
+      <button class="btn ghost sm" onclick="go('lekcije')">← ${dual("All lessons","Sve lekcije")}</button>
+      <button class="btn sm" onclick="startDrill(${u.id})">${dual("Practise","Vježbaj")} (${u.drills.length})</button>
+      <button class="btn ghost sm" onclick="genPractice(${u.id})">${dual("More practice from AI","Još vježbi")}</button>
     </div>
     ${gram}
     <hr class="rule">
-    <div class="kicker">rječnik · vocabulary</div>${vocab}
-    <div class="kicker" style="margin-top:22px">fraze · phrases</div>${phr}
+    <div class="kicker">vocabulary · rječnik</div>${vocab}
+    <div class="kicker" style="margin-top:22px">phrases · fraze</div>${phr}
     <div id="extra"></div>
     <div style="margin-top:26px;display:flex;gap:9px;flex-wrap:wrap">
-      <button class="btn" onclick="startDrill(${u.id})">Vježbaj sada</button>
-      ${next?`<button class="btn ghost" onclick="go('unit',${next.id})">Sljedeća: ${esc(next.title)} →</button>`:""}
+      <button class="btn" onclick="startDrill(${u.id})">${dual("Practise now","Vježbaj sada")}</button>
+      ${next?`<button class="btn ghost" onclick="go('unit',${next.id})">Next: ${esc(next.title)} →</button>`:""}
     </div>`);
   if(!S.done[id]) S.done[id] = {};
   if(!S.done[id].read){ S.done[id].read = true; addXP(10); } else save();
@@ -1348,17 +1368,17 @@ function vUnit(id){
 async function genPractice(id){
   const u = UNITS.find(x=>x.id===id);
   const box = $("#extra");
-  box.innerHTML = `<div class="card" style="margin-top:18px"><span class="spin"></span> Pišem nove rečenice…</div>`;
+  box.innerHTML = `<div class="card" style="margin-top:18px"><span class="spin"></span> Writing new sentences…</div>`;
   try{
-    const txt = await ask(STYLE_RULES + `You write practice sentences for a Croatian course.`,
+    const txt = await ask(STYLE_RULES + `You write practice sentences for a Croatian course. Use everyday spoken vocabulary, not bureaucratic forms.`,
       [{role:"user", content:`Unit topic: "${u.title}" — ${u.goal}
 Vocabulary in play: ${u.vocab.map(v=>v[0]).join(", ")}.
 Write 8 fresh example sentences in standard Croatian at CEFR ${S.level} using this unit's grammar and words. Vary the persons and include a couple of questions.
 Return ONLY a JSON array, no prose, no markdown: [{"hr":"...","en":"..."}]`}]);
     const arr = parseJSON(txt);
-    box.innerHTML = `<div class="kicker" style="margin-top:24px">nove rečenice · fresh from the tutor</div>
+    box.innerHTML = `<div class="kicker" style="margin-top:24px">new sentences · nove rečenice</div>
       <div class="wordlist">${arr.map(x=>wordRow(x.hr,x.en)).join("")}</div>
-      <button class="btn ghost sm" style="margin-top:10px" onclick="genPractice(${id})">Još osam</button>`;
+      <button class="btn ghost sm" style="margin-top:10px" onclick="genPractice(${id})">${dual("Eight more","Još osam")}</button>`;
   }catch(e){ box.innerHTML = apiError(e); }
 }
 
@@ -1377,9 +1397,9 @@ function paintDrill(){
   const bar = `<div class="progressline"><i style="width:${(D.i/D.q.length)*100}%"></i></div>`;
   const body = q.t === "mc"
     ? `<div class="opts">${q.o.map((o,i)=>`<button class="opt" onclick="pick(${i})">${esc(o)}</button>`).join("")}</div>`
-    : `<input class="answer" id="ans" placeholder="Napiši na hrvatskom…" autocomplete="off" autocapitalize="off" spellcheck="false">
-       <div style="margin-top:12px"><button class="btn" onclick="pick(-1)">Provjeri</button></div>`;
-  shell(`pitanje ${D.i+1} od ${D.q.length}`, esc(D.title), "",
+    : `<input class="answer" id="ans" placeholder="Type it in Croatian…" autocomplete="off" autocapitalize="off" spellcheck="false">
+       <div style="margin-top:12px"><button class="btn" onclick="pick(-1)">${dual("Check","Provjeri")}</button></div>`;
+  shell(`question ${D.i+1} of ${D.q.length}`, esc(D.title), "",
     `${bar}<div class="card"><div class="q">${esc(q.q)}</div>${body}<div id="verdict"></div></div>`);
   const a = $("#ans");
   if(a){ a.focus(); a.addEventListener("keydown", e=>{ if(e.key==="Enter") pick(-1); }); }
@@ -1399,8 +1419,8 @@ function pick(i){
   }
   if(ok){ D.score++; addXP(5); }
   $("#verdict").innerHTML = `<div class="verdict ${ok?"ok":"no"}">
-    <b style="color:${ok?"var(--olive)":"var(--madder)"}">${ok?"Točno!":"Nije točno."}</b> ${esc(q.e||"")}
-    </div><div style="margin-top:12px"><button class="btn" id="nx">${D.i+1>=D.q.length?"Rezultat":"Dalje →"}</button></div>`;
+    <b style="color:${ok?"var(--olive)":"var(--madder)"}">${ok?"Correct!":"Not quite."}</b> ${esc(q.e||"")}
+    </div><div style="margin-top:12px"><button class="btn" id="nx">${D.i+1>=D.q.length?"See score":"Next →"}</button></div>`;
   $("#nx").focus();
   $("#nx").onclick = ()=>{ D.i++; paintDrill(); };
 }
@@ -1409,14 +1429,14 @@ function endDrill(){
   const msg = pct===100 ? "Perfect. Every one right." : pct>=75 ? "Very good." : pct>=50 ? "Decent start — reread the lesson." : "Go back to the lesson and try again.";
   if(D.unit){ S.done[D.unit] = S.done[D.unit]||{}; S.done[D.unit].drill = Math.max(S.done[D.unit].drill||0, pct); save(); }
   const next = D.unit ? UNITS.find(x=>x.id===D.unit+1) : null;
-  shell("gotovo · done", "Rezultat", "",
+  shell("done · gotovo", "Your score", "",
     `<div class="card" style="text-align:center;padding:40px">
       <div style="font-family:var(--mono);font-size:56px;color:var(--brass);line-height:1">${D.score}<span style="font-size:26px;color:var(--stone-dim)">/${D.q.length}</span></div>
       <p style="font-family:var(--display);font-size:22px;margin-top:8px">${msg}</p>
       <div class="chips" style="justify-content:center;margin-top:16px">
-        ${D.unit?`<button class="btn ghost sm" onclick="startDrill(${D.unit})">Opet</button>
-        <button class="btn ghost sm" onclick="go('unit',${D.unit})">Natrag na lekciju</button>`:""}
-        ${next?`<button class="btn sm" onclick="go('unit',${next.id})">Sljedeća cjelina →</button>`:`<button class="btn sm" onclick="go('razgovor')">Idi na razgovor →</button>`}
+        ${D.unit?`<button class="btn ghost sm" onclick="startDrill(${D.unit})">${dual("Again","Opet")}</button>
+        <button class="btn ghost sm" onclick="go('unit',${D.unit})">${dual("Back to lesson","Natrag na lekciju")}</button>`:""}
+        ${next?`<button class="btn sm" onclick="go('unit',${next.id})">${dual("Next unit","Sljedeća cjelina")} →</button>`:`<button class="btn sm" onclick="go('razgovor')">${dual("Go talk","Idi na razgovor")} →</button>`}
       </div></div>`);
 }
 
@@ -1478,7 +1498,7 @@ function delChat(id, ev){
 function renameChat(id, ev){
   ev.stopPropagation();
   const c = S.chats[id]; if(!c) return;
-  const v = prompt("Novi naziv razgovora:", c.title || "");
+  const v = prompt("New name for this conversation:", c.title || "");
   if(v !== null){ c.title = v.trim().slice(0,60) || c.title; save(); vTalk(); }
 }
 function ago(t){
@@ -1490,9 +1510,9 @@ function ago(t){
   return days === 1 ? "jučer" : days + " dana";
 }
 const LEVELS = [
-  {k:"A1", l:"Početnik", en:"beginner", d:"very short sentences, present tense, common words, lots of scaffolding"},
-  {k:"A2", l:"Osnovni",  en:"elementary", d:"short everyday sentences, past and future allowed, basic cases"},
-  {k:"B1", l:"Srednji",  en:"intermediate", d:"normal conversational Croatian, full case system, some idiom"}
+  {k:"A1", l:"Početnik", en:"Beginner", d:"very short sentences, present tense, common words, lots of scaffolding"},
+  {k:"A2", l:"Osnovni",  en:"Elementary", d:"short everyday sentences, past and future allowed, basic cases"},
+  {k:"B1", l:"Srednji",  en:"Intermediate", d:"normal conversational Croatian, full case system, some idiom"}
 ];
 
 function vTalk(){
@@ -1502,13 +1522,13 @@ function vTalk(){
   shell("razgovor · conversation", "Pričaj sa <i>mnom</i>",
     "Pick a situation and type back in Croatian. Every reply comes with a translation you can ignore once you don't need it, a gentle correction when you slip, and three things you could say next.",
     `<div class="card">
-      <div class="kicker">situacija</div>
+      <div class="kicker">situation · situacija</div>
       <div class="chips" style="margin-bottom:14px">${SCENARIOS.map(s=>
-        `<button class="chip" aria-pressed="${s.k===S.scenario}" onclick="setScenario('${s.k}')">${s.l}</button>`).join("")}</div>
-      <div class="kicker">razina · level</div>
+        `<button class="chip" aria-pressed="${s.k===S.scenario}" onclick="setScenario('${s.k}')">${dual(s.en, s.l)}</button>`).join("")}</div>
+      <div class="kicker">level · razina</div>
       <div class="chips">${LEVELS.map(l=>
-        `<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevel('${l.k}')">${l.k} · ${l.l}</button>`).join("")}
-        <button class="chip" aria-pressed="${S.showEn}" onclick="S.showEn=!S.showEn;save();vTalk()">Prijevod</button></div>
+        `<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevel('${l.k}')">${dual(l.k + " · " + l.en, l.l)}</button>`).join("")}
+        <button class="chip" aria-pressed="${S.showEn}" onclick="S.showEn=!S.showEn;save();vTalk()">${dual("Translation","Prijevod")}</button></div>
     </div>
 
     <div class="card" style="margin-top:14px">
@@ -1526,10 +1546,10 @@ function vTalk(){
             <div class="cs2">${esc(sc?sc.l:"")} · ${esc(c.level||"A1")} · ${c.hist.length} poruka · ${ago(c.updated||c.created)}</div>
             ${last ? `<div class="cprev">${esc(String(last.hr||"").slice(0,70))}</div>` : ""}
           </div>
-          <button class="crn" title="Preimenuj" onclick="renameChat('${c.id}',event)">✎</button>
-          <button class="cdel${DELARM===c.id?" armed":""}" onclick="delChat('${c.id}',event)">${DELARM===c.id?"Obriši?":"×"}</button>
+          <button class="crn" title="Rename" onclick="renameChat('${c.id}',event)">✎</button>
+          <button class="cdel${DELARM===c.id?" armed":""}" onclick="delChat('${c.id}',event)">${DELARM===c.id?"Delete?":"×"}</button>
         </div>`;
-      }).join("")}</div>` : `<p style="font-size:14px;color:var(--stone-dim);margin:0">Nema spremljenih razgovora. Napiši nešto ispod i razgovor se sprema sam.</p>`}
+      }).join("")}</div>` : `<p style="font-size:14px;color:var(--stone-dim);margin:0">No saved conversations yet. Type below and it saves itself.</p>`}
     </div>
 
     <div class="card" style="margin-top:14px">
@@ -1537,8 +1557,8 @@ function vTalk(){
       <div class="chat" id="chat"></div>
       <div id="sugg" class="hintbar"></div>
       <div class="composer">
-        <input id="say" placeholder="Napiši nešto na hrvatskom…" autocomplete="off" autocapitalize="sentences">
-        <button class="btn" id="send" onclick="sendMsg()">Pošalji</button>
+        <input id="say" placeholder="Write something in Croatian…" autocomplete="off" autocapitalize="sentences">
+        <button class="btn" id="send" onclick="sendMsg()">${dual("Send","Pošalji")}</button>
       </div>
       <div style="font-size:12.5px;color:var(--stone-dim);margin-top:9px">Stuck? Write <b style="color:var(--brass)">?</b> and press send — I'll rephrase in easier Croatian and tell you what to say.</div>
       <div id="cherr"></div>
@@ -1561,7 +1581,7 @@ function paintChat(){
     if(m.who==="me") return `<div class="msg me"><div class="cro">${esc(m.hr)}</div></div>`;
     return `<div class="msg bot"><div class="cro">${esc(m.hr)} ${spk(m.hr)}</div>
       ${S.showEn && m.tr ? `<div class="tr">${esc(m.tr)}</div>` : ""}
-      ${m.fix ? `<div class="fix"><b>Skoro:</b> ${esc(m.fix.fixed)}<br><span style="color:var(--stone-dim)">${esc(m.fix.note)}</span></div>` : ""}</div>`;
+      ${m.fix ? `<div class="fix"><b>Almost:</b> ${esc(m.fix.fixed)}<br><span style="color:var(--stone-dim)">${esc(m.fix.note)}</span></div>` : ""}</div>`;
   }).join("");
   c.scrollTop = c.scrollHeight;
   const s = $("#sugg");
@@ -1638,19 +1658,19 @@ function vQuiz(){
   shell("provjera · test yourself", "Koliko <i>znaš</i>?",
     "Two ways to test: a mixed round pulled straight from the course, or a fresh set written for you on the spot. The generated ones never repeat, so you can't pass by remembering the answer order.",
     `<div class="card">
-      <div class="kicker">gradivo · material</div>
+      <div class="kicker">material · gradivo</div>
       <div class="chips" style="margin-bottom:14px">
-        <button class="chip" aria-pressed="${QSEL.unit==='mix'}" onclick="QSEL.unit='mix';vQuiz()">Sve cjeline</button>
+        <button class="chip" aria-pressed="${QSEL.unit==='mix'}" onclick="QSEL.unit='mix';vQuiz()">${dual('All units','Sve cjeline')}</button>
         ${UNITS.map(u=>`<button class="chip" aria-pressed="${QSEL.unit==u.id}" onclick="QSEL.unit=${u.id};vQuiz()">${u.id}</button>`).join("")}
       </div>
-      <div class="kicker">vrsta pitanja · question type</div>
+      <div class="kicker">question type · vrsta pitanja</div>
       <div class="chips">
-        ${[["mixed","Mješovito"],["mc","Višestruki izbor"],["type","Prijevod (pisanje)"],["case","Padeži"],["verb","Glagoli"]].map(x=>
-          `<button class="chip" aria-pressed="${QSEL.type===x[0]}" onclick="QSEL.type='${x[0]}';vQuiz()">${x[1]}</button>`).join("")}
+        ${[["mixed","Mixed","Mješovito"],["mc","Multiple choice","Višestruki izbor"],["type","Translate & type","Prijevod"],["case","Noun cases","Padeži"],["verb","Verbs","Glagoli"]].map(x=>
+          `<button class="chip" aria-pressed="${QSEL.type===x[0]}" onclick="QSEL.type='${x[0]}';vQuiz()">${dual(x[1], x[2])}</button>`).join("")}
       </div>
       <div style="margin-top:18px;display:flex;gap:9px;flex-wrap:wrap">
-        <button class="btn brass" onclick="genQuiz()">Novi test s AI-jem (8 pitanja)</button>
-        <button class="btn ghost" onclick="localQuiz()">Brzi test iz gradiva</button>
+        <button class="btn brass" onclick="genQuiz()">${dual("New AI quiz — 8 questions","Novi test")}</button>
+        <button class="btn ghost" onclick="localQuiz()">${dual("Quick quiz from the course","Brzi test")}</button>
       </div>
       <div id="qout"></div>
     </div>`);
@@ -1659,12 +1679,12 @@ function localQuiz(){
   let pool = QSEL.unit==="mix" ? UNITS.flatMap(u=>u.drills) : UNITS.find(u=>u.id==QSEL.unit).drills;
   if(QSEL.type==="mc" || QSEL.type==="type") pool = pool.filter(q=>q.t===QSEL.type);
   if(!pool.length){ $("#qout").innerHTML = `<div class="err">No questions of that type in this selection. Try Mješovito.</div>`; return; }
-  D = {unit:null, title:"Brzi test", q:shuffle(pool).slice(0,10), i:0, score:0};
+  D = {unit:null, title:"Quick quiz", q:shuffle(pool).slice(0,10), i:0, score:0};
   paintDrill();
 }
 async function genQuiz(){
   const out = $("#qout");
-  out.innerHTML = `<div style="margin-top:16px"><span class="spin"></span> Sastavljam pitanja…</div>`;
+  out.innerHTML = `<div style="margin-top:16px"><span class="spin"></span> Writing questions…</div>`;
   const scope = QSEL.unit==="mix"
     ? UNITS.map(u=>`${u.id}. ${u.title}`).join("; ")
     : (()=>{ const u=UNITS.find(x=>x.id==QSEL.unit); return `${u.title} — ${u.goal}. Vocabulary: ${u.vocab.map(v=>v[0]).join(", ")}`; })();
@@ -1682,7 +1702,7 @@ For "type", list every reasonable correct variant (with and without the pronoun,
 Return ONLY a JSON array of 8 objects. No markdown, no commentary.`}], 1600);
     const arr = parseJSON(txt).filter(q=>q && q.q && (q.t==="mc" ? Array.isArray(q.o) : Array.isArray(q.a)));
     if(!arr.length) throw new Error("empty");
-    D = {unit:null, title:"Test", q:arr, i:0, score:0};
+    D = {unit:null, title:"Quiz", q:arr, i:0, score:0};
     paintDrill();
   }catch(e){ out.innerHTML = apiError(e); }
 }
@@ -1695,11 +1715,11 @@ function vRead(){
   shell("čitanje · reading", "Pročitaj pa <i>odgovori</i>",
     "A short text written at your level, then questions about it. Tap any word you don't know and it'll tell you — including what its dictionary form is, which matters a lot in a language where every noun has seven shapes.",
     `<div class="card">
-      <div class="kicker">tema · topic</div>
+      <div class="kicker">topic · tema</div>
       <div class="chips" style="margin-bottom:14px">${READING_TOPICS.map(t=>
-        `<button class="chip" onclick="genRead(${JSON.stringify(t).replace(/"/g,'&quot;')})">${esc(t)}</button>`).join("")}</div>
-      <div class="chips">${LEVELS.map(l=>`<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevelR('${l.k}')">${l.k} · ${l.l}</button>`).join("")}
-        <button class="chip" onclick="genRead(READING_TOPICS[Math.floor(Math.random()*READING_TOPICS.length)])">Iznenadi me</button></div>
+        `<button class="chip" onclick="genRead(${JSON.stringify(t[0]).replace(/"/g,'&quot;')})">${dual(esc(t[1]), esc(t[0]))}</button>`).join("")}</div>
+      <div class="chips">${LEVELS.map(l=>`<button class="chip" aria-pressed="${l.k===S.level}" onclick="setLevelR('${l.k}')">${dual(l.k + " · " + l.en, l.l)}</button>`).join("")}
+        <button class="chip" onclick="genRead(READING_TOPICS[Math.floor(Math.random()*READING_TOPICS.length)][0])">${dual("Surprise me","Iznenadi me")}</button></div>
     </div>
     <div id="rout"></div>`);
   if(RD) paintRead();
@@ -1708,9 +1728,9 @@ function setLevelR(k){ S.level=k; save(); vRead(); }
 
 async function genRead(topic){
   const out = $("#rout");
-  out.innerHTML = `<div class="card" style="margin-top:14px"><span class="spin"></span> Pišem tekst o temi „${esc(topic)}"…</div>`;
+  out.innerHTML = `<div class="card" style="margin-top:14px"><span class="spin"></span> Writing a text about “${esc(topic)}”…</div>`;
   try{
-    const txt = await ask(STYLE_RULES + "You write graded reading texts for a Croatian course.",
+    const txt = await ask(STYLE_RULES + "You write graded reading texts for a Croatian course. Use everyday spoken vocabulary (avion, aerodrom, dućan), never bureaucratic forms.",
       [{role:"user", content:`Topic: ${topic}. Level: CEFR ${S.level}.
 Write a short original text in standard Croatian: ${S.level==="A1"?"60-90":S.level==="A2"?"110-150":"170-220"} words. Natural, warm, specific, with real Croatian detail. Present tense dominant at A1.
 Then: a glossary of the 10-14 hardest words (give the DICTIONARY form plus the English), and 4 comprehension questions in Croatian with 4 options each.
@@ -1740,13 +1760,13 @@ function paintRead(){
       <h2 style="font-size:27px;margin-bottom:12px">${esc(RD.title||"")} ${spk(RD.title||"")}</h2>
       <div class="read">${body}</div>
       <div class="chips" style="margin-top:18px">
-        <button class="btn ghost sm" onclick="speak(${JSON.stringify(RD.text||"").replace(/"/g,'&quot;')})">🔊 Poslušaj cijeli tekst</button>
-        <button class="btn ghost sm" onclick="$('#tr').classList.toggle('hidden')">Prijevod</button>
-        <button class="btn sm" onclick="readQuiz()">Odgovori na pitanja</button>
+        <button class="btn ghost sm" onclick="speak(${JSON.stringify(RD.text||"").replace(/"/g,'&quot;')})">🔊 ${dual("Listen to the whole text","Poslušaj sve")}</button>
+        <button class="btn ghost sm" onclick="$('#tr').classList.toggle('hidden')">${dual("Translation","Prijevod")}</button>
+        <button class="btn sm" onclick="readQuiz()">${dual("Answer the questions","Odgovori na pitanja")}</button>
       </div>
       <div id="tr" class="note hidden" style="margin-top:14px">${esc(RD.translation||"")}</div>
     </div>
-    ${(RD.glossary||[]).length?`<div class="kicker" style="margin-top:22px">rječnik iz teksta</div>
+    ${(RD.glossary||[]).length?`<div class="kicker" style="margin-top:22px">words from the text · rječnik</div>
       <div class="wordlist">${RD.glossary.map(g=>wordRow(g[0],g[1])).join("")}</div>`:""}`;
 }
 function readQuiz(){
@@ -1790,28 +1810,28 @@ function vCards(){
   if(!keys.length){
     return shell("kartice · flashcards", "Tvoje <i>kartice</i>", "",
       `<div class="card" style="text-align:center;padding:44px">
-        <p style="font-family:var(--display);font-size:22px">Još nema kartica.</p>
+        <p style="font-family:var(--display);font-size:22px">No flashcards yet.</p>
         <p style="color:var(--stone-dim);font-size:14.5px;max-width:44ch;margin:0 auto 16px">Star any word in a lesson, a reading, or a generated sentence list and it lands here. Cards you get right move up a box and come back less often; ones you miss drop to box one.</p>
-        <button class="btn" onclick="go('lekcije')">Idi na lekcije</button>
-        <button class="btn ghost" onclick="seedCards()">Napuni s 40 osnovnih riječi</button>
+        <button class="btn" onclick="go('lekcije')">${dual("Go to lessons","Idi na lekcije")}</button>
+        <button class="btn ghost" onclick="seedCards()">${dual("Load 40 starter words","40 osnovnih riječi")}</button>
       </div>`);
   }
   const boxes = [1,2,3,4,5].map(b=>keys.filter(k=>(S.cards[k].box||1)===b).length);
   shell("kartice · flashcards", "Tvoje <i>kartice</i>",
     "Leitner boxes. Box one comes back every session, box five almost never. Getting a card wrong sends it straight back to box one — that's the point.",
     `<div class="card">
-      <div class="kicker">raspored · distribution</div>
+      <div class="kicker">distribution · raspored</div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">${boxes.map((n,i)=>
         `<div style="flex:1;min-width:70px;text-align:center;padding:10px;border:1px solid var(--line);border-radius:10px">
           <div style="font-family:var(--mono);font-size:22px;color:${i===0?'var(--madder)':i===4?'var(--olive)':'var(--brass)'}">${n}</div>
-          <div style="font-size:11px;color:var(--stone-dim)">kutija ${i+1}</div></div>`).join("")}</div>
+          <div style="font-size:11px;color:var(--stone-dim)">box ${i+1}</div></div>`).join("")}</div>
       <div style="margin-top:16px;display:flex;gap:9px;flex-wrap:wrap">
-        <button class="btn" onclick="startCards('hr')">Vježbaj — hrvatski → engleski</button>
-        <button class="btn ghost" onclick="startCards('en')">Obrnuto — engleski → hrvatski</button>
+        <button class="btn" onclick="startCards('hr')">${dual("Practise: Croatian → English","hrvatski → engleski")}</button>
+        <button class="btn ghost" onclick="startCards('en')">${dual("Reverse: English → Croatian","engleski → hrvatski")}</button>
       </div>
     </div>
     <div class="card" style="margin-top:14px">
-      <div class="kicker">sve kartice (${keys.length})</div>
+      <div class="kicker">all cards · sve kartice (${keys.length})</div>
       <div class="wordlist">${keys.map(k=>{const p=k.split("|");return wordRow(p[0],p[1]);}).join("")}</div>
     </div>`);
 }
@@ -1827,17 +1847,17 @@ function startCards(dir){
 }
 function paintCard(){
   if(FC.i >= FC.q.length){
-    return shell("gotovo", "Kraj runde", "",
+    return shell("done · gotovo", "Round finished", "",
       `<div class="card" style="text-align:center;padding:40px">
         <div style="font-family:var(--mono);font-size:52px;color:var(--brass)">${FC.right}<span style="font-size:24px;color:var(--stone-dim)">/${FC.q.length}</span></div>
         <div class="chips" style="justify-content:center;margin-top:16px">
-          <button class="btn" onclick="startCards('${FC.dir}')">Još jedna runda</button>
-          <button class="btn ghost" onclick="go('kartice')">Natrag</button></div></div>`);
+          <button class="btn" onclick="startCards('${FC.dir}')">${dual("Another round","Još jedna runda")}</button>
+          <button class="btn ghost" onclick="go('kartice')">${dual("Back","Natrag")}</button></div></div>`);
   }
   const k = FC.q[FC.i], p = k.split("|");
   const front = FC.dir==="hr" ? p[0] : p[1];
   const back  = FC.dir==="hr" ? p[1] : p[0];
-  shell(`kartica ${FC.i+1} od ${FC.q.length} · kutija ${S.cards[k].box||1}`, "Kartice", "",
+  shell(`card ${FC.i+1} of ${FC.q.length} · box ${S.cards[k].box||1}`, "Flashcards", "",
     `<div class="progressline"><i style="width:${FC.i/FC.q.length*100}%"></i></div>
     <div class="flash">
       <div class="front">${esc(front)}</div>
@@ -1846,8 +1866,8 @@ function paintCard(){
     </div>
     <div style="margin-top:16px;display:flex;gap:9px;justify-content:center;flex-wrap:wrap">
       ${FC.flipped
-        ? `<button class="btn ghost" onclick="gradeCard(false)">Ne znam</button><button class="btn" onclick="gradeCard(true)">Znam</button>`
-        : `<button class="btn brass" onclick="FC.flipped=true;paintCard()">Okreni</button>`}
+        ? `<button class="btn ghost" onclick="gradeCard(false)">${dual("Didn\u2019t know","Ne znam")}</button><button class="btn" onclick="gradeCard(true)">${dual("I knew it","Znam")}</button>`
+        : `<button class="btn brass" onclick="FC.flipped=true;paintCard()">${dual("Flip","Okreni")}</button>`}
     </div>`);
 }
 function gradeCard(ok){
@@ -1867,21 +1887,21 @@ function vGrammar(){
   shell("gramatika · reference", "Sve na <i>jednom</i> mjestu",
     "The tables you'll come back to. Croatian schools drill the cases in this exact order, so learning the sequence pays off every time you open a dictionary or a textbook.",
     `<div class="card">
-      <div class="kicker">padeži — jednina · singular</div>${tbl(CASES.sg)}
-      <div class="kicker" style="margin-top:22px">padeži — množina · plural</div>${tbl(CASES.pl)}
+      <div class="kicker">cases — singular · jednina</div>${tbl(CASES.sg)}
+      <div class="kicker" style="margin-top:22px">cases — plural · množina</div>${tbl(CASES.pl)}
       <div class="note"><b>Shortcut:</b> dativ and lokativ are always identical. In the plural, dativ, lokativ and instrumental are all identical too. That means seven cases really only cost you five sets of endings.</div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">glagoli — prezent</div>
+      <div class="kicker">verbs — present tense · prezent</div>
       <div class="grid g2" style="margin-top:8px">${VERBTABLES.map(v=>
         `<div><h3 style="font-size:17px;margin-bottom:6px">${esc(v.n)}</h3>
           <table>${v.r.map(r=>`<tr><td class="cs">${r[0]}</td><td class="hr">${r[1]}</td></tr>`).join("")}</table>
-          <div style="font-size:12.5px;color:var(--stone-dim);margin-top:5px">niječno: ${esc(v.neg)}</div></div>`).join("")}</div>
+          <div style="font-size:12.5px;color:var(--stone-dim);margin-top:5px">negative: ${esc(v.neg)}</div></div>`).join("")}</div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">vremena · the three tenses, side by side</div>
+      <div class="kicker">the tenses side by side · vremena</div>
       <div class="tblwrap"><table>
         <tr><th></th><th>raditi (m)</th><th>raditi (f)</th><th>niječno</th></tr>
         <tr><td class="cs">prezent</td><td class="hr">radim</td><td class="hr">radim</td><td class="hr">ne radim</td></tr>
@@ -1893,13 +1913,13 @@ function vGrammar(){
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">abeceda · 30 letters, all phonetic</div>
+      <div class="kicker">the alphabet · abeceda — 30 letters, all phonetic</div>
       <div class="wordlist">${ALPHABET.map(a=>`<div class="word">${spk(a[0].split(" ")[1]||a[0])}<span class="hr">${esc(a[0])}</span><span class="en">${esc(a[1])}</span></div>`).join("")}</div>
       <div class="note">Croatian uses <b>Latin script only</b>. Dž, Lj and Nj are single letters, not pairs. There are no silent letters and no exceptions: spell it as you hear it, read it as it's written.</div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">hrvatski, a ne …  · what makes it Croatian</div>
+      <div class="kicker">what makes it Croatian · hrvatski, a ne…</div>
       <p style="font-size:14.5px;color:var(--stone-dim)">You'll meet the words on the right online, in subtitles, and in a lot of apps that lump these languages together. This course never uses them. Learn the left column.</p>
       <div class="tblwrap"><table><tr><th>hrvatski ✓</th><th>izbjegavaj ✗</th><th>English</th></tr>
         ${CROATIAN_ONLY.map(r=>`<tr><td class="hr" style="color:var(--olive)">${esc(r[0])}</td><td style="color:var(--madder);opacity:.8">${esc(r[1])}</td><td style="color:var(--stone-dim);font-size:13.5px">${esc(r[2])}</td></tr>`).join("")}
@@ -1907,7 +1927,7 @@ function vGrammar(){
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">red riječi · the second-position rule</div>
+      <div class="kicker">word order · the second-position rule</div>
       <p style="font-size:15px">The little unstressed words — <b>sam, si, je, smo, ste, su · ću, ćeš, će · bih, bi · me, te, ga, joj, mu, se · li</b> — cluster in <b>second position</b> in the clause, and they go in this order:</p>
       <p style="font-family:var(--display);font-size:19px;color:var(--brass)">li → ću/bih → mi/ti/mu/joj → me/te/ga/je → se → je (biti)</p>
       <p style="font-size:15px">Dao <b>mi ga je</b>. — He gave it to me.<br>Kako <b>ti se</b> sviđa? — How do you like it?<br>Jučer <b>sam ga</b> vidio. — I saw him yesterday.</p>
@@ -2271,7 +2291,7 @@ function uploadSave(input){
       if(typeof obj !== "object" || obj === null) throw new Error("shape");
       applyState(obj);
       await save();
-      m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Učitano.</b> ${S.xp||0} bodova · ${Object.keys(S.cards||{}).length} kartica · ${Object.keys(S.chats||{}).length} razgovora.</div>`;
+      m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Loaded.</b> ${S.xp||0} points · ${Object.keys(S.cards||{}).length} cards · ${Object.keys(S.chats||{}).length} conversations.</div>`;
       setTimeout(()=>go("napredak"), 1100);
     }catch(e){ m.innerHTML = `<div class="err">That file isn't a Nauči hrvatski backup.</div>`; }
   };
@@ -2362,19 +2382,19 @@ function vSave(){
         Include conversations <span style="opacity:.7">(${Object.keys(S.chats||{}).length} spremljeno — makes the code much longer)</span>
       </label>
       <textarea id="code" readonly rows="4" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone-dim);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical">${saveCode()}</textarea>
-      <div style="font-size:12px;color:var(--stone-dim);margin-top:6px">${code.length.toLocaleString()} znakova${code.length>20000?" — long enough that copying gets fragile. Use the file backup below instead.":""}</div>
+      <div style="font-size:12px;color:var(--stone-dim);margin-top:6px">${code.length.toLocaleString()} characters${code.length>20000?" — long enough that copying gets fragile. Use the file backup below instead.":""}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
         <button class="btn brass" id="cpy" onclick="copyCode()">Copy code</button>
-        <button class="btn ghost" onclick="downloadSave()">Preuzmi .json (sve, s razgovorima)</button>
+        <button class="btn ghost" onclick="downloadSave()">${dual("Download backup (.json)","Preuzmi sve")}</button>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px">
       <div class="kicker">restore</div>
-      <textarea id="restore" rows="4" placeholder="Zalijepi kod ovdje…" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical"></textarea>
+      <textarea id="restore" rows="4" placeholder="Paste your save code here…" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical"></textarea>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
         <button class="btn" onclick="restoreCode()">Restore from code</button>
-        <label class="btn ghost" style="cursor:pointer">Učitaj .json<input type="file" accept=".json,application/json" style="display:none" onchange="uploadSave(this)"></label>
+        <label class="btn ghost" style="cursor:pointer">${dual("Load backup file","Učitaj .json")}<input type="file" accept=".json,application/json" style="display:none" onchange="uploadSave(this)"></label>
       </div>
       <div style="font-size:12px;color:var(--stone-dim);margin-top:8px">A progress-only code leaves your saved conversations alone — it won't delete them.</div>
       <div id="rmsg"></div>
@@ -2404,7 +2424,7 @@ async function restoreCode(){
     if(typeof obj !== "object" || obj === null) throw new Error("shape");
     applyState(obj);
     await save();
-    m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Vraćeno.</b> ${S.xp||0} bodova · ${Object.keys(S.cards||{}).length} kartica${obj.chats?" · "+Object.keys(S.chats||{}).length+" razgovora":""}.</div>`;
+    m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Restored.</b> ${S.xp||0} points · ${Object.keys(S.cards||{}).length} kartica${obj.chats?" · "+Object.keys(S.chats||{}).length+" razgovora":""}.</div>`;
     setTimeout(()=>go("napredak"), 1100);
   }catch(e){ m.innerHTML = `<div class="err">Couldn't read that code. It may have been cut off when copying — make sure you got the whole thing, with no line breaks added.</div>`; }
 }
@@ -2514,12 +2534,12 @@ function openSettings(){
 
 async function testConn(){
   const msg = $("#kmsg");
-  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Provjeravam…</div>`;
+  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Checking…</div>`;
   try{
     const out = await ask("Odgovaraj isključivo na standardnom hrvatskom jeziku.",
       [{role:"user", content:"Pozdravi me u jednoj kratkoj rečenici."}], 256);
-    const via = GKEY ? "osobni ključ" : PROXY_OK ? "poslužitelj" : "Claude";
-    msg.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Radi</b> — preko: ${via}.<br>„${esc(out.slice(0,140))}"</div>`;
+    const via = GKEY ? "your own key" : PROXY_OK ? "the server" : "Claude";
+    msg.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Working</b> — via: ${via}.<br>„${esc(out.slice(0,140))}"</div>`;
     paintGear();
   }catch(e){ msg.innerHTML = apiError(e); }
 }
@@ -2537,12 +2557,12 @@ async function saveKey(){
   GMODEL = m; await Store.set(MODEL_K, m);
   if(v){ GKEY = v; await Store.set(KEY_K, v); }
   paintGear();
-  $("#kmsg").innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Spremljeno.</b> ${GKEY ? "Ključ "+esc(maskKey(GKEY))+" · model "+esc(GMODEL) : "Model "+esc(GMODEL)+". Ključ nije unesen."}</div>`;
+  $("#kmsg").innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Saved.</b> ${GKEY ? "Ključ "+esc(maskKey(GKEY))+" · model "+esc(GMODEL) : "Model "+esc(GMODEL)+". Ključ nije unesen."}</div>`;
 }
 
 async function clearKey(){
   GKEY = ""; PROXY_OK = null; await Store.del(KEY_K); paintGear();
-  $("#kmsg").innerHTML = `<div class="verdict no">Ključ obrisan s ovog uređaja.</div>`;
+  $("#kmsg").innerHTML = `<div class="verdict no">Key removed from this device.</div>`;
   setTimeout(openSettings, 900);
 }
 
@@ -2551,7 +2571,7 @@ async function testKey(){
   const k = ($("#k").value || "").trim() || GKEY;
   const m = $("#m").value;
   if(!k){ msg.innerHTML = `<div class="err">Paste a key first.</div>`; return; }
-  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Zovem Gemini…</div>`;
+  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Calling Gemini…</div>`;
   try{
     const out = await askGemini("Odgovaraj isključivo na standardnom hrvatskom jeziku.",
       [{role:"user", content:"Pozdravi me u jednoj kratkoj rečenici."}], 256, k, m);
