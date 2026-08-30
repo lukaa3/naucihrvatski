@@ -6,7 +6,7 @@
 <title>Pleter — učim hrvatski</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=Karla:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
 <style>
 :root{
@@ -315,7 +315,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "3.0";
+const VERSION = "3.1";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -1911,8 +1911,16 @@ const CLOUD = {
   ready:false, user:null, email:"", busy:false,
   lastSync:0, lastErr:"", available:false,
 
-  init(){
-    if(typeof netlifyIdentity === "undefined"){ this.ready = true; return; }
+  init(tries){
+    // The widget is a separate network request. If it hasn't landed yet,
+    // wait for it rather than concluding it will never arrive.
+    if(typeof netlifyIdentity === "undefined"){
+      const n = (tries || 0) + 1;
+      if(n < 40){ setTimeout(()=>this.init(n), 200); return; }   // ~8s
+      this.ready = true; this.available = false; this.lastErr = "WIDGET";
+      paintCloud(); if(CUR === "napredak") vSave();
+      return;
+    }
     this.available = true;
     try{
       netlifyIdentity.on("init", u => { this.user = u; this.email = u ? u.email : ""; this.ready = true;
@@ -1926,8 +1934,18 @@ const CLOUD = {
   },
 
   open(tab){
-    if(!this.available){ this.lastErr = "WIDGET"; paintCloud(); return; }
-    netlifyIdentity.open(tab || "login");
+    if(typeof netlifyIdentity === "undefined"){
+      this.lastErr = "WIDGET"; paintCloud();
+      if(CUR === "napredak") vSave();
+      return;
+    }
+    this.available = true;
+    try{
+      netlifyIdentity.open(tab || "login");
+    }catch(e){
+      this.lastErr = "OPEN_FAILED: " + (e && e.message ? e.message : "widget refused to open");
+      paintCloud(); if(CUR === "napredak") vSave();
+    }
   },
   out(){ if(this.available) netlifyIdentity.logout(); },
 
@@ -1996,7 +2014,8 @@ function cloudErrText(m){
   if(m === "STORAGE_UNAVAILABLE")return "Netlify Blobs isn't available on this site.";
   if(m === "TOO_LARGE")          return "Your save is over 900 KB. Delete some old conversations.";
   if(m === "EMPTY")              return "Nothing saved in the cloud yet.";
-  if(m === "WIDGET")             return "Identity isn't enabled on this site yet.";
+  if(m === "WIDGET")             return "The Netlify Identity widget didn't load. Usually this means Identity isn't enabled on the site yet: Netlify → your site → Identity → Enable. A browser extension blocking scripts can also cause it.";
+  if(m.indexOf("OPEN_FAILED") === 0) return "The login window wouldn't open. Enable Identity in Netlify, then hard-refresh (Ctrl/Cmd + Shift + R).";
   return m;
 }
 
@@ -2093,6 +2112,8 @@ function vSave(){
         </div>`
       : `
         <div style="font-family:var(--display);font-size:22px;font-weight:700">Prijavi se i zaboravi kodove</div>
+        ${!CLOUD.ready ? `<div style="font-size:13px;color:var(--stone-dim);margin-top:6px"><span class="spin"></span> Učitavam prijavu…</div>`
+          : !CLOUD.available ? `<div class="err" style="margin-top:10px">${esc(cloudErrText("WIDGET"))}</div>` : ""}
         <p style="font-size:14.5px;color:var(--stone-dim);margin-top:6px">Make an account with an email and password and your progress follows you to every device automatically. Passwords are handled by Netlify — this app never sees them.</p>
         ${CLOUD.lastErr ? `<div class="err" style="margin-top:10px">${esc(cloudErrText(CLOUD.lastErr))}</div>` : ""}
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
