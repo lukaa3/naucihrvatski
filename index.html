@@ -234,12 +234,16 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
 .hidden{display:none !important}
 hr.rule{border:0;border-top:1px solid var(--line);margin:22px 0}
 
-/* ---------- Netlify Identity widget must sit above the whole app ---------- */
-#netlify-identity-widget{z-index:9999 !important}
-#netlify-identity-widget iframe{z-index:9999 !important}
+/* ---------- Netlify Identity widget ----------
+   The widget stays mounted full-screen even when closed, so by default it must
+   ignore clicks entirely. Only when the dialog is genuinely open does it become
+   interactive. Without this, an invisible layer eats every click on the page. */
+#netlify-identity-widget{z-index:9998 !important; pointer-events:none !important}
+html.identity-open #netlify-identity-widget{pointer-events:auto !important}
+html.identity-open #netlify-identity-widget iframe{pointer-events:auto !important}
 
 /* ---------- invite banner ---------- */
-.invite{position:fixed;left:0;right:0;bottom:0;z-index:200;background:var(--deep-3);border-top:1px solid var(--brass);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
+.invite{position:fixed;left:0;right:0;bottom:0;z-index:10000;background:var(--deep-3);border-top:1px solid var(--brass);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
 .invite p{margin:0;flex:1;min-width:200px;font-size:14px}
 
 /* ---------- chat list ---------- */
@@ -323,7 +327,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "3.2";
+const VERSION = "3.3";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -1943,11 +1947,16 @@ const CLOUD = {
         if(u){ this.clearHash(); this.sync(); }
         else if(this.token_kind){ this.showInvite(); setTimeout(()=>this.openToken(), 400); }
       });
+      netlifyIdentity.on("open",  () => document.documentElement.classList.add("identity-open"));
+      netlifyIdentity.on("close", () => document.documentElement.classList.remove("identity-open"));
       netlifyIdentity.on("error", err => {
+        document.documentElement.classList.remove("identity-open");
         this.lastErr = "IDENTITY: " + ((err && err.message) || "unknown");
         paintCloud(); if(CUR === "napredak") vSave();
       });
-      netlifyIdentity.on("login", u => { this.user = u; this.email = u.email; netlifyIdentity.close();
+      netlifyIdentity.on("login", u => { this.user = u; this.email = u.email;
+        try{ netlifyIdentity.close(); }catch(e){}
+        document.documentElement.classList.remove("identity-open");
         this.clearHash(); paintCloud(); this.sync();
         if(CUR === "napredak") vSave(); });
       netlifyIdentity.on("logout", () => { this.user = null; this.email = ""; paintCloud();
@@ -1963,9 +1972,11 @@ const CLOUD = {
   },
 
   openToken(){
+    document.documentElement.classList.add("identity-open");
     try{
       netlifyIdentity.open(this.token_kind === "recovery_token" ? "login" : "signup");
     }catch(e){
+      document.documentElement.classList.remove("identity-open");
       this.lastErr = "OPEN_FAILED: " + (e && e.message ? e.message : "widget refused to open");
       paintCloud();
     }
@@ -2073,6 +2084,14 @@ function paintCloud(){
   const el = $("#cloudbadge"); if(!el) return;
   el.textContent = CLOUD.user ? ("☁ " + CLOUD.email.split("@")[0]) : "";
 }
+
+// Escape always releases the page, whatever state the widget is in.
+document.addEventListener("keydown", e => {
+  if(e.key === "Escape"){
+    document.documentElement.classList.remove("identity-open");
+    try{ if(typeof netlifyIdentity !== "undefined") netlifyIdentity.close(); }catch(err){}
+  }
+});
 
 /* ============================================================
    NAPREDAK — save codes
