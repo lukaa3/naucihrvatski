@@ -1,0 +1,8 @@
+{
+  "name": "pleter",
+  "version": "3.0.0",
+  "private": true,
+  "dependencies": {
+    "@netlify/blobs": "^8.1.0"
+  }
+}
