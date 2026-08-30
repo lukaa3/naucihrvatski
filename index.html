@@ -6,6 +6,7 @@
 <title>Pleter — učim hrvatski</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=Karla:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
 <style>
 :root{
@@ -284,6 +285,7 @@ select.field{font-family:var(--body);font-size:15px}
     </a>
 
     <button class="gear" onclick="openSettings()"><span class="dot" id="dot"></span><span id="gearlbl">Postavke</span></button>
+    <div id="cloudbadge" style="font-size:11.5px;color:var(--olive);letter-spacing:.04em"></div>
 
     <nav class="nav" id="nav"></nav>
 
@@ -313,7 +315,7 @@ select.field{font-family:var(--body);font-size:15px}
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "2.2";
+const VERSION = "3.0";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -931,11 +933,11 @@ const Store = (()=>{
 /* API key lives on its own, deliberately OUTSIDE the state object,
    so it never ends up inside an exported save code. */
 const KEY_K = "pleter:gemini_key", MODEL_K = "pleter:gemini_model";
-let GKEY = "", GMODEL = "gemini-2.5-flash";
-const MODELS = ["gemini-2.5-flash","gemini-2.5-flash-lite","gemini-2.5-pro","gemini-3.5-flash"];
+let GKEY = "", GMODEL = "gemini-3.6-flash";
+const MODELS = ["gemini-3.6-flash","gemini-3.5-flash","gemini-3.1-flash-lite","gemini-2.5-flash"];
 async function loadKey(){
   GKEY   = (await Store.get(KEY_K))   || "";
-  GMODEL = (await Store.get(MODEL_K)) || "gemini-2.5-flash";
+  GMODEL = (await Store.get(MODEL_K)) || "gemini-3.6-flash";
 }
 const maskKey = k => !k ? "" : k.length<12 ? "•".repeat(k.length) : k.slice(0,6)+"…"+k.slice(-4);
 
@@ -959,7 +961,16 @@ async function loadState(){
     await save();
   }
 }
-async function save(){ await Store.set("pleter:state", S); paintStats(); }
+let PUSH_T = null;
+async function save(){
+  S.updatedAt = Date.now();
+  await Store.set("pleter:state", S);
+  paintStats();
+  if(CLOUD.user){                       // debounced background push
+    clearTimeout(PUSH_T);
+    PUSH_T = setTimeout(()=>CLOUD.push(true), 4000);
+  }
+}
 function addXP(n){ S.xp = (S.xp||0) + n; save(); }
 
 function paintStats(){
@@ -1104,12 +1115,12 @@ const PROXY = "/.netlify/functions/chat";
 let PROXY_OK = null;   // null = untested, true = live, false = not usable
 let DIAG = null;       // what the health check actually found
 
-async function probe(){
+async function probe(live){
   // Informational only. The health check tells us what's wrong when it can,
   // but an older function build has no ping endpoint — that's not a failure,
   // so we never rule the proxy out on anything except 404 or no response.
   try{
-    const r = await fetch(PROXY + "?ping=1");
+    const r = await fetch(PROXY + "?ping=1" + (live ? "&live=1" : ""));
     if(r.status === 404){
       DIAG = { deployed:false, key:false, origin:false, http:404 };
       PROXY_OK = false; paintGear(); return;
@@ -1118,7 +1129,9 @@ async function probe(){
     try{ j = await r.json(); }catch(e){}
     if(j && j.ok === true && typeof j.keyConfigured === "boolean"){
       DIAG = { deployed:true, known:true, key:!!j.keyConfigured, origin:!!j.originAllowed,
-               origins:j.originsConfigured || [], http:r.status };
+               origins:j.originsConfigured || [], http:r.status,
+               works: typeof j.keyWorks === "boolean" ? j.keyWorks : null,
+               problem: j.keyProblem || "" };
     }else{
       // function is alive but predates ?ping — status unknown, so let the real call decide
       DIAG = { deployed:true, known:false, key:null, origin:null, http:r.status };
@@ -1140,15 +1153,18 @@ async function askProxy(system, messages, maxTokens){
     });
   }catch(e){ throw new Error("NOPROXY"); }          // offline, or opened as a local file
 
-  if(res.status === 404 || res.status === 405){ throw new Error("NOPROXY"); }
+  if(res.status === 404){ throw new Error("NOPROXY:404"); }
 
-  let data = null;
-  try{ data = await res.json(); }catch(e){ throw new Error("NOPROXY"); }
+  let data = null, raw = "";
+  try{ raw = await res.text(); data = JSON.parse(raw); }
+  catch(e){ throw new Error("BADRESP:" + res.status + ":" + raw.slice(0,120).replace(/\s+/g," ")); }
 
   if(!res.ok){
     if(res.status === 429) throw new Error(data.error || "RATE");
     if(res.status === 500) throw new Error("NOKEY");
-    throw new Error(data.error || ("Server " + res.status));
+    if(res.status === 403) throw new Error("ORIGIN");
+    if(res.status === 405) throw new Error("OLDFN");
+    throw new Error("HTTP " + res.status + " — " + (data.error || "no detail"));
   }
   if(!data || !data.text) throw new Error("Prazan odgovor.");
   PROXY_OK = true;
@@ -1160,7 +1176,9 @@ async function ask(system, messages, maxTokens){
   if(PROXY_OK !== false){
     try{ return await askProxy(system, messages, maxTokens); }
     catch(e){
-      if(e.message === "NOPROXY"){ PROXY_OK = false; }        // fall through to Claude
+      // Only fall through to Claude if nothing answered at all. If the function
+      // replied with an error, surface that error — masking it hides the cause.
+      if(String(e.message).indexOf("NOPROXY") === 0){ PROXY_OK = false; }
       else throw e;
     }
   }
@@ -1175,12 +1193,24 @@ function parseJSON(txt){
 }
 function apiError(e){
   const m = String((e && e.message) || "");
+  if(/^KEY_INVALID/.test(m))  return `<div class="err"><b>Ključ nije valjan.</b> Google rejected the key itself. In Netlify, re-paste <code>GEMINI_API_KEY</code> — watch for a trailing space or a key you've since deleted in AI Studio — then <b>Trigger deploy</b>.</div>`;
+  if(/^KEY_EXPIRED/.test(m))  return `<div class="err"><b>Ključ je istekao.</b> Make a fresh one in Google AI Studio, update the Netlify variable, and redeploy.</div>`;
+  if(/^API_DISABLED/.test(m)) return `<div class="err"><b>API nije uključen.</b> The Generative Language API isn't enabled for this key's project. Enable it in Google Cloud, wait a minute, then try again.</div>`;
+  if(/^PERMISSION/.test(m))   return `<div class="err"><b>Ključ nema dopuštenje.</b> The key exists but is restricted from calling this API. Check its API restrictions in Google Cloud.</div>`;
+  if(/^BILLING/.test(m))      return `<div class="err"><b>Naplata nije uključena.</b> This Google project needs billing enabled.</div>`;
+  if(/^QUOTA/.test(m))        return `<div class="err"><b>Kvota je potrošena.</b> The key's quota is used up. Wait, or check your limits in AI Studio.</div>`;
+  if(/^MODEL/.test(m))        return `<div class="err"><b>Model nije dostupan.</b> This key can't reach <code>${esc(GMODEL)}</code>.</div>`;
+  if(/^UPSTREAM_/.test(m))    return `<div class="err"><b>Gemini je odbio zahtjev.</b> The full reason is in Netlify → Logs → Functions → chat.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim)">${esc(m)}</div></div>`;
+  if(m === "ORIGIN") return `<div class="err"><b>Origin blokiran (403).</b> The function is running but rejected this site's address. In Netlify, either delete the <code>ALLOWED_ORIGIN</code> variable, or set it to exactly the URL in your address bar — including <code>https://</code> and no trailing slash. Redeploy after changing it.</div>`;
+  if(m === "OLDFN") return `<div class="err"><b>Stara verzija funkcije (405).</b> The deployed <code>chat.js</code> is an older build that rejects this request shape. Replace <code>netlify/functions/chat.js</code> on GitHub with the latest one and commit.</div>`;
+  if(m.indexOf("NOPROXY") === 0) return `<div class="err"><b>Funkcija nije pronađena (404).</b> Netlify has no function at <code>/.netlify/functions/chat</code>. Check the file is at exactly that path in your repo and that the deploy finished.</div>`;
+  if(m.indexOf("BADRESP") === 0) return `<div class="err"><b>Neočekivan odgovor.</b> The server replied with something that isn't JSON — usually Netlify's own error page.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m)}</div></div>`;
   if(m === "NOKEY") return `<div class="err"><b>Poslužitelj nije spreman.</b> The site is deployed but <code>GEMINI_API_KEY</code> isn't set. In Netlify: <b>Site configuration → Environment variables → Add a variable</b>, then redeploy — env vars only take effect on a new deploy.</div>`;
   if(m === "RATE" || /limit|Prebrzo|preopterećen|sutra/i.test(m)) return `<div class="err"><b>Uspori malo.</b> ${esc(m === "RATE" ? "Rate limit reached. Wait a minute." : m)}</div>`;
   if(m === "BADKEY")  return `<div class="err"><b>Ključ ne radi.</b> Google rejected that API key. Open <b>Postavke</b>, check you pasted the whole thing, and make sure the Generative Language API is enabled for the key.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
   if(m === "NOMODEL") return `<div class="err"><b>Model nije pronađen.</b> Your key doesn't have access to <b>${esc(GMODEL)}</b>. Pick a different one in <b>Postavke</b>.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Promijeni model</button></div></div>`;
   if(m === "RATE")    return `<div class="err"><b>Previše zahtjeva.</b> You've hit Gemini's rate limit. Wait a minute and try again — the free tier is generous but not unlimited.</div>`;
-  if(!GKEY) return `<div class="err"><b>Nema veze s AI-jem.</b> This copy can't reach the server function, isn't running inside Claude, and has no personal key set. Lessons, grammar, drills and flashcards all work without it.<div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
+  if(!GKEY) return `<div class="err"><b>Nema veze s AI-jem.</b> Lessons, grammar, drills and flashcards all work without it.<div style="font-family:var(--mono);font-size:11px;margin-top:8px;color:var(--stone-dim);word-break:break-all">${esc(m) || "no error message"}</div><div style="margin-top:9px"><button class="btn sm" onclick="openSettings()">Otvori postavke</button></div></div>`;
   return `<div class="err"><b>Nije uspjelo.</b> ${esc(m) || "Unknown error."} Try again, or check your key in <b>Postavke</b>.</div>`;
 }
 
@@ -1875,6 +1905,107 @@ function vGrammar(){
 }
 
 /* ============================================================
+   OBLAK — accounts via Netlify Identity
+   ============================================================ */
+const CLOUD = {
+  ready:false, user:null, email:"", busy:false,
+  lastSync:0, lastErr:"", available:false,
+
+  init(){
+    if(typeof netlifyIdentity === "undefined"){ this.ready = true; return; }
+    this.available = true;
+    try{
+      netlifyIdentity.on("init", u => { this.user = u; this.email = u ? u.email : ""; this.ready = true;
+        paintCloud(); if(u) this.sync(); });
+      netlifyIdentity.on("login", u => { this.user = u; this.email = u.email; netlifyIdentity.close();
+        paintCloud(); this.sync(); });
+      netlifyIdentity.on("logout", () => { this.user = null; this.email = ""; paintCloud();
+        if(CUR === "napredak") vSave(); });
+      netlifyIdentity.init();
+    }catch(e){ this.ready = true; this.available = false; }
+  },
+
+  open(tab){
+    if(!this.available){ this.lastErr = "WIDGET"; paintCloud(); return; }
+    netlifyIdentity.open(tab || "login");
+  },
+  out(){ if(this.available) netlifyIdentity.logout(); },
+
+  async token(){
+    if(!this.user) return null;
+    try{ return await this.user.jwt(); }catch(e){ return null; }
+  },
+
+  async call(method, body){
+    const t = await this.token();
+    if(!t) throw new Error("NOT_SIGNED_IN");
+    const res = await fetch("/.netlify/functions/sync", {
+      method,
+      headers: { "Authorization": "Bearer " + t, "Content-Type": "application/json" },
+      body: body ? JSON.stringify(body) : undefined
+    });
+    if(res.status === 404) throw new Error("NO_FUNCTION");
+    let d = null;
+    try{ d = await res.json(); }catch(e){ throw new Error("BAD_RESPONSE"); }
+    if(!res.ok) throw new Error(d.error || ("HTTP " + res.status));
+    return d;
+  },
+
+  // On sign-in: whichever copy is newer wins, and the other gets overwritten.
+  async sync(){
+    if(this.busy) return; this.busy = true; this.lastErr = "";
+    try{
+      const d = await this.call("GET");
+      if(d.empty){ await this.push(); }
+      else if((d.updatedAt || 0) > (S.updatedAt || 0)){
+        applyState(d.state); await Store.set("pleter:state", S);
+        this.lastSync = d.updatedAt; paintStats();
+        if(CUR === "napredak") vSave();
+      }else{
+        await this.push();
+      }
+    }catch(e){ this.lastErr = String(e.message || e); }
+    this.busy = false; paintCloud();
+    if(CUR === "napredak" && !this.lastErr) vSave();
+  },
+
+  async push(quiet){
+    if(!this.user) return;
+    try{
+      const d = await this.call("POST", { state: S, v: VERSION });
+      this.lastSync = d.updatedAt; this.lastErr = "";
+    }catch(e){ this.lastErr = String(e.message || e); }
+    paintCloud();
+    if(!quiet && CUR === "napredak") vSave();
+  },
+
+  async pull(){
+    try{
+      const d = await this.call("GET");
+      if(d.empty){ this.lastErr = "EMPTY"; }
+      else { applyState(d.state); await Store.set("pleter:state", S);
+             this.lastSync = d.updatedAt; this.lastErr = ""; paintStats(); }
+    }catch(e){ this.lastErr = String(e.message || e); }
+    if(CUR === "napredak") vSave();
+  }
+};
+
+function cloudErrText(m){
+  if(m === "NOT_SIGNED_IN")      return "Sign in again — your session expired.";
+  if(m === "NO_FUNCTION")        return "sync.js isn't deployed yet.";
+  if(m === "STORAGE_UNAVAILABLE")return "Netlify Blobs isn't available on this site.";
+  if(m === "TOO_LARGE")          return "Your save is over 900 KB. Delete some old conversations.";
+  if(m === "EMPTY")              return "Nothing saved in the cloud yet.";
+  if(m === "WIDGET")             return "Identity isn't enabled on this site yet.";
+  return m;
+}
+
+function paintCloud(){
+  const el = $("#cloudbadge"); if(!el) return;
+  el.textContent = CLOUD.user ? ("☁ " + CLOUD.email.split("@")[0]) : "";
+}
+
+/* ============================================================
    NAPREDAK — save codes
    ============================================================ */
 function b64enc(str){
@@ -1946,6 +2077,32 @@ function vSave(){
   shell("napredak · your save", "Gdje ti je <i>napredak</i>",
     "There's no account and no server here — this is one file. Instead your progress lives in the app, and a save code lets you carry it anywhere: another browser, another laptop, or a downloaded copy of the file.",
     `<div class="card">
+      <div class="kicker">račun · account</div>
+      ${CLOUD.user ? `
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <span style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--olive)">Prijavljen</span>
+          <span class="pill">${esc(CLOUD.email)}</span>
+        </div>
+        <p style="font-size:14.5px;color:var(--stone-dim);margin-top:8px">Progress and conversations save to your account automatically. Sign in on any other device with the same email and everything follows you — no codes.</p>
+        <div style="font-size:12.5px;color:var(--stone-dim)">${CLOUD.lastSync ? "Zadnje spremanje: " + new Date(CLOUD.lastSync).toLocaleString() : "Još nije sinkronizirano."}</div>
+        ${CLOUD.lastErr ? `<div class="err" style="margin-top:10px">${esc(cloudErrText(CLOUD.lastErr))}</div>` : ""}
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn sm" onclick="CLOUD.push()">Spremi sada</button>
+          <button class="btn ghost sm" onclick="CLOUD.pull()">Učitaj iz oblaka</button>
+          <button class="btn ghost sm" onclick="CLOUD.out()">Odjavi se</button>
+        </div>`
+      : `
+        <div style="font-family:var(--display);font-size:22px;font-weight:700">Prijavi se i zaboravi kodove</div>
+        <p style="font-size:14.5px;color:var(--stone-dim);margin-top:6px">Make an account with an email and password and your progress follows you to every device automatically. Passwords are handled by Netlify — this app never sees them.</p>
+        ${CLOUD.lastErr ? `<div class="err" style="margin-top:10px">${esc(cloudErrText(CLOUD.lastErr))}</div>` : ""}
+        <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" onclick="CLOUD.open('signup')">Otvori račun</button>
+          <button class="btn ghost" onclick="CLOUD.open('login')">Prijava</button>
+        </div>
+        <p style="font-size:12.5px;color:var(--stone-dim);margin-top:12px;margin-bottom:0">Don't want an account? The save code below still works exactly as before.</p>`}
+    </div>
+
+    <div class="card" style="margin-top:14px">
       <div class="kicker">stanje · status</div>
       <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
         <span style="font-family:var(--display);font-size:24px;font-weight:700;color:${p?'var(--olive)':'var(--madder)'}">${p?'Sprema se automatski':'Ne sprema se'}</span>
@@ -2087,8 +2244,13 @@ function openSettings(){
           : row(DIAG.key, "GEMINI_API_KEY je postavljen",
                  DIAG.key ? "" : "Set it in Netlify, then redeploy — env vars only apply to new deploys") +
             row(DIAG.origin, "Origin je dopušten",
-                 DIAG.origin ? "" : "This URL isn't in the allow list" + (DIAG.origins && DIAG.origins.length ? " — configured: " + DIAG.origins.map(esc).join(", ") : "")))}
-    <div style="margin-top:10px"><button class="btn ghost sm" onclick="DIAG=null;openSettings();probe().then(openSettings)">Provjeri ponovno</button></div>`;
+                 DIAG.origin ? "" : "This URL isn't in the allow list" + (DIAG.origins && DIAG.origins.length ? " — configured: " + DIAG.origins.map(esc).join(", ") : "")) +
+            (DIAG.works === null ? "" : row(DIAG.works, "Ključ stvarno radi",
+                 DIAG.works ? "Google accepted a test call" : esc(DIAG.problem || "Google rejected the key"))))}
+    <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn ghost sm" onclick="DIAG=null;openSettings();probe().then(openSettings)">Provjeri ponovno</button>
+      <button class="btn brass sm" onclick="DIAG=null;openSettings();probe(true).then(openSettings)">Testiraj ključ uživo</button>
+    </div>`;
   box.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Postavke">
     <div class="eyebrow">postavke · settings</div>
     <h2>Veza s <i style="color:var(--brass)">AI-jem</i></h2>
@@ -2191,6 +2353,7 @@ async function testKey(){
   paintStats();
   paintGear();
   go("home");
+  CLOUD.init();
 })();
 </script>
 
