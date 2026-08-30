@@ -1,5 +1,5 @@
 /* ============================================================
-   Pleter — cloud save
+   Nauči hrvatski — cloud save
    Auth is handled entirely by Netlify Identity. This function
    never sees or stores a password; it only trusts the verified
    user that Netlify attaches to the request.
@@ -24,7 +24,7 @@ exports.handler = async (event, context) => {
   }
 
   let store;
-  try{ store = getStore("pleter-saves"); }
+  try{ store = getStore("naucihrvatski-saves"); }
   catch(e){
     console.error("Blobs unavailable:", e && e.message);
     return json(500, { error: "STORAGE_UNAVAILABLE" });
