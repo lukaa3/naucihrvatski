@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pleter — učim hrvatski</title>
+<title>Nauči hrvatski</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Alegreya:ital,wght@0,400;0,500;0,700;0,800;1,400;1,700&family=Karla:wght@300;400;500;600;700&family=Space+Mono:wght@400;700&display=swap&subset=latin,latin-ext" rel="stylesheet">
 <style>
 :root{
-  --deep:#0F212B;
-  --deep-2:#16303C;
-  --deep-3:#1E3F4D;
-  --stone:#EDE7DA;
-  --stone-dim:#A9B4B6;
-  --olive:#93AC72;
-  --madder:#CB4B3C;
-  --brass:#D9A441;
-  --line:rgba(237,231,218,.12);
-  --line-2:rgba(237,231,218,.22);
+  --deep:#08152F;
+  --deep-2:#102344;
+  --deep-3:#193561;
+  --stone:#EAF0FA;
+  --stone-dim:#93A6C4;
+  --dim:#93A6C4;
+  --olive:#3FB98A;
+  --madder:#E0362F;
+  --brass:#6BA6FF;
+  --line:rgba(234,240,250,.13);
+  --line-2:rgba(234,240,250,.24);
   --display:'Alegreya', Georgia, 'Times New Roman', serif;
   --body:'Karla', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --mono:'Space Mono', ui-monospace, Menlo, monospace;
@@ -40,8 +40,8 @@ body{
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(900px 500px at 82% -8%, rgba(217,164,65,.09), transparent 60%),
-    radial-gradient(700px 600px at 6% 104%, rgba(147,172,114,.07), transparent 62%);
+    radial-gradient(900px 500px at 82% -8%, rgba(107,166,255,.13), transparent 60%),
+    radial-gradient(700px 600px at 6% 104%, rgba(224,54,47,.08), transparent 62%);
 }
 h1,h2,h3,h4{font-family:var(--display);font-weight:800;line-height:1.15;margin:0;letter-spacing:-.01em}
 p{margin:0 0 .8em}
@@ -72,7 +72,7 @@ input,textarea,select{font-family:inherit;font-size:inherit}
 }
 .nav button .hr{font-family:var(--display);font-size:17px;font-weight:700;color:inherit}
 .nav button .en{font-size:11px;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
-.nav button:hover{background:rgba(237,231,218,.05);color:var(--stone)}
+.nav button:hover{background:rgba(107,166,255,.10);color:var(--stone)}
 .nav button[aria-current="true"]{background:var(--deep-2);color:var(--stone)}
 .nav button[aria-current="true"] .hr{color:var(--brass)}
 
@@ -85,10 +85,8 @@ input,textarea,select{font-family:inherit;font-size:inherit}
 .main{padding:30px 34px 90px;min-width:0}
 
 /* ---------- pleter (signature) ---------- */
-.pleter{width:100%;height:26px;display:block;overflow:visible}
-.pleter .bg{stroke:rgba(237,231,218,.14)}
-.pleter .fg{stroke:var(--brass)}
-.pleter path{fill:none;stroke-width:2.2;stroke-linecap:round}
+.board{width:100%;height:20px;display:block;border-radius:3px;overflow:hidden}
+.board rect{transition:fill .35s}
 
 /* ---------- page head ---------- */
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass);margin-bottom:8px}
@@ -115,8 +113,8 @@ input,textarea,select{font-family:inherit;font-size:inherit}
 .btn:hover{filter:brightness(1.1)}
 .btn:active{transform:translateY(1px)}
 .btn.ghost{background:transparent;border-color:var(--line-2);color:var(--stone)}
-.btn.ghost:hover{background:rgba(237,231,218,.06)}
-.btn.brass{background:var(--brass);border-color:var(--brass);color:#20180A}
+.btn.ghost:hover{background:rgba(107,166,255,.12)}
+.btn.brass{background:var(--brass);border-color:var(--brass);color:#05132B}
 .btn.sm{padding:6px 13px;font-size:13.5px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 
@@ -126,7 +124,7 @@ input,textarea,select{font-family:inherit;font-size:inherit}
   padding:5px 12px;border-radius:999px;font-size:13.5px;transition:.15s;
 }
 .chip:hover{color:var(--stone);border-color:var(--stone-dim)}
-.chip[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#20180A;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--brass);border-color:var(--brass);color:#05132B;font-weight:600}
 
 /* ---------- word rows ---------- */
 .wordlist{display:grid;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:10px;overflow:hidden}
@@ -135,7 +133,7 @@ input,textarea,select{font-family:inherit;font-size:inherit}
 .word .en{color:var(--stone-dim);flex:1;font-size:14.5px}
 .word .note{font-size:12px;color:var(--brass);opacity:.85;font-style:italic}
 .spk{background:none;border:0;color:var(--stone-dim);padding:3px 5px;border-radius:6px;line-height:1}
-.spk:hover{color:var(--brass);background:rgba(217,164,65,.1)}
+.spk:hover{color:var(--brass);background:rgba(107,166,255,.14)}
 .save{background:none;border:0;color:var(--stone-dim);padding:3px 5px;font-size:13px}
 .save:hover{color:var(--brass)}
 .save[aria-pressed="true"]{color:var(--brass)}
@@ -169,10 +167,10 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
 .chat{display:flex;flex-direction:column;gap:12px;min-height:280px;max-height:56vh;overflow-y:auto;padding-right:4px}
 .msg{max-width:88%;padding:12px 15px;border-radius:14px;font-size:15.5px}
 .msg.bot{background:var(--deep-3);border:1px solid var(--line);align-self:flex-start;border-bottom-left-radius:4px}
-.msg.me{background:rgba(203,75,60,.16);border:1px solid rgba(203,75,60,.4);align-self:flex-end;border-bottom-right-radius:4px}
+.msg.me{background:rgba(224,54,47,.18);border:1px solid rgba(224,54,47,.45);align-self:flex-end;border-bottom-right-radius:4px}
 .msg .cro{font-family:var(--display);font-size:18px;line-height:1.45}
 .msg .tr{font-size:13.5px;color:var(--stone-dim);margin-top:5px;font-style:italic}
-.fix{margin-top:9px;padding:9px 11px;border-left:3px solid var(--olive);background:rgba(147,172,114,.1);border-radius:0 8px 8px 0;font-size:13.5px}
+.fix{margin-top:9px;padding:9px 11px;border-left:3px solid var(--olive);background:rgba(63,185,138,.12);border-radius:0 8px 8px 0;font-size:13.5px}
 .fix b{color:var(--olive)}
 .composer{display:flex;gap:9px;margin-top:14px}
 .composer input{
@@ -181,8 +179,8 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
 }
 .composer input::placeholder{color:var(--stone-dim);opacity:.65}
 .hintbar{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
-.hintbar button{background:rgba(217,164,65,.11);border:1px solid rgba(217,164,65,.3);color:var(--brass);padding:4px 11px;border-radius:999px;font-size:13px}
-.hintbar button:hover{background:rgba(217,164,65,.2)}
+.hintbar button{background:rgba(107,166,255,.13);border:1px solid rgba(107,166,255,.35);color:var(--brass);padding:4px 11px;border-radius:999px;font-size:13px}
+.hintbar button:hover{background:rgba(107,166,255,.24)}
 
 /* ---------- quiz ---------- */
 .q{font-family:var(--display);font-size:23px;font-weight:700;margin-bottom:14px;line-height:1.35}
@@ -192,22 +190,22 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
   padding:12px 16px;border-radius:11px;font-size:16px;transition:.13s;
 }
 .opt:hover:not(:disabled){border-color:var(--brass)}
-.opt.right{border-color:var(--olive);background:rgba(147,172,114,.16)}
-.opt.wrong{border-color:var(--madder);background:rgba(203,75,60,.14)}
+.opt.right{border-color:var(--olive);background:rgba(63,185,138,.18)}
+.opt.wrong{border-color:var(--madder);background:rgba(224,54,47,.16)}
 .answer{
   width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);
   padding:12px 16px;border-radius:11px;font-size:18px;font-family:var(--display);
 }
 .verdict{margin-top:13px;padding:12px 14px;border-radius:10px;font-size:14.5px}
-.verdict.ok{background:rgba(147,172,114,.13);border:1px solid rgba(147,172,114,.4)}
-.verdict.no{background:rgba(203,75,60,.12);border:1px solid rgba(203,75,60,.4)}
+.verdict.ok{background:rgba(63,185,138,.14);border:1px solid rgba(63,185,138,.42)}
+.verdict.no{background:rgba(224,54,47,.13);border:1px solid rgba(224,54,47,.42)}
 .progressline{height:3px;background:var(--line);border-radius:2px;overflow:hidden;margin-bottom:20px}
 .progressline i{display:block;height:100%;background:var(--brass);transition:width .3s}
 
 /* ---------- reading ---------- */
 .read{font-family:var(--display);font-size:20px;line-height:1.75;max-width:62ch}
-.read w{cursor:pointer;border-bottom:1px dotted rgba(217,164,65,.4)}
-.read w:hover{color:var(--brass);background:rgba(217,164,65,.09)}
+.read w{cursor:pointer;border-bottom:1px dotted rgba(107,166,255,.45)}
+.read w:hover{color:var(--brass);background:rgba(107,166,255,.12)}
 .gloss{
   position:fixed;background:var(--deep-3);border:1px solid var(--brass);border-radius:9px;
   padding:8px 12px;font-family:var(--body);font-size:14px;z-index:60;pointer-events:none;
@@ -225,22 +223,15 @@ td.cs{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:
 .flash .back{font-size:19px;color:var(--stone-dim)}
 
 /* ---------- misc ---------- */
-.note{font-size:13.5px;color:var(--stone-dim);background:rgba(237,231,218,.04);border-left:2px solid var(--brass);padding:10px 13px;border-radius:0 8px 8px 0;margin:10px 0}
+.note{font-size:13.5px;color:var(--stone-dim);background:rgba(107,166,255,.07);border-left:2px solid var(--brass);padding:10px 13px;border-radius:0 8px 8px 0;margin:10px 0}
 .note b{color:var(--brass)}
 .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;padding:3px 9px;border:1px solid var(--line-2);border-radius:999px;color:var(--stone-dim)}
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(237,231,218,.25);border-top-color:var(--brass);border-radius:50%;animation:sp .7s linear infinite;vertical-align:-2px}
 @keyframes sp{to{transform:rotate(360deg)}}
-.err{background:rgba(203,75,60,.12);border:1px solid rgba(203,75,60,.45);border-radius:10px;padding:12px 15px;font-size:14px;margin-top:12px}
+.err{background:rgba(224,54,47,.13);border:1px solid rgba(224,54,47,.48);border-radius:10px;padding:12px 15px;font-size:14px;margin-top:12px}
 .hidden{display:none !important}
 hr.rule{border:0;border-top:1px solid var(--line);margin:22px 0}
 
-/* ---------- Netlify Identity widget ----------
-   The widget stays mounted full-screen even when closed, so by default it must
-   ignore clicks entirely. Only when the dialog is genuinely open does it become
-   interactive. Without this, an invisible layer eats every click on the page. */
-#netlify-identity-widget{z-index:9998 !important; pointer-events:none !important}
-html.identity-open #netlify-identity-widget{pointer-events:auto !important}
-html.identity-open #netlify-identity-widget iframe{pointer-events:auto !important}
 
 /* ---------- invite banner ---------- */
 .invite{position:fixed;left:0;right:0;bottom:0;z-index:10000;background:var(--deep-3);border-top:1px solid var(--brass);padding:14px 18px;display:flex;gap:12px;align-items:center;flex-wrap:wrap;box-shadow:0 -8px 30px rgba(0,0,0,.5)}
@@ -250,7 +241,7 @@ html.identity-open #netlify-identity-widget iframe{pointer-events:auto !importan
 .chatlist{display:grid;gap:6px;max-height:260px;overflow-y:auto}
 .chatrow{display:flex;align-items:center;gap:8px;background:var(--deep);border:1px solid var(--line);border-radius:11px;padding:9px 12px;cursor:pointer;transition:.13s}
 .chatrow:hover{border-color:var(--line-2)}
-.chatrow.on{border-color:var(--brass);background:rgba(217,164,65,.07)}
+.chatrow.on{border-color:var(--brass);background:rgba(107,166,255,.10)}
 .cmeta{flex:1;min-width:0}
 .ct{font-family:var(--display);font-size:16.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cs2{font-size:11px;letter-spacing:.04em;color:var(--stone-dim);text-transform:uppercase}
@@ -261,7 +252,7 @@ html.identity-open #netlify-identity-widget iframe{pointer-events:auto !importan
 .cdel.armed{color:var(--madder);border:1px solid var(--madder);font-size:11.5px;padding:3px 8px}
 
 /* ---------- settings modal ---------- */
-.scrim{position:fixed;inset:0;background:rgba(6,14,18,.72);backdrop-filter:blur(3px);z-index:80;display:flex;align-items:center;justify-content:center;padding:18px}
+.scrim{position:fixed;inset:0;background:rgba(4,10,24,.76);backdrop-filter:blur(3px);z-index:80;display:flex;align-items:center;justify-content:center;padding:18px}
 .modal{background:var(--deep-2);border:1px solid var(--line-2);border-radius:18px;max-width:520px;width:100%;max-height:88vh;overflow-y:auto;padding:26px;box-shadow:0 24px 70px rgba(0,0,0,.6)}
 .modal h2{font-size:26px;margin-bottom:4px}
 .field{width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);padding:11px 14px;border-radius:11px;font-family:var(--mono);font-size:13px}
@@ -292,28 +283,23 @@ select.field{font-family:var(--body);font-size:15px}
 <div class="shell">
   <aside class="rail">
     <a class="brand" href="#" onclick="go('home');return false">
-      <div class="mark">Ple<em>ter</em></div>
-      <div class="tag">hrvatski &nbsp;·&nbsp; svaki dan</div>
+      <div class="mark">Nauči <em>hrvatski</em></div>
+      <div class="tag">learn croatian &nbsp;·&nbsp; every day</div>
     </a>
 
-    <button class="gear" onclick="openSettings()"><span class="dot" id="dot"></span><span id="gearlbl">Postavke</span></button>
+    <button class="gear" onclick="openSettings()"><span class="dot" id="dot"></span><span id="gearlbl">Settings</span></button>
     <div id="cloudbadge" style="font-size:11.5px;color:var(--olive);letter-spacing:.04em"></div>
 
     <nav class="nav" id="nav"></nav>
 
     <div class="rail-foot">
       <div class="stat-row">
-        <div class="stat"><b id="s-xp">0</b><span>bodova</span></div>
-        <div class="stat"><b id="s-streak">0</b><span>dana</span></div>
-        <div class="stat"><b id="s-words">0</b><span>riječi</span></div>
+        <div class="stat"><b id="s-xp">0</b><span>points</span></div>
+        <div class="stat"><b id="s-streak">0</b><span>day streak</span></div>
+        <div class="stat"><b id="s-words">0</b><span>words</span></div>
       </div>
-      <svg class="pleter" viewBox="0 0 240 26" preserveAspectRatio="none" aria-hidden="true">
-        <path class="bg" d="M0,13 C15,1 30,1 45,13 C60,25 75,25 90,13 C105,1 120,1 135,13 C150,25 165,25 180,13 C195,1 210,1 225,13 C232,19 236,21 240,21"/>
-        <path class="bg" d="M0,13 C15,25 30,25 45,13 C60,1 75,1 90,13 C105,25 120,25 135,13 C150,1 165,1 180,13 C195,25 210,25 225,13 C232,7 236,5 240,5"/>
-        <g id="pl-fill"><path class="fg" id="pl-a" d="M0,13 C15,1 30,1 45,13 C60,25 75,25 90,13 C105,1 120,1 135,13 C150,25 165,25 180,13 C195,1 210,1 225,13 C232,19 236,21 240,21"/>
-        <path class="fg" id="pl-b" d="M0,13 C15,25 30,25 45,13 C60,1 75,1 90,13 C105,25 120,25 135,13 C150,1 165,1 180,13 C195,25 210,25 225,13 C232,7 236,5 240,5"/></g>
-      </svg>
-      <div style="margin-top:8px" id="pl-label">Pleter se plete kako učiš.</div>
+      <svg class="board" viewBox="0 0 240 20" preserveAspectRatio="none" aria-hidden="true" id="board"></svg>
+      <div style="margin-top:8px" id="pl-label">Your checkerboard fills as you learn.</div>
     </div>
   </aside>
 
@@ -321,13 +307,14 @@ select.field{font-family:var(--body);font-size:15px}
 </div>
 <div id="gloss" class="gloss hidden"></div>
 <div id="settings" class="hidden"></div>
+<div id="authbox" class="hidden"></div>
 <script>
 /* ============================================================
-   PLETER — hrvatski
+   NAUČI HRVATSKI — hrvatski
    Standard Croatian only: ijekavian, Croatian lexicon.
    ============================================================ */
 
-const VERSION = "3.3";
+const VERSION = "4.0";
 const ORD = ["","prva","druga","treća","četvrta","peta","šesta","sedma","osma","deveta","deseta","jedanaesta","dvanaesta"];
 
 const UNITS = [
@@ -944,7 +931,7 @@ const Store = (()=>{
 
 /* API key lives on its own, deliberately OUTSIDE the state object,
    so it never ends up inside an exported save code. */
-const KEY_K = "pleter:gemini_key", MODEL_K = "pleter:gemini_model";
+const KEY_K = "nh:gemini_key", MODEL_K = "nh:gemini_model";
 let GKEY = "", GMODEL = "gemini-3.6-flash";
 const MODELS = ["gemini-3.6-flash","gemini-3.5-flash","gemini-3.1-flash-lite","gemini-2.5-flash"];
 async function loadKey(){
@@ -963,7 +950,7 @@ let S = {
 };
 
 async function loadState(){
-  const saved = await Store.get("pleter:state");
+  const saved = await Store.get("nh:state");
   if(saved) S = Object.assign(S, saved);
   const today = new Date().toISOString().slice(0,10);
   if(S.lastDay !== today){
@@ -976,7 +963,7 @@ async function loadState(){
 let PUSH_T = null;
 async function save(){
   S.updatedAt = Date.now();
-  await Store.set("pleter:state", S);
+  await Store.set("nh:state", S);
   paintStats();
   if(CLOUD.user){                       // debounced background push
     clearTimeout(PUSH_T);
@@ -993,16 +980,28 @@ function paintStats(){
   $("#s-streak").textContent = S.streak||0;
   $("#s-words").textContent = Object.keys(S.cards||{}).length;
   const pct = Math.min(1, d/total);
-  ["#pl-a","#pl-b"].forEach(sel=>{
-    const p = $(sel); if(!p) return;
-    const L = p.getTotalLength();
-    p.style.strokeDasharray = L;
-    p.style.strokeDashoffset = L*(1-pct);
-  });
+
+  // Šahovnica: the checkerboard fills square by square as you finish the course.
+  const board = $("#board");
+  if(board){
+    const cols = 24, rows = 2, w = 240/cols, hgt = 20/rows;
+    const filled = Math.round(pct * cols * rows);
+    let out = "", n = 0;
+    for(let r = 0; r < rows; r++){
+      for(let c = 0; c < cols; c++){
+        const light = (r + c) % 2 === 0;
+        const on = n < filled;
+        const fill = on ? (light ? "#E0362F" : "#EAF0FA") : (light ? "rgba(234,240,250,.07)" : "rgba(234,240,250,.03)");
+        out += `<rect x="${c*w}" y="${r*hgt}" width="${w}" height="${hgt}" fill="${fill}"/>`;
+        n++;
+      }
+    }
+    board.innerHTML = out;
+  }
   const lab = $("#pl-label");
-  if(lab) lab.textContent = d===0 ? "Pleter se plete kako učiš."
-        : d>=total ? "Pleter je gotov. Bravo!"
-        : Math.round(pct*100) + "% programa gotovo";
+  if(lab) lab.textContent = d === 0 ? "Your checkerboard fills as you learn."
+        : d >= total ? "Course complete. Bravo!"
+        : Math.round(pct*100) + "% of the course done";
 }
 
 /* ============================================================
@@ -1230,14 +1229,14 @@ function apiError(e){
    ROUTER
    ============================================================ */
 const VIEWS = [
-  {k:"home",    hr:"Početna",   en:"Home"},
-  {k:"lekcije", hr:"Lekcije",   en:"Lessons"},
-  {k:"razgovor",hr:"Razgovor",  en:"Talk"},
-  {k:"provjera",hr:"Provjera",  en:"Quiz"},
-  {k:"citanje", hr:"Čitanje",   en:"Reading"},
-  {k:"kartice", hr:"Kartice",   en:"Cards"},
-  {k:"gramatika",hr:"Gramatika",en:"Grammar"},
-  {k:"napredak", hr:"Napredak",  en:"Save"}
+  {k:"home",     hr:"Home",     en:"Početna"},
+  {k:"lekcije",  hr:"Lessons",  en:"Lekcije"},
+  {k:"razgovor", hr:"Talk",     en:"Razgovor"},
+  {k:"provjera", hr:"Quiz",     en:"Provjera"},
+  {k:"citanje",  hr:"Reading",  en:"Čitanje"},
+  {k:"kartice",  hr:"Cards",    en:"Kartice"},
+  {k:"gramatika",hr:"Grammar",  en:"Gramatika"},
+  {k:"napredak", hr:"Account",  en:"Račun"}
 ];
 let CUR = "home";
 function paintNav(){
@@ -1407,7 +1406,7 @@ function pick(i){
 }
 function endDrill(){
   const pct = Math.round(D.score/D.q.length*100);
-  const msg = pct===100 ? "Savršeno. Sve točno." : pct>=75 ? "Vrlo dobro." : pct>=50 ? "Dobar početak — ponovi lekciju." : "Vrati se na lekciju pa probaj opet.";
+  const msg = pct===100 ? "Perfect. Every one right." : pct>=75 ? "Very good." : pct>=50 ? "Decent start — reread the lesson." : "Go back to the lesson and try again.";
   if(D.unit){ S.done[D.unit] = S.done[D.unit]||{}; S.done[D.unit].drill = Math.max(S.done[D.unit].drill||0, pct); save(); }
   const next = D.unit ? UNITS.find(x=>x.id===D.unit+1) : null;
   shell("gotovo · done", "Rezultat", "",
@@ -1514,8 +1513,8 @@ function vTalk(){
 
     <div class="card" style="margin-top:14px">
       <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:10px">
-        <div class="kicker" style="margin:0">razgovori · ${list.length} spremljeno</div>
-        <button class="btn sm" onclick="startChat()">+ Novi razgovor</button>
+        <div class="kicker" style="margin:0">razgovori · ${list.length} saved</div>
+        <button class="btn sm" onclick="startChat()">+ New conversation</button>
       </div>
       ${list.length ? `<div class="chatlist">${list.map(c=>{
         const sc = SCENARIOS.find(x=>x.k===c.scenario);
@@ -1624,7 +1623,7 @@ async function sendMsg(){
   }catch(e){
     CH.hist.push({who:"bot", hr:"Oprosti, nešto nije u redu.", tr:"Sorry — the connection failed. Details below.", sugg:[]});
     if($("#cherr")) $("#cherr").innerHTML = apiError(e);
-    console.error("Pleter AI call failed:", e);
+    console.error("Nauči hrvatski AI call failed:", e);
   }
   const ty = $("#typing"); if(ty) ty.remove();
   CH.busy = false; if($("#send")) $("#send").disabled = false;
@@ -1917,109 +1916,156 @@ function vGrammar(){
 }
 
 /* ============================================================
-   OBLAK — accounts via Netlify Identity
+   ACCOUNTS — Netlify Identity (GoTrue) called directly.
+   No widget, no iframe. Netlify hashes and stores the passwords;
+   this app only ever holds a short-lived access token.
    ============================================================ */
+const IDENTITY = "/.netlify/identity";
+const AUTH_K = "nh:auth";
+
 const CLOUD = {
-  ready:false, user:null, email:"", busy:false,
-  lastSync:0, lastErr:"", available:false,
+  ready:false, user:null, email:"", token:"", refresh:"", expires:0,
+  busy:false, lastSync:0, lastErr:"", pendingToken:"", pendingKind:"",
 
-  init(tries){
-    // The widget is a separate network request. If it hasn't landed yet,
-    // wait for it rather than concluding it will never arrive.
-    if(typeof netlifyIdentity === "undefined"){
-      const n = (tries || 0) + 1;
-      if(n < 40){ setTimeout(()=>this.init(n), 200); return; }   // ~8s
-      this.ready = true; this.available = false; this.lastErr = "WIDGET";
-      paintCloud(); if(CUR === "napredak") vSave();
-      return;
-    }
-    this.available = true;
-
-    // Invite / recovery links arrive as  #invite_token=...  in the URL.
-    // The widget is meant to pick these up on its own; when it doesn't, the
-    // page just sits there. So detect it ourselves and open the dialog.
+  async init(){
     const hash = window.location.hash || "";
-    this.token_kind = (hash.match(/(invite_token|recovery_token|confirmation_token)=/) || [])[1] || "";
+    const m = hash.match(/(invite_token|recovery_token|confirmation_token)=([^&]+)/);
+    if(m){
+      this.pendingKind = m[1];
+      this.pendingToken = decodeURIComponent(m[2]);
+      try{ history.replaceState(null,"",location.pathname+location.search); }catch(e){}
+    }
 
+    const saved = await Store.get(AUTH_K);
+    if(saved && saved.refresh){
+      this.token = saved.token || ""; this.refresh = saved.refresh;
+      this.expires = saved.expires || 0; this.email = saved.email || "";
+      try{ await this.fresh(); this.user = true; }catch(e){ await this.forget(); }
+    }
+    this.ready = true;
+    paintCloud();
+    if(this.user) this.sync();
+    if(this.pendingToken){
+      if(this.pendingKind === "confirmation_token") this.confirmEmail();
+      else openAuth(this.pendingKind === "recovery_token" ? "reset" : "invite");
+    }
+  },
+
+  async req(path, opts){
+    const res = await fetch(IDENTITY + path, opts);
+    let d = null;
+    try{ d = await res.json(); }catch(e){}
+    if(!res.ok){
+      const msg = (d && (d.msg || d.error_description || d.error || d.message)) || ("HTTP " + res.status);
+      throw new Error(msg);
+    }
+    return d;
+  },
+
+  async store(){
+    await Store.set(AUTH_K, { token:this.token, refresh:this.refresh, expires:this.expires, email:this.email });
+  },
+  async forget(){
+    this.user = null; this.token = ""; this.refresh = ""; this.expires = 0; this.email = "";
+    await Store.del(AUTH_K); paintCloud();
+  },
+
+  session(d){
+    this.token = d.access_token;
+    this.refresh = d.refresh_token || this.refresh;
+    this.expires = Date.now() + ((d.expires_in || 3600) * 1000) - 60000;
+    if(d.user && d.user.email) this.email = d.user.email;
+    this.user = true;
+  },
+
+  async fresh(){
+    if(this.token && Date.now() < this.expires) return this.token;
+    if(!this.refresh) throw new Error("NO_SESSION");
+    const d = await this.req("/token", {
+      method:"POST",
+      headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+      body:"grant_type=refresh_token&refresh_token=" + encodeURIComponent(this.refresh)
+    });
+    this.session(d); await this.store();
+    return this.token;
+  },
+
+  async signIn(email, password){
+    const d = await this.req("/token", {
+      method:"POST",
+      headers:{ "Content-Type":"application/x-www-form-urlencoded" },
+      body:"grant_type=password&username=" + encodeURIComponent(email) + "&password=" + encodeURIComponent(password)
+    });
+    this.email = email; this.session(d); await this.store();
+    await this.me(); paintCloud(); await this.sync();
+  },
+
+  async signUp(email, password){
+    const d = await this.req("/signup", {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ email, password })
+    });
+    if(d && d.access_token){ this.email = email; this.session(d); await this.store(); await this.sync(); return "in"; }
+    return "confirm";                      // Netlify sent a confirmation email
+  },
+
+  async acceptInvite(password){
+    const d = await this.req("/verify", {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ type:"signup", token:this.pendingToken, password })
+    });
+    this.pendingToken = ""; this.session(d); await this.store();
+    await this.me(); paintCloud(); await this.sync();
+  },
+
+  async confirmEmail(){
     try{
-      netlifyIdentity.on("init", u => { this.user = u; this.email = u ? u.email : ""; this.ready = true;
-        paintCloud();
-        if(u){ this.clearHash(); this.sync(); }
-        else if(this.token_kind){ this.showInvite(); setTimeout(()=>this.openToken(), 400); }
+      const d = await this.req("/verify", {
+        method:"POST", headers:{ "Content-Type":"application/json" },
+        body: JSON.stringify({ type:"signup", token:this.pendingToken })
       });
-      netlifyIdentity.on("open",  () => document.documentElement.classList.add("identity-open"));
-      netlifyIdentity.on("close", () => document.documentElement.classList.remove("identity-open"));
-      netlifyIdentity.on("error", err => {
-        document.documentElement.classList.remove("identity-open");
-        this.lastErr = "IDENTITY: " + ((err && err.message) || "unknown");
-        paintCloud(); if(CUR === "napredak") vSave();
-      });
-      netlifyIdentity.on("login", u => { this.user = u; this.email = u.email;
-        try{ netlifyIdentity.close(); }catch(e){}
-        document.documentElement.classList.remove("identity-open");
-        this.clearHash(); paintCloud(); this.sync();
-        if(CUR === "napredak") vSave(); });
-      netlifyIdentity.on("logout", () => { this.user = null; this.email = ""; paintCloud();
-        if(CUR === "napredak") vSave(); });
-      netlifyIdentity.init();
-    }catch(e){ this.ready = true; this.available = false; }
+      this.pendingToken = ""; this.session(d); await this.store();
+      await this.me(); paintCloud(); await this.sync();
+    }catch(e){ this.lastErr = String(e.message || e); paintCloud(); }
   },
 
-  clearHash(){
-    this.token_kind = "";
-    const b = $("#invitebar"); if(b) b.remove();
-    try{ history.replaceState(null, "", window.location.pathname + window.location.search); }catch(e){}
+  async recover(email){
+    await this.req("/recover", {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ email })
+    });
   },
 
-  openToken(){
-    document.documentElement.classList.add("identity-open");
+  async resetPassword(password){
+    const d = await this.req("/verify", {
+      method:"POST", headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ type:"recovery", token:this.pendingToken })
+    });
+    this.session(d); await this.store();
+    await this.req("/user", {
+      method:"PUT",
+      headers:{ "Content-Type":"application/json", "Authorization":"Bearer " + this.token },
+      body: JSON.stringify({ password })
+    });
+    this.pendingToken = "";
+    await this.me(); paintCloud(); await this.sync();
+  },
+
+  async me(){
     try{
-      netlifyIdentity.open(this.token_kind === "recovery_token" ? "login" : "signup");
-    }catch(e){
-      document.documentElement.classList.remove("identity-open");
-      this.lastErr = "OPEN_FAILED: " + (e && e.message ? e.message : "widget refused to open");
-      paintCloud();
-    }
+      const d = await this.req("/user", { headers:{ "Authorization":"Bearer " + (await this.fresh()) } });
+      if(d && d.email){ this.email = d.email; await this.store(); }
+    }catch(e){}
   },
 
-  showInvite(){
-    if($("#invitebar")) return;
-    const kind = this.token_kind === "recovery_token" ? "reset your password" : "finish setting up your account";
-    const el = document.createElement("div");
-    el.id = "invitebar"; el.className = "invite";
-    el.innerHTML = `<p><b>Pozivnica primljena.</b> Click below to ${kind}. If nothing opens, your browser may be blocking the popup.</p>
-      <button class="btn sm" onclick="CLOUD.openToken()">Postavi lozinku</button>
-      <button class="btn ghost sm" onclick="CLOUD.clearHash()">Odbaci</button>`;
-    document.body.appendChild(el);
-  },
+  async signOut(){ await this.forget(); if(CUR === "napredak") vSave(); },
 
-  open(tab){
-    if(typeof netlifyIdentity === "undefined"){
-      this.lastErr = "WIDGET"; paintCloud();
-      if(CUR === "napredak") vSave();
-      return;
-    }
-    this.available = true;
-    try{
-      netlifyIdentity.open(tab || "login");
-    }catch(e){
-      this.lastErr = "OPEN_FAILED: " + (e && e.message ? e.message : "widget refused to open");
-      paintCloud(); if(CUR === "napredak") vSave();
-    }
-  },
-  out(){ if(this.available) netlifyIdentity.logout(); },
-
-  async token(){
-    if(!this.user) return null;
-    try{ return await this.user.jwt(); }catch(e){ return null; }
-  },
-
+  /* ---- progress sync ---- */
   async call(method, body){
-    const t = await this.token();
-    if(!t) throw new Error("NOT_SIGNED_IN");
+    const t = await this.fresh();
     const res = await fetch("/.netlify/functions/sync", {
       method,
-      headers: { "Authorization": "Bearer " + t, "Content-Type": "application/json" },
+      headers:{ "Authorization":"Bearer " + t, "Content-Type":"application/json" },
       body: body ? JSON.stringify(body) : undefined
     });
     if(res.status === 404) throw new Error("NO_FUNCTION");
@@ -2029,28 +2075,25 @@ const CLOUD = {
     return d;
   },
 
-  // On sign-in: whichever copy is newer wins, and the other gets overwritten.
   async sync(){
-    if(this.busy) return; this.busy = true; this.lastErr = "";
+    if(this.busy || !this.user) return;
+    this.busy = true; this.lastErr = "";
     try{
       const d = await this.call("GET");
-      if(d.empty){ await this.push(); }
+      if(d.empty){ await this.push(true); }
       else if((d.updatedAt || 0) > (S.updatedAt || 0)){
-        applyState(d.state); await Store.set("pleter:state", S);
+        applyState(d.state); await Store.set("nh:state", S);
         this.lastSync = d.updatedAt; paintStats();
-        if(CUR === "napredak") vSave();
-      }else{
-        await this.push();
-      }
+      }else{ await this.push(true); }
     }catch(e){ this.lastErr = String(e.message || e); }
     this.busy = false; paintCloud();
-    if(CUR === "napredak" && !this.lastErr) vSave();
+    if(CUR === "napredak") vSave();
   },
 
   async push(quiet){
     if(!this.user) return;
     try{
-      const d = await this.call("POST", { state: S, v: VERSION });
+      const d = await this.call("POST", { state:S, v:VERSION });
       this.lastSync = d.updatedAt; this.lastErr = "";
     }catch(e){ this.lastErr = String(e.message || e); }
     paintCloud();
@@ -2060,8 +2103,8 @@ const CLOUD = {
   async pull(){
     try{
       const d = await this.call("GET");
-      if(d.empty){ this.lastErr = "EMPTY"; }
-      else { applyState(d.state); await Store.set("pleter:state", S);
+      if(d.empty) this.lastErr = "EMPTY";
+      else { applyState(d.state); await Store.set("nh:state", S);
              this.lastSync = d.updatedAt; this.lastErr = ""; paintStats(); }
     }catch(e){ this.lastErr = String(e.message || e); }
     if(CUR === "napredak") vSave();
@@ -2069,29 +2112,116 @@ const CLOUD = {
 };
 
 function cloudErrText(m){
-  if(m === "NOT_SIGNED_IN")      return "Sign in again — your session expired.";
-  if(m === "NO_FUNCTION")        return "sync.js isn't deployed yet.";
-  if(m === "STORAGE_UNAVAILABLE")return "Netlify Blobs isn't available on this site.";
-  if(m === "TOO_LARGE")          return "Your save is over 900 KB. Delete some old conversations.";
-  if(m === "EMPTY")              return "Nothing saved in the cloud yet.";
-  if(m === "WIDGET")             return "The Netlify Identity widget didn't load. Usually this means Identity isn't enabled on the site yet: Netlify → your site → Identity → Enable. A browser extension blocking scripts can also cause it.";
-  if(m.indexOf("IDENTITY") === 0) return "Netlify Identity reported: " + m.replace("IDENTITY: ","") + ". If this mentions an expired or used token, ask for a fresh invite — invite links only work once.";
-  if(m.indexOf("OPEN_FAILED") === 0) return "The login window wouldn't open. Enable Identity in Netlify, then hard-refresh (Ctrl/Cmd + Shift + R).";
+  m = String(m || "");
+  if(/No user found|Invalid login|invalid_grant/i.test(m)) return "Wrong email or password.";
+  if(/already registered|already been registered/i.test(m)) return "That email already has an account — sign in instead.";
+  if(/Password should be at least/i.test(m)) return "Password must be at least 6 characters.";
+  if(/expired|not found|invalid/i.test(m) && CLOUD.pendingToken === "") return "That link has expired or was already used. Ask for a new invite.";
+  if(/signups not allowed|Signups not allowed/i.test(m)) return "Public sign-ups are off for this site. You need an invite.";
+  if(m === "NO_FUNCTION")         return "sync.js isn't deployed yet.";
+  if(m === "STORAGE_UNAVAILABLE") return "Netlify Blobs isn't available on this site.";
+  if(m === "TOO_LARGE")           return "Your save is over 900 KB. Delete some old conversations.";
+  if(m === "EMPTY")               return "Nothing saved to your account yet.";
+  if(m === "NO_SESSION")          return "Your session expired. Sign in again.";
+  if(/404/.test(m))               return "Netlify Identity isn't enabled on this site yet.";
   return m;
 }
 
 function paintCloud(){
   const el = $("#cloudbadge"); if(!el) return;
-  el.textContent = CLOUD.user ? ("☁ " + CLOUD.email.split("@")[0]) : "";
+  el.textContent = CLOUD.user ? ("● " + (CLOUD.email || "signed in")) : "";
 }
 
-// Escape always releases the page, whatever state the widget is in.
-document.addEventListener("keydown", e => {
-  if(e.key === "Escape"){
-    document.documentElement.classList.remove("identity-open");
-    try{ if(typeof netlifyIdentity !== "undefined") netlifyIdentity.close(); }catch(err){}
+/* ---------- auth dialog (ours, not an iframe) ---------- */
+let AUTHTAB = "in";
+function openAuth(tab){
+  AUTHTAB = tab || "in";
+  const box = $("#authbox");
+  box.className = "scrim";
+  box.onclick = e => { if(e.target === box && AUTHTAB !== "invite" && AUTHTAB !== "reset") closeAuth(); };
+  paintAuth();
+  setTimeout(()=>{ const f = box.querySelector("input"); if(f) f.focus(); }, 40);
+}
+function closeAuth(){ const b = $("#authbox"); b.className = "hidden"; b.innerHTML = ""; }
+
+function paintAuth(){
+  const t = AUTHTAB;
+  const title = t === "invite" ? "Set your password"
+              : t === "reset"  ? "Choose a new password"
+              : t === "up"     ? "Create account"
+              : t === "forgot" ? "Reset password" : "Sign in";
+  const fields =
+    t === "invite" || t === "reset"
+      ? `<input class="field" id="a-p1" type="password" placeholder="New password (min 6 characters)" autocomplete="new-password">
+         <input class="field" id="a-p2" type="password" placeholder="Repeat password" autocomplete="new-password" style="margin-top:8px">`
+    : t === "forgot"
+      ? `<input class="field" id="a-e" type="email" placeholder="Your email" autocomplete="email">`
+      : `<input class="field" id="a-e" type="email" placeholder="Email" autocomplete="email">
+         <input class="field" id="a-p1" type="password" placeholder="Password" autocomplete="${t==="up"?"new-password":"current-password"}" style="margin-top:8px">`;
+  const action = t === "invite" ? "Set password and sign in"
+               : t === "reset"  ? "Save new password"
+               : t === "up"     ? "Create account"
+               : t === "forgot" ? "Send reset link" : "Sign in";
+  $("#authbox").innerHTML = `<div class="modal" role="dialog" aria-modal="true">
+    <div class="eyebrow">account</div>
+    <h2>${title}</h2>
+    ${t === "invite" ? `<p style="color:var(--dim);font-size:14px">You were invited to Nauči hrvatski. Pick a password and you're in.</p>` : ""}
+    ${t === "up" ? `<p style="color:var(--dim);font-size:14px">Your progress will follow you to every device.</p>` : ""}
+    <div style="margin-top:14px">${fields}</div>
+    <div id="a-msg" style="margin-top:12px"></div>
+    <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn" id="a-go" onclick="doAuth()">${action}</button>
+      ${t !== "invite" && t !== "reset" ? `<button class="btn ghost" onclick="closeAuth()">Cancel</button>` : ""}
+    </div>
+    ${t === "in" ? `<div style="margin-top:14px;font-size:13.5px;color:var(--dim)">
+        No account? <a href="#" onclick="AUTHTAB='up';paintAuth();return false">Create one</a> ·
+        <a href="#" onclick="AUTHTAB='forgot';paintAuth();return false">Forgot password</a></div>` : ""}
+    ${t === "up" ? `<div style="margin-top:14px;font-size:13.5px;color:var(--dim)">
+        Already have one? <a href="#" onclick="AUTHTAB='in';paintAuth();return false">Sign in</a></div>` : ""}
+    ${t === "forgot" ? `<div style="margin-top:14px;font-size:13.5px;color:var(--dim)">
+        <a href="#" onclick="AUTHTAB='in';paintAuth();return false">Back to sign in</a></div>` : ""}
+  </div>`;
+  const box = $("#authbox");
+  box.querySelectorAll("input").forEach(i => i.addEventListener("keydown", e => { if(e.key === "Enter") doAuth(); }));
+}
+
+async function doAuth(){
+  const msg = $("#a-msg"), go = $("#a-go");
+  const val = id => { const el = $(id); return el ? el.value.trim() : ""; };
+  const email = val("#a-e"), p1 = val("#a-p1"), p2 = val("#a-p2");
+  const fail = t => { msg.innerHTML = `<div class="err">${esc(t)}</div>`; go.disabled = false; };
+
+  if((AUTHTAB === "invite" || AUTHTAB === "reset")){
+    if(p1.length < 6) return fail("Password must be at least 6 characters.");
+    if(p1 !== p2) return fail("The two passwords don't match.");
+  }else if(AUTHTAB === "forgot"){
+    if(!email) return fail("Enter your email.");
+  }else{
+    if(!email || !p1) return fail("Enter your email and password.");
   }
-});
+
+  go.disabled = true;
+  msg.innerHTML = `<div style="font-size:14px"><span class="spin"></span> Working…</div>`;
+  try{
+    if(AUTHTAB === "in"){ await CLOUD.signIn(email, p1); closeAuth(); }
+    else if(AUTHTAB === "up"){
+      const r = await CLOUD.signUp(email, p1);
+      if(r === "confirm"){
+        msg.innerHTML = `<div class="verdict ok"><b>Check your email.</b> Click the confirmation link, then come back and sign in.</div>`;
+        go.disabled = false; return;
+      }
+      closeAuth();
+    }
+    else if(AUTHTAB === "invite"){ await CLOUD.acceptInvite(p1); closeAuth(); }
+    else if(AUTHTAB === "reset"){ await CLOUD.resetPassword(p1); closeAuth(); }
+    else if(AUTHTAB === "forgot"){
+      await CLOUD.recover(email);
+      msg.innerHTML = `<div class="verdict ok"><b>Sent.</b> Check your email for the reset link.</div>`;
+      go.disabled = false; return;
+    }
+    if(CUR === "napredak") vSave();
+  }catch(e){ fail(cloudErrText(e.message || e)); }
+}
 
 /* ============================================================
    NAPREDAK — save codes
@@ -2107,7 +2237,7 @@ function b64dec(b64){
   for(let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
   return new TextDecoder().decode(bytes);
 }
-const TAG = "PLETER1:";
+const TAG = "NAUCI1:";
 let INCL_CHATS = false;
 function exportObj(withChats){
   const o = JSON.parse(JSON.stringify(S));
@@ -2123,7 +2253,7 @@ function downloadSave(){
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "pleter-save-" + new Date().toISOString().slice(0,10) + ".json";
+    a.download = "naucihrvatski-save-" + new Date().toISOString().slice(0,10) + ".json";
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(()=>URL.revokeObjectURL(url), 1000);
   }catch(e){
@@ -2143,7 +2273,7 @@ function uploadSave(input){
       await save();
       m.innerHTML = `<div class="verdict ok"><b style="color:var(--olive)">Učitano.</b> ${S.xp||0} bodova · ${Object.keys(S.cards||{}).length} kartica · ${Object.keys(S.chats||{}).length} razgovora.</div>`;
       setTimeout(()=>go("napredak"), 1100);
-    }catch(e){ m.innerHTML = `<div class="err">That file isn't a Pleter backup.</div>`; }
+    }catch(e){ m.innerHTML = `<div class="err">That file isn't a Nauči hrvatski backup.</div>`; }
   };
   r.readAsText(f);
 }
@@ -2165,37 +2295,36 @@ function vSave(){
   shell("napredak · your save", "Gdje ti je <i>napredak</i>",
     "There's no account and no server here — this is one file. Instead your progress lives in the app, and a save code lets you carry it anywhere: another browser, another laptop, or a downloaded copy of the file.",
     `<div class="card">
-      <div class="kicker">račun · account</div>
+      <div class="kicker">account</div>
       ${CLOUD.user ? `
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--olive)">Prijavljen</span>
+          <span style="font-family:var(--display);font-size:22px;font-weight:700;color:var(--olive)">Signed in</span>
           <span class="pill">${esc(CLOUD.email)}</span>
         </div>
         <p style="font-size:14.5px;color:var(--stone-dim);margin-top:8px">Progress and conversations save to your account automatically. Sign in on any other device with the same email and everything follows you — no codes.</p>
-        <div style="font-size:12.5px;color:var(--stone-dim)">${CLOUD.lastSync ? "Zadnje spremanje: " + new Date(CLOUD.lastSync).toLocaleString() : "Još nije sinkronizirano."}</div>
+        <div style="font-size:12.5px;color:var(--stone-dim)">${CLOUD.lastSync ? "Last saved: " + new Date(CLOUD.lastSync).toLocaleString() : "Not synced yet."}</div>
         ${CLOUD.lastErr ? `<div class="err" style="margin-top:10px">${esc(cloudErrText(CLOUD.lastErr))}</div>` : ""}
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn sm" onclick="CLOUD.push()">Spremi sada</button>
-          <button class="btn ghost sm" onclick="CLOUD.pull()">Učitaj iz oblaka</button>
-          <button class="btn ghost sm" onclick="CLOUD.out()">Odjavi se</button>
+          <button class="btn sm" onclick="CLOUD.push()">Save now</button>
+          <button class="btn ghost sm" onclick="CLOUD.pull()">Load from account</button>
+          <button class="btn ghost sm" onclick="CLOUD.signOut()">Sign out</button>
         </div>`
       : `
-        <div style="font-family:var(--display);font-size:22px;font-weight:700">Prijavi se i zaboravi kodove</div>
-        ${!CLOUD.ready ? `<div style="font-size:13px;color:var(--stone-dim);margin-top:6px"><span class="spin"></span> Učitavam prijavu…</div>`
-          : !CLOUD.available ? `<div class="err" style="margin-top:10px">${esc(cloudErrText("WIDGET"))}</div>` : ""}
+        <div style="font-family:var(--display);font-size:22px;font-weight:700">Sign in — no more save codes</div>
+        
         <p style="font-size:14.5px;color:var(--stone-dim);margin-top:6px">Make an account with an email and password and your progress follows you to every device automatically. Passwords are handled by Netlify — this app never sees them.</p>
         ${CLOUD.lastErr ? `<div class="err" style="margin-top:10px">${esc(cloudErrText(CLOUD.lastErr))}</div>` : ""}
         <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" onclick="CLOUD.open('signup')">Otvori račun</button>
-          <button class="btn ghost" onclick="CLOUD.open('login')">Prijava</button>
+          <button class="btn" onclick="openAuth('up')">Create account</button>
+          <button class="btn ghost" onclick="openAuth('in')">Sign in</button>
         </div>
         <p style="font-size:12.5px;color:var(--stone-dim);margin-top:12px;margin-bottom:0">Don't want an account? The save code below still works exactly as before.</p>`}
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">stanje · status</div>
+      <div class="kicker">device storage</div>
       <div style="display:flex;align-items:baseline;gap:10px;flex-wrap:wrap">
-        <span style="font-family:var(--display);font-size:24px;font-weight:700;color:${p?'var(--olive)':'var(--madder)'}">${p?'Sprema se automatski':'Ne sprema se'}</span>
+        <span style="font-family:var(--display);font-size:24px;font-weight:700;color:${p?'var(--olive)':'var(--madder)'}">${p?'Saving automatically':'Not saving'}</span>
         <span class="pill">${Store.mode === "local" ? "localStorage · ovaj preglednik" : Store.mode === "claude" ? "Claude · ova aplikacija" : "samo u memoriji"}</span>
       </div>
       <p style="font-size:14.5px;color:var(--stone-dim);margin-top:8px;margin-bottom:0">${
@@ -2205,7 +2334,7 @@ function vSave(){
         ? "Everything saves as you go, tied to this app inside Claude. Close the tab and come back and it'll be here."
         : "Nothing persists in this environment. Copy your save code before you close the tab, or your progress goes with it."}</p>
       <hr class="rule">
-      <div class="kicker">sažetak</div>
+      <div class="kicker">summary</div>
       <div class="grid g3">
         <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${S.xp||0}</div><div style="font-size:12px;color:var(--stone-dim)">bodova</div></div>
         <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${units}/${UNITS.length}</div><div style="font-size:12px;color:var(--stone-dim)">lekcija pročitano</div></div>
@@ -2214,37 +2343,37 @@ function vSave(){
         <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${S.streak||0}</div><div style="font-size:12px;color:var(--stone-dim)">dana zaredom</div></div>
         <div><div style="font-family:var(--mono);font-size:26px;color:var(--brass)">${Object.keys(S.chats||{}).length}</div><div style="font-size:12px;color:var(--stone-dim)">razgovora</div></div>
       </div>
-      <div style="margin-top:14px"><span class="pill">Pleter v${VERSION}</span></div>
+      <div style="margin-top:14px"><span class="pill">Nauči hrvatski v${VERSION}</span></div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">ime · what should I call you</div>
+      <div class="kicker">your name</div>
       <div style="display:flex;gap:9px;flex-wrap:wrap">
         <input class="answer" id="nm" style="flex:1;min-width:180px;font-size:17px" value="${esc(S.name||"")}" placeholder="npr. Yur" maxlength="24">
-        <button class="btn ghost" onclick="S.name=$('#nm').value.trim();save();vSave()">Spremi ime</button>
+        <button class="btn ghost" onclick="S.name=$('#nm').value.trim();save();vSave()">Save name</button>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">kod za spremanje · your save code</div>
-      <p style="font-size:14.5px;color:var(--stone-dim)">Paste this into Pleter on any other device to land where you left off. Your API key is <b style="color:var(--stone)">not</b> in here, so the code is safe to email yourself.</p>
+      <div class="kicker">save code</div>
+      <p style="font-size:14.5px;color:var(--stone-dim)">Paste this into Nauči hrvatski on any other device to land where you left off. Your API key is <b style="color:var(--stone)">not</b> in here, so the code is safe to email yourself.</p>
       <label style="display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--stone-dim);margin-bottom:9px">
         <input type="checkbox" ${INCL_CHATS?"checked":""} onchange="INCL_CHATS=this.checked;go('napredak')">
-        Uključi i razgovore <span style="opacity:.7">(${Object.keys(S.chats||{}).length} spremljeno — makes the code much longer)</span>
+        Include conversations <span style="opacity:.7">(${Object.keys(S.chats||{}).length} spremljeno — makes the code much longer)</span>
       </label>
       <textarea id="code" readonly rows="4" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone-dim);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical">${saveCode()}</textarea>
       <div style="font-size:12px;color:var(--stone-dim);margin-top:6px">${code.length.toLocaleString()} znakova${code.length>20000?" — long enough that copying gets fragile. Use the file backup below instead.":""}</div>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn brass" id="cpy" onclick="copyCode()">Kopiraj kod</button>
+        <button class="btn brass" id="cpy" onclick="copyCode()">Copy code</button>
         <button class="btn ghost" onclick="downloadSave()">Preuzmi .json (sve, s razgovorima)</button>
       </div>
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">vrati napredak · restore</div>
+      <div class="kicker">restore</div>
       <textarea id="restore" rows="4" placeholder="Zalijepi kod ovdje…" style="width:100%;background:var(--deep);border:1px solid var(--line-2);color:var(--stone);border-radius:11px;padding:12px;font-family:var(--mono);font-size:11px;resize:vertical"></textarea>
       <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center">
-        <button class="btn" onclick="restoreCode()">Vrati iz koda</button>
+        <button class="btn" onclick="restoreCode()">Restore from code</button>
         <label class="btn ghost" style="cursor:pointer">Učitaj .json<input type="file" accept=".json,application/json" style="display:none" onchange="uploadSave(this)"></label>
       </div>
       <div style="font-size:12px;color:var(--stone-dim);margin-top:8px">A progress-only code leaves your saved conversations alone — it won't delete them.</div>
@@ -2252,9 +2381,9 @@ function vSave(){
     </div>
 
     <div class="card" style="margin-top:14px">
-      <div class="kicker">početak ispočetka · start over</div>
+      <div class="kicker">start over</div>
       <p style="font-size:14.5px;color:var(--stone-dim)">Wipes XP, streak, finished units and every flashcard. Grab your save code first if you might want it back.</p>
-      <button class="btn ghost" id="wipe" onclick="wipe()">Obriši sav napredak</button>
+      <button class="btn ghost" id="wipe" onclick="wipe()">Erase all progress</button>
     </div>`);
 }
 
@@ -2269,7 +2398,7 @@ async function restoreCode(){
   const v = ($("#restore").value||"").trim();
   const m = $("#rmsg");
   if(!v){ m.innerHTML = `<div class="err">Paste a save code first.</div>`; return; }
-  if(v.indexOf(TAG) !== 0){ m.innerHTML = `<div class="err">That doesn't look like a Pleter code — it should start with ${TAG}</div>`; return; }
+  if(v.indexOf(TAG) !== 0){ m.innerHTML = `<div class="err">That doesn't look like a save code — it should start with ${TAG}</div>`; return; }
   try{
     const obj = JSON.parse(b64dec(v.slice(TAG.length)));
     if(typeof obj !== "object" || obj === null) throw new Error("shape");
@@ -2283,7 +2412,7 @@ async function restoreCode(){
 let WIPEARM = false;
 async function wipe(){
   const b = $("#wipe");
-  if(!WIPEARM){ WIPEARM = true; b.textContent = "Sigurno? Klikni opet."; b.style.borderColor = "var(--madder)"; b.style.color = "var(--madder)";
+  if(!WIPEARM){ WIPEARM = true; b.textContent = "Are you sure? Click again."; b.style.borderColor = "var(--madder)"; b.style.color = "var(--madder)";
     setTimeout(()=>{ WIPEARM = false; if($("#wipe")){ $("#wipe").textContent = "Obriši sav napredak"; $("#wipe").style.borderColor=""; $("#wipe").style.color=""; } }, 4000);
     return; }
   WIPEARM = false;
@@ -2295,15 +2424,15 @@ async function wipe(){
    POSTAVKE — API key modal
    ============================================================ */
 function connState(){
-  if(GKEY) return { k:"key",     c:"var(--brass)", t:"Osobni ključ" };
-  if(DIAG === null) return { k:"probing", c:"var(--stone-dim)", t:"Provjeravam…" };
+  if(GKEY) return { k:"key",     c:"var(--brass)", t:"Personal key" };
+  if(DIAG === null) return { k:"probing", c:"var(--stone-dim)", t:"Checking…" };
   if(!DIAG.deployed) return Store.mode === "claude"
-      ? { k:"claude", c:"var(--brass)", t:"Preko Claudea" }
-      : { k:"nofunc", c:"var(--madder)", t:"Funkcija nije nađena" };
-  if(DIAG.known === false) return { k:"unknown", c:"var(--brass)", t:"Funkcija radi" };
-  if(!DIAG.key)    return { k:"nokey",  c:"var(--madder)", t:"Ključ nije postavljen" };
-  if(!DIAG.origin) return { k:"origin", c:"var(--madder)", t:"Origin blokiran" };
-  return { k:"server", c:"var(--olive)", t:"Poslužitelj spreman" };
+      ? { k:"claude", c:"var(--brass)", t:"Running via Claude" }
+      : { k:"nofunc", c:"var(--madder)", t:"AI not connected" };
+  if(DIAG.known === false) return { k:"unknown", c:"var(--brass)", t:"Function is live" };
+  if(!DIAG.key)    return { k:"nokey",  c:"var(--madder)", t:"API key not set" };
+  if(!DIAG.origin) return { k:"origin", c:"var(--madder)", t:"Origin blocked" };
+  return { k:"server", c:"var(--olive)", t:"AI connected" };
 }
 function paintGear(){
   const d = $("#dot"), l = $("#gearlbl");
@@ -2324,26 +2453,26 @@ function openSettings(){
        <div style="flex:1"><div style="font-size:14.5px">${label}</div>
        ${detail?`<div style="font-size:12.5px;color:var(--stone-dim)">${detail}</div>`:""}</div></div>`;
   const diag = GKEY ? "" : `
-    <div class="kicker" style="margin-top:18px">dijagnostika</div>
+    <div class="kicker" style="margin-top:18px">diagnostics</div>
     ${DIAG === null
-      ? `<div style="font-size:14px"><span class="spin"></span> Provjeravam poslužitelj…</div>`
-      : row(DIAG.deployed, "Funkcija je objavljena",
+      ? `<div style="font-size:14px"><span class="spin"></span> Checking the server…</div>`
+      : row(DIAG.deployed, "Function is deployed",
              DIAG.deployed ? "/.netlify/functions/chat odgovara ("+DIAG.http+")" : "404 — netlify/functions/chat.js didn't deploy") +
         (DIAG.known === false
-          ? `<div style="font-size:13px;color:var(--stone-dim);padding:8px 0">This function build has no health check, so the key and origin can't be read from here. It's an older <code>chat.js</code> — everything may still work. Press <b>Provjeri vezu</b> to find out for real.</div>`
-          : row(DIAG.key, "GEMINI_API_KEY je postavljen",
+          ? `<div style="font-size:13px;color:var(--stone-dim);padding:8px 0">This function build has no health check, so the key and origin can't be read from here. It's an older <code>chat.js</code> — everything may still work. Press <b>Test connection</b> to find out for real.</div>`
+          : row(DIAG.key, "GEMINI_API_KEY is set",
                  DIAG.key ? "" : "Set it in Netlify, then redeploy — env vars only apply to new deploys") +
-            row(DIAG.origin, "Origin je dopušten",
+            row(DIAG.origin, "Origin is allowed",
                  DIAG.origin ? "" : "This URL isn't in the allow list" + (DIAG.origins && DIAG.origins.length ? " — configured: " + DIAG.origins.map(esc).join(", ") : "")) +
-            (DIAG.works === null ? "" : row(DIAG.works, "Ključ stvarno radi",
+            (DIAG.works === null ? "" : row(DIAG.works, "The key actually works",
                  DIAG.works ? "Google accepted a test call" : esc(DIAG.problem || "Google rejected the key"))))}
     <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-      <button class="btn ghost sm" onclick="DIAG=null;openSettings();probe().then(openSettings)">Provjeri ponovno</button>
-      <button class="btn brass sm" onclick="DIAG=null;openSettings();probe(true).then(openSettings)">Testiraj ključ uživo</button>
+      <button class="btn ghost sm" onclick="DIAG=null;openSettings();probe().then(openSettings)">Check again</button>
+      <button class="btn brass sm" onclick="DIAG=null;openSettings();probe(true).then(openSettings)">Test the key live</button>
     </div>`;
   box.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-label="Postavke">
-    <div class="eyebrow">postavke · settings</div>
-    <h2>Veza s <i style="color:var(--brass)">AI-jem</i></h2>
+    <div class="eyebrow">settings</div>
+    <h2>AI <i style="color:var(--brass)">connection</i></h2>
 
     <div style="display:flex;align-items:center;gap:9px;margin:14px 0 6px">
       <span class="dot" style="width:9px;height:9px;background:${st.c}"></span>
@@ -2357,28 +2486,28 @@ function openSettings(){
       : "The server path isn't usable yet. The checks below say why."}</p>
     ${diag}
 
-    <div style="margin-top:16px"><button class="btn" onclick="testConn()">Provjeri vezu</button></div>
+    <div style="margin-top:16px"><button class="btn" onclick="testConn()">Test connection</button></div>
     <div id="kmsg" style="margin-top:12px"></div>
 
     <hr class="rule">
     <details ${GKEY?"open":""}>
-      <summary style="cursor:pointer;font-size:13.5px;color:var(--stone-dim)">Napredno — vlastiti Gemini ključ</summary>
+      <summary style="cursor:pointer;font-size:13.5px;color:var(--stone-dim)">Advanced — use your own Gemini key</summary>
       <p style="font-size:13px;color:var(--stone-dim);margin-top:10px">Only needed if you're running the file locally with no server behind it. On the live site, leave this empty.</p>
       <input class="field" id="k" type="password" autocomplete="off" spellcheck="false"
              placeholder="${GKEY ? maskKey(GKEY) : "AIza…"}" value="">
       <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--stone-dim);margin-top:8px">
-        <input type="checkbox" onchange="$('#k').type = this.checked ? 'text' : 'password'"> Prikaži ključ
+        <input type="checkbox" onchange="$('#k').type = this.checked ? 'text' : 'password'"> Show key
       </label>
       <div class="kicker" style="margin-top:14px">model</div>
       <select class="field" id="m">${MODELS.map(m=>`<option value="${m}" ${m===GMODEL?"selected":""}>${m}</option>`).join("")}</select>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px">
-        <button class="btn ghost" onclick="saveKey()">Spremi ključ</button>
-        ${GKEY ? `<button class="btn ghost" onclick="clearKey()">Obriši ključ</button>` : ""}
+        <button class="btn ghost" onclick="saveKey()">Save key</button>
+        ${GKEY ? `<button class="btn ghost" onclick="clearKey()">Remove key</button>` : ""}
       </div>
       <p style="font-size:12.5px;color:var(--stone-dim);margin-top:12px;margin-bottom:0">A personal key is stored in this browser only and is deliberately excluded from your save codes and backups. If a key of yours has ever been pasted somewhere public, delete it in AI Studio and make a new one.</p>
     </details>
 
-    <div style="margin-top:18px"><button class="btn ghost" onclick="closeSettings()">Zatvori</button></div>
+    <div style="margin-top:18px"><button class="btn ghost" onclick="closeSettings()">Close</button></div>
   </div>`;
   document.addEventListener("keydown", escClose);
 }
