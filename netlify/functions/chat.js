@@ -1,11 +1,15 @@
 /* ============================================================
-   Pleter — Gemini proxy
+   Nauči hrvatski — Gemini proxy
    The API key lives in the GEMINI_API_KEY environment variable
    and never reaches the browser.
    ============================================================ */
 
-const DEFAULT_MODEL   = "gemini-3.6-flash";
-const ALLOWED_MODELS  = new Set(["gemini-2.5-flash", "gemini-2.5-flash-lite", "gemini-3.5-flash"]);
+// Tried in order. If Google 404s one (retired without notice, which happens),
+// the next is tried automatically and remembered for this instance.
+const MODEL_CHAIN     = ["gemini-3.6-flash", "gemini-3.5-flash", "gemini-2.5-flash"];
+const DEFAULT_MODEL   = MODEL_CHAIN[0];
+const ALLOWED_MODELS  = new Set([...MODEL_CHAIN, "gemini-3.1-flash-lite", "gemini-2.5-flash-lite"]);
+let WORKING_MODEL     = null;   // cached once something succeeds
 
 // --- abuse limits -------------------------------------------------
 const MAX_MESSAGES     = 40;      // turns in one conversation
@@ -54,6 +58,27 @@ function originOk(headers){
   return allow.some(a => { try { return new URL(src).origin === new URL(a).origin; } catch(e){ return false; } });
 }
 
+// Maps an upstream failure to a specific, safe explanation.
+function classify(status, detail){
+  const d = String(detail || "");
+  if(/API key not valid|API_KEY_INVALID/i.test(d))
+    return "KEY_INVALID: the GEMINI_API_KEY value is not a valid key. Check for a stray space or a deleted key, then redeploy.";
+  if(/API key expired|API_KEY_EXPIRED/i.test(d))
+    return "KEY_EXPIRED: this key has expired. Create a new one in Google AI Studio.";
+  if(/SERVICE_DISABLED|has not been used in project|is disabled/i.test(d))
+    return "API_DISABLED: the Generative Language API isn't enabled for this key's project. Enable it in Google Cloud, then wait a minute.";
+  if(/PERMISSION_DENIED|caller does not have permission|API keys are not supported/i.test(d))
+    return "PERMISSION: the key exists but isn't allowed to call this API. Check the key's API restrictions in Google Cloud.";
+  if(/billing/i.test(d))
+    return "BILLING: this project needs billing enabled.";
+  if(/quota|RESOURCE_EXHAUSTED/i.test(d))
+    return "QUOTA: this key has used up its quota. Free-tier limits reset daily at midnight Pacific time.";
+  if(/not found|NOT_FOUND/i.test(d) || status === 404)
+    return "MODEL: this key can't access that model.";
+  if(status === 429) return "QUOTA: the free-tier quota for this model is used up. It resets daily at midnight Pacific time.";
+  return "UPSTREAM_" + status + ": Gemini rejected the request. Full detail is in the Netlify function log.";
+}
+
 const json = (code, obj, origin) => ({
   statusCode: code,
   headers: {
@@ -77,14 +102,40 @@ exports.handler = async (event) => {
   if(event.httpMethod === "GET"){
     const q = event.queryStringParameters || {};
     if(q.ping !== undefined){
-      return json(200, {
+      const base = {
         ok: true,
         deployed: true,
         keyConfigured: !!process.env.GEMINI_API_KEY,
         originAllowed: originOk(h),
         originsConfigured: allowedOrigins(),
         model: DEFAULT_MODEL
-      }, origin);
+      };
+      // ?ping=1&live=1 spends one tiny call to prove the key actually works.
+      if(q.live !== undefined && process.env.GEMINI_API_KEY){
+        try{
+          const r = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/${DEFAULT_MODEL}:generateContent`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json", "x-goog-api-key": process.env.GEMINI_API_KEY },
+              body: JSON.stringify({
+                contents: [{ role: "user", parts: [{ text: "hi" }] }],
+                generationConfig: { maxOutputTokens: 256 }
+              })
+            });
+          if(r.ok){ base.keyWorks = true; base.modelUsed = DEFAULT_MODEL; }
+          else {
+            let detail = "";
+            try { const j = await r.json(); detail = (j.error && j.error.message) || ""; } catch(e){}
+            console.error("Live key check failed:", r.status, detail);
+            base.keyWorks = false;
+            base.keyProblem = classify(r.status, detail);
+          }
+        }catch(e){
+          base.keyWorks = false;
+          base.keyProblem = "NETWORK: the function couldn't reach Google.";
+        }
+      }
+      return json(200, base, origin);
     }
     return json(405, { error: "Method not allowed" }, origin);
   }
@@ -104,8 +155,8 @@ exports.handler = async (event) => {
   if(limited){
     return json(429, {
       error: limited === "minute"
-        ? "Prebrzo. Pričekaj minutu."
-        : "Dnevni limit je dosegnut. Pokušaj sutra."
+        ? "Too fast. Wait a minute and try again."
+        : "Daily limit for this site reached. Try again tomorrow."
     }, origin);
   }
 
@@ -143,32 +194,52 @@ exports.handler = async (event) => {
     }
   };
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
-  const send = p => fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json", "x-goog-api-key": key },
-    body: JSON.stringify(p)
-  });
+  const send = (m, p) => fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/${m}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": key },
+      body: JSON.stringify(p)
+    });
 
   try {
-    let res = await send(payload);
+    // Candidates: what was asked for, then the chain, minus duplicates.
+    const tried = [];
+    const candidates = [WORKING_MODEL, model, ...MODEL_CHAIN]
+      .filter(m => m && !tried.includes(m) && (tried.push(m), true));
 
-    if(res.status === 400){                       // some models reject thinkingConfig
-      const retry = JSON.parse(JSON.stringify(payload));
-      delete retry.generationConfig.thinkingConfig;
-      res = await send(retry);
+    let res = null, used = null;
+    for(const m of candidates){
+      res = await send(m, payload);
+
+      if(res.status === 400){                     // some models reject thinkingConfig
+        const retry = JSON.parse(JSON.stringify(payload));
+        delete retry.generationConfig.thinkingConfig;
+        res = await send(m, retry);
+      }
+
+      // 404 = model retired. 429 = that model's free-tier quota is spent.
+      // Both are worth retrying on the next model, since limits are per-model.
+      if((res.status === 404 || res.status === 429) && m !== candidates[candidates.length - 1]){
+        console.warn(`Model ${m} unavailable (${res.status}), falling back.`);
+        continue;
+      }
+      used = m;
+      break;
     }
+
+    if(!used){
+      console.error("Every model in the chain failed:", candidates.join(", "));
+      return json(502, { error: "MODEL: none of the configured models are available. Update MODEL_CHAIN in chat.js." }, origin);
+    }
+    if(res.ok) WORKING_MODEL = used;
 
     if(!res.ok){
       let detail = "";
       try { const j = await res.json(); detail = (j.error && j.error.message) || ""; } catch(e){}
       console.error("Gemini error", res.status, detail);   // logged server-side only
 
-      // Never echo Google's message back — it can contain key or project detail.
-      if(res.status === 429) return json(429, { error: "Gemini je preopterećen. Pokušaj za koju minutu." }, origin);
-      if(res.status === 400 || res.status === 403) return json(502, { error: "Upstream rejected the request." }, origin);
-      if(res.status === 404) return json(502, { error: "Model nije dostupan." }, origin);
-      return json(502, { error: "Upstream error." }, origin);
+      // Classify without echoing Google's raw text (it can contain project detail).
+      return json(res.status === 429 ? 429 : 502, { error: classify(res.status, detail) }, origin);
     }
 
     const data = await res.json();
@@ -178,16 +249,16 @@ exports.handler = async (event) => {
     if(!text){
       const reason = cand && cand.finishReason;
       return json(502, {
-        error: reason === "MAX_TOKENS" ? "Odgovor je predugačak — pokušaj ponovno."
-             : reason === "SAFETY"     ? "Odgovor je blokiran."
-             : "Prazan odgovor."
+        error: reason === "MAX_TOKENS" ? "The reply got cut off. Try again."
+             : reason === "SAFETY"     ? "The reply was blocked by a safety filter."
+             : "Empty reply from Gemini."
       }, origin);
     }
 
-    return json(200, { text, model }, origin);
+    return json(200, { text, model: used }, origin);
 
   } catch(err){
     console.error("Proxy failure:", err && err.message);
-    return json(502, { error: "Nije uspjelo povezivanje s Geminijem." }, origin);
+    return json(502, { error: "Could not reach Gemini." }, origin);
   }
 };
