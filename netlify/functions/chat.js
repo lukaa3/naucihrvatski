@@ -75,6 +75,7 @@ function classify(status, detail){
     return "QUOTA: this key has used up its quota. Free-tier limits reset daily at midnight Pacific time.";
   if(/not found|NOT_FOUND/i.test(d) || status === 404)
     return "MODEL: this key can't access that model.";
+  if(status === 503 || status === 500) return "BUSY: Gemini was temporarily overloaded. This usually clears in a few seconds — try again.";
   if(status === 429) return "QUOTA: the free-tier quota for this model is used up. It resets daily at midnight Pacific time.";
   return "UPSTREAM_" + status + ": Gemini rejected the request. Full detail is in the Netlify function log.";
 }
@@ -219,7 +220,8 @@ exports.handler = async (event) => {
 
       // 404 = model retired. 429 = that model's free-tier quota is spent.
       // Both are worth retrying on the next model, since limits are per-model.
-      if((res.status === 404 || res.status === 429) && m !== candidates[candidates.length - 1]){
+      if((res.status === 404 || res.status === 429 || res.status === 500 ||
+          res.status === 503 || res.status === 502) && m !== candidates[candidates.length - 1]){
         console.warn(`Model ${m} unavailable (${res.status}), falling back.`);
         continue;
       }
